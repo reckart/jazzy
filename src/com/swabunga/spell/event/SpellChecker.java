@@ -267,7 +267,8 @@ public class SpellChecker {
         break;
       case SpellCheckEvent.ADDTODICT:
         String addWord = event.getReplaceWord();
-        tokenizer.replaceWord(addWord);
+        if (!addWord.equals(word))
+          tokenizer.replaceWord(addWord);
         userdictionary.addWord(addWord);
         break;
       case SpellCheckEvent.CANCEL:

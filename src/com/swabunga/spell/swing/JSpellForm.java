@@ -39,6 +39,7 @@ public class JSpellForm extends JPanel
   /** The resource for the Suggestions label*/
   private static final String SUGGESTIONS_RES = "SUGGESTIONS";
   private static final String INVALIDWORD_RES = "INVALIDWORD";
+  private JLabel wrongWordLabel;
 
   /* Accessible GUI Components */
   protected JList suggestList;
@@ -99,8 +100,13 @@ public class JSpellForm extends JPanel
   protected JPanel makeCentrePanel () {
     JPanel jPanel2 = new JPanel();
     jPanel2.setLayout(new BoxLayout(jPanel2, BoxLayout.Y_AXIS));
+    JPanel jPanel3 = new JPanel();
     JLabel lbl1 = new JLabel(messages.getString(INVALIDWORD_RES));
-    jPanel2.add(lbl1);
+    wrongWordLabel = new JLabel("");
+    wrongWordLabel.setForeground(Color.RED);
+    jPanel3.add(lbl1);
+    jPanel3.add(wrongWordLabel);
+    jPanel2.add(jPanel3);
     checkText = new JTextArea();
     jPanel2.add(new JScrollPane(checkText));
     JLabel lbl2 = new JLabel(messages.getString(SUGGESTIONS_RES));
@@ -150,7 +156,8 @@ public class JSpellForm extends JPanel
       m.addElement(suggestions.get(i));
     }
     suggestList.setModel(m);
-    if (m.size()>0) {
+    wrongWordLabel.setText(event.getInvalidWord());
+   if (m.size()>0) {
     	suggestList.setSelectedIndex(0);
     	checkText.setText(((Word)m.get(0)).getWord());
     } else {

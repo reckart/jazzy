@@ -203,9 +203,10 @@ public abstract class AbstractWordFinder implements WordFinder {
       Character curChar = new Character(text.charAt(newIndex));
 
       if (curChar.equals(startIgnore)) {
-        while ((++newIndex) < text.length()) {
+        newIndex++;
+        while (newIndex < text.length()) {
           curChar = new Character(text.charAt(newIndex));
-
+          newIndex++;
           if ((endIgnore != null && curChar.equals(endIgnore))||
              (endIgnore == null && !Character.isLetterOrDigit(curChar.charValue()))){
             break;

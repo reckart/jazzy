@@ -12,10 +12,12 @@
   <property name="package" value="com.swabunga.spell.event"/>
   <property name="verbose" value="false"/>
   <property name="jsdk-lib"  value=""/>
+  <property name="junit"  value=""/>
 
   <!-- Build classpath -->
   <path id="classpath.id">
     <pathelement path="${classpath}"/>
+    <pathelement location="${junit}"/>
     <!-- external libs needed for build
     <fileset dir="lib">
       <include name="**/*.jar"/>
@@ -45,6 +47,7 @@
     <javac deprecation="true" verbose="${verbose}" srcdir="${src}" destdir="${build}" target="${target}">
       <classpath refid="classpath.id"/>
       <exclude name="com/swabunga/spell/jedit/**"/>
+      <exclude name="com/swabunga/test/**"/>
     </javac>
     <copy todir="${build}" >
       <fileset dir="${src}" >
@@ -59,6 +62,7 @@
            bootclasspathref="bootclass.path">
       <classpath refid="classpath.id"/>
       <exclude name="com/swabunga/spell/jedit/**"/>
+      <exclude name="com/swabunga/test/**"/>
     </javac>
     <copy todir="${build}" >
       <fileset dir="${src}" >
@@ -69,8 +73,9 @@
 
   <target name="debug-compile" depends="init">
     <!-- Compile the java code from ${src} into ${build} -->
-    <javac debug="true" srcdir="${src}" destdir="${build}" target="${target}">
-      <classpath refid="classpath.id"/>
+    <javac debug="true" srcdir="${src}" destdir="${build}"
+           target="${target}" classpath="${classpath};${junit}">
+      <!-- <classpath refid="classpath.id"/> -->
       <exclude name="com/swabunga/spell/jedit/**"/>
     </javac>
     <copy todir="${build}" >
@@ -80,22 +85,10 @@
     </copy>
   </target>
 
-  <target name="clean-debug-compile" depends="clean,init">
-    <!-- Compile the java code from ${src} into ${build} -->
-    <javac debug="true" srcdir="${src}" destdir="${build}" target="${target}">
-      <classpath refid="classpath.id"/>
-      <exclude name="com/swabunga/spell/jedit/**"/>
-    </javac>
-    <copy todir="${build}" >
-      <fileset dir="${src}" >
-        <include name="**/*.properties"/>
-      </fileset>
-    </copy>
-  </target>
+  <target name="clean-debug-compile" depends="clean,debug-compile"/>
 
-  <target name="clean-compile" depends="clean,compile">
-  </target>
-
+  <target name="clean-compile" depends="clean,compile"/>
+  
   <target name="javadoc" depends="init">
     <!-- Compile the javadoc from ${src} into ${javadoc} -->
     <javadoc sourcepath="${src}" destdir="${javadoc}" packagenames="com.swabunga.spell.*">
@@ -171,6 +164,10 @@
   	</jar>
   </target>
 
+  <target name="compile-test" depends="debug-compile">
+    <java classname="com.swabunga.test.spell.event.TeXWordFinderTester" fork="true" classpath="bin;${junit}"/>
+  </target>
+  
  <!-- Build jEdit Plugin from jedit_build.xml Ant file. -->
 
  <target name="jedit-plugin-install">

@@ -14,7 +14,7 @@
 	<property name="jsdk-lib"  value=""/>
  
   <!-- Build classpath -->
-  <path id="classpath">
+  <path id="classpath.id">
     <pathelement path="${classpath}"/>
     <!-- external libs needed for build
     <fileset dir="lib">
@@ -43,7 +43,7 @@
   <target name="compile" depends="init">
     <!-- Compile the java code from ${src} into ${build} -->
     <javac deprecation="true" verbose="${verbose}" srcdir="${src}" destdir="${build}" target="${target}">
-      <classpath refid="classpath"/>
+      <classpath refid="classpath.id"/>
     </javac>
     <copy todir="${build}" >
       <fileset dir="${src}" >
@@ -56,7 +56,7 @@
     <!-- Compile the java code from ${src} into ${build} -->
     <javac deprecation="true" verbose="${verbose}" srcdir="${src}" destdir="${build}" target="${target}"
            bootclasspathref="bootclass.path">
-      <classpath refid="classpath"/>
+      <classpath refid="classpath.id"/>
     </javac>
     <copy todir="${build}" >
       <fileset dir="${src}" >
@@ -68,7 +68,7 @@
   <target name="debug-compile" depends="init">
     <!-- Compile the java code from ${src} into ${build} -->
     <javac debug="true" srcdir="${src}" destdir="${build}" target="${target}">
-      <classpath refid="classpath"/>
+      <classpath refid="classpath.id"/>
     </javac>
     <copy todir="${build}" >
       <fileset dir="${src}" >
@@ -80,7 +80,7 @@
   <target name="clean-debug-compile" depends="clean,init">
     <!-- Compile the java code from ${src} into ${build} -->
     <javac debug="true" srcdir="${src}" destdir="${build}" target="${target}">
-      <classpath refid="classpath"/>
+      <classpath refid="classpath.id"/>
     </javac>
     <copy todir="${build}" >
       <fileset dir="${src}" >
@@ -95,7 +95,7 @@
   <target name="javadoc" depends="init">
     <!-- Compile the javadoc from ${src} into ${javadoc} -->
     <javadoc sourcepath="${src}" destdir="${javadoc}" packagenames="com.swabunga.spell.*">
-      <classpath refid="classpath"/>
+      <classpath refid="classpath.id"/>
     </javadoc>
   </target>
 
@@ -110,10 +110,11 @@
 
   <target name="applet" depends="compile">
 	<jar jarfile="${www}/jazzy-applet.jar" basedir="${build}"/>
+	<signjar jar="${www}/jazzy-applet.jar" alias="jazzyKey" storepass="secret" verbose="true" />
   </target>
   
   <target name="dictionary-release">
-	<zip zipfile="${dist}/english.0.zip" basedir="${dict}"/>
+	<zip zipfile="${dist}/english.0.zip" basedir="${dict}" includes="**/english.0" />
   </target>
   
   <target name="website" depends="applet,dictionary-release">
@@ -127,6 +128,12 @@
   
   <target name="binary-release" depends="compile,library-core,library-swing,examples,javadoc,website">
   	<zip zipfile="${dist}/jazzy-bin.zip" basedir="." excludes="dict/**,bin/**,**/jazzy-bin.zip,**/english.0.zip,**/jazzy-src.zip"/>
+  	<!-- DMV
+  	<copy todir="\cygwin\home\don\oddpost\build\jboss_webapps\jazzy.war">
+  		<fileset dir="${www}"/>
+  		<fileset dir="bin"/>
+	</copy>
+	-->
   </target>
   
   <target name="library-core" depends="compile">
@@ -159,7 +166,7 @@
   		</manifest>
   	</jar>
   </target>
-  
+
  <!-- Start of jEdit Plugin targets -->
  
   <target name="jedit-pack" depends="init">

@@ -10,7 +10,7 @@ package com.swabunga.spell.event;
  * When the object is instantiated, and before the first call to <CODE>next()</CODE> is made,
  * the following methods should throw a <CODE>WordNotFoundException</CODE>:<br>
  * <CODE>getCurrentWordEnd()</CODE>, <CODE>getCurrentWordPosition()</CODE>,
- *  <CODE>isNewSentance()</CODE> and <CODE>replaceWord()</CODE>.
+ *  <CODE>isNewSentence()</CODE> and <CODE>replaceWord()</CODE>.
  * </P>
  *
  * <P>A call to <CODE>next()</CODE> when <CODE>hasMoreWords()</CODE> returns false
@@ -49,11 +49,11 @@ public interface WordTokenizer {
   public int getCurrentWordPosition();
 
   /**
-   * Returns true if the current word is at the start of a sentance
+   * Returns true if the current word is at the start of a sentence
    * @return true if the current word starts a sentence.
    * @throws WordNotFoundException current word has not yet been set.
    */
-  public boolean isNewSentance();
+  public boolean isNewSentence();
 
   /**
    * Returns true if there are more words left

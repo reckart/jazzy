@@ -182,15 +182,15 @@ public class SpellChecker {
    * Returns true iif this word contains mixed case characters
    *
    * @param  word  Description of the Parameter
-   * @param startsSentance True if this word is at the start of a sentance
+   * @param startsSentence True if this word is at the start of a sentence
    * @return       The mixedCaseWord value
    */
-  private final static boolean isMixedCaseWord(String word, boolean startsSentance) {
+  private final static boolean isMixedCaseWord(String word, boolean startsSentence) {
     int strLen = word.length();
     boolean isUpper = Character.isUpperCase(word.charAt(0));
-    //Ignore the first character if this word starts the sentance and the first
+    //Ignore the first character if this word starts the sentence and the first
     //character was upper cased, since this is normal behaviour
-    if ((startsSentance) && isUpper && (strLen > 1))
+    if ((startsSentence) && isUpper && (strLen > 1))
       isUpper = Character.isUpperCase(word.charAt(1));
     if (isUpper) {
       for (int i = word.length() - 1; i > 0; i--) {
@@ -277,19 +277,20 @@ public class SpellChecker {
    * <p>For each invalid word the action listeners will be informed with a new SpellCheckEvent</p>
    *
    * @param  tokenizer  Description of the Parameter
-   * @return Either SPELLCHECK_OK, SPELLCHECK_CANCEL or the number of errors found. The number of errors are those that are found BEFORE and corretions are made.
+   * @return Either SPELLCHECK_OK, SPELLCHECK_CANCEL or the number of errors found. The number of errors are those that 
+   * are found BEFORE any corretions are made.
    */
   public final int checkSpelling(WordTokenizer tokenizer) {
     int errors = 0;
     boolean terminated = false;
     //Keep track of the previous word
-    String previousWord = null;
+//    String previousWord = null;
     while (tokenizer.hasMoreWords() && !terminated) {
       String word = tokenizer.nextWord();
       //Check the spelling of the word
       if (!isCorrect(word)) {
  		if (
-          	  (config.getBoolean(Configuration.SPELL_IGNOREMIXEDCASE) && isMixedCaseWord(word, tokenizer.isNewSentance())) ||
+          	  (config.getBoolean(Configuration.SPELL_IGNOREMIXEDCASE) && isMixedCaseWord(word, tokenizer.isNewSentence())) ||
               (config.getBoolean(Configuration.SPELL_IGNOREUPPERCASE) && isUpperCaseWord(word)) ||
               (config.getBoolean(Configuration.SPELL_IGNOREDIGITWORDS) && isDigitWord(word)) ||
               (config.getBoolean(Configuration.SPELL_IGNOREINTERNETADDRESSES) && isINETWord(word))) {
@@ -297,7 +298,7 @@ public class SpellChecker {
           //to one of the above cases.
         } else {
           //We cant ignore this misspelt word
-          //For this invalid word are we ignoreing the misspelling?
+          //For this invalid word are we ignoring the misspelling?
           if (!ignoredWords.contains(word)) {
             errors++;
             //Is this word being automagically replaced
@@ -305,7 +306,7 @@ public class SpellChecker {
               tokenizer.replaceWord((String) autoReplaceWords.get(word));
             } else {
               //JMH Need to somehow capitalise the suggestions if
-              //ignoreSentanceCapitalisation is not set to true
+              //ignoreSentenceCapitalisation is not set to true
               //Fire the event.
               SpellCheckEvent event = new BasicSpellCheckEvent(word, getSuggestions(word,
                   config.getInteger(Configuration.SPELL_THRESHOLD)), tokenizer);
@@ -321,7 +322,7 @@ public class SpellChecker {
          *  }
          */
         //Check for capitalisation
-        if ((!config.getBoolean(Configuration.SPELL_IGNORESENTANCECAPITALIZATION)) && (tokenizer.isNewSentance())
+        if ((!config.getBoolean(Configuration.SPELL_IGNORESENTENCECAPITALIZATION)) && (tokenizer.isNewSentence())
             && (Character.isLowerCase(word.charAt(0)))) {
           errors++;
           StringBuffer buf = new StringBuffer(word);

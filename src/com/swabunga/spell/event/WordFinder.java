@@ -9,7 +9,7 @@ package com.swabunga.spell.event;
  * When the object is instantiated, and before the first call to <CODE>next()</CODE> is made,
  * the following methods should throw a <CODE>WordNotFoundException</CODE>:<br>
  * <CODE>current()</CODE>,
- *  <CODE>startsSentance()</CODE> and <CODE>replace()</CODE>.
+ *  <CODE>startsSentence()</CODE> and <CODE>replace()</CODE>.
  * </P>
  *
  * <P>A call to <CODE>next()</CODE> when <CODE>hasMoreWords()</CODE> returns false

@@ -13,7 +13,7 @@ public class JavaWordFinder
 
   //~ Instance/static variables ...............................................
 
-	private BreakIterator sentanceIterator;
+	private BreakIterator sentenceIterator;
 	private boolean inComment;
 
   //~ Constructors ............................................................
@@ -48,7 +48,7 @@ public class JavaWordFinder
 //    if (nextWord != null) {
       currentWord.copy(nextWord);
 
-      int current = sentanceIterator.current();
+      int current = sentenceIterator.current();
 
       if (current == currentWord.getStart())
         startsSentence = true;
@@ -56,7 +56,7 @@ public class JavaWordFinder
         startsSentence = false;
 
         if (currentWord.getEnd() > current) {
-          sentanceIterator.next();
+          sentenceIterator.next();
         }
       }
 //    } else {
@@ -132,16 +132,16 @@ public class JavaWordFinder
    */
   public void replace(String newWord) {
     super.replace(newWord);
-    sentanceIterator.setText(text);
+    sentenceIterator.setText(text);
 
     int start = currentWord.getStart();
-    sentanceIterator.following(start);
-    startsSentence = sentanceIterator.current() == start;
+    sentenceIterator.following(start);
+    startsSentence = sentenceIterator.current() == start;
   }
 
   protected void init() {
-    sentanceIterator = BreakIterator.getSentenceInstance();
-    sentanceIterator.setText(text);
+    sentenceIterator = BreakIterator.getSentenceInstance();
+    sentenceIterator.setText(text);
 		inComment = false;
   }
 }

@@ -15,7 +15,7 @@ public class XMLWordFinder
 
   //~ Instance/static variables ...............................................
 
-  private BreakIterator sentanceIterator;
+  private BreakIterator sentenceIterator;
 
   //~ Constructors ............................................................
 
@@ -44,7 +44,7 @@ public class XMLWordFinder
 
       currentWord.copy(nextWord);
 
-      int current = sentanceIterator.current();
+      int current = sentenceIterator.current();
 
       if (current == currentWord.getStart())
         startsSentence = true;
@@ -52,14 +52,14 @@ public class XMLWordFinder
         startsSentence = false;
 
         if (currentWord.getEnd() > current) {
-          sentanceIterator.next();
+          sentenceIterator.next();
         }
       }
 
     int i = currentWord.getEnd();
     boolean finished = false;
     boolean started = false;
-    boolean ignore = false;
+//    boolean ignore = false;
   
 	  search:      /* Find words. */
     while (i < text.length() && !finished) {
@@ -103,15 +103,15 @@ public class XMLWordFinder
    */
   public void replace(String newWord) {
     super.replace(newWord);
-    sentanceIterator.setText(text);
+    sentenceIterator.setText(text);
 
     int start = currentWord.getStart();
-    sentanceIterator.following(start);
-    startsSentence = sentanceIterator.current() == start;
+    sentenceIterator.following(start);
+    startsSentence = sentenceIterator.current() == start;
   }
 
   protected void init() {
-    sentanceIterator = BreakIterator.getSentenceInstance();
-    sentanceIterator.setText(text);
+    sentenceIterator = BreakIterator.getSentenceInstance();
+    sentenceIterator.setText(text);
   }
 }

@@ -12,10 +12,6 @@ import com.swabunga.spell.engine.*;
 
 /** This is the main class for spell checking (using the new event based spell
  *  checking).
- *  <p>
- *  Some changes in the event handeling will be necessary, since the user may want
- *  to present some context information etc that is not currently available in the
- *  SpellCheckEvent.
  *
  * @author Jason Height (jheight@chariot.net.au)
  */
@@ -28,10 +24,6 @@ public class SpellChecker {
   private Set ignoredWords = new HashSet();
   private Map autoReplaceWords = new HashMap();
 
-  //JMH This is probably the place to put a list that holds the ignorable words
-  //and the change all words. As such the Spell Checker becomes the userobject that
-  //cannot be shared and the dictionary could become the thread safe shared object.
-  //Currently the SpellDictionary is not thread safe, certainly the DoubleMeta isnt.
   /** Constructs the SpellChecker. The default threshold is used*/
   public SpellChecker (SpellDictionary dictionary) {
     if (dictionary == null)
@@ -73,71 +65,81 @@ public class SpellChecker {
     }
   }
 
+  /** This method clears the words that are currently being remembered as
+   *  Ignore All words and Replace All words.
+   */
+  public void reset() {
+    ignoredWords.clear();
+    autoReplaceWords.clear();
+  }
+
   /** Checks the text string.
    *  <p>
    *  Returns the corrected string.
+   *  @deprecated use checkSpelling(WordTokenizer)
    */
   public String checkString (String text) {
+    StringWordTokenizer tokens = new StringWordTokenizer(text);
+    checkSpelling(tokens);
+    return tokens.getFinalText();
+  }
+
+  /** This method is called to check the spelling of the words that are returned
+   *  by the WordTokenizer.
+   *  <p>For each invalid word the action listeners will be informed with a new SpellCheckEvent</p>
+   */
+  public final void checkSpelling(WordTokenizer tokenizer) {
     //Dont bother to execute if no-one is listening ;-)
     if (eventListeners.size() > 0) {
-      int wordCount = 0;
-      long startTime = System.currentTimeMillis();
-      WordTokenizer tokens = new WordTokenizer(text);
-      while (tokens.hasMoreWords()) {
-        wordCount++;
-        String word = tokens.nextWord();
+      boolean terminated = false;
+      while (tokenizer.hasMoreWords() && !terminated) {
+        String word = tokenizer.nextWord();
         //Check the spelling of the word
         if (!dictionary.isCorrect(word)) {
           //For this invalid word are we ignoreing the misspelling?
           if (!ignoredWords.contains(word)) {
+            //Is this word being automagically replaced
             if (autoReplaceWords.containsKey(word)) {
-            //JMH TBD
+              tokenizer.replaceWord((String)autoReplaceWords.get(word));
             }
             else {
-              //JMH TBD replace the string tokenizer with something that remembers its current position
+              System.out.println("Current word position="+tokenizer.getCurrentWordPosition());
+              //Fire the event.
               SpellCheckEvent event = new BasicSpellCheckEvent(word, dictionary.getSuggestions(word,
-                  threshold), text, tokens.getCurrentPosition());
+                  threshold), tokenizer);
               fireSpellCheckEvent(event);
+              //Work out what to do in response to the event.
               switch (event.getAction()) {
                 case SpellCheckEvent.INITIAL:
                   break;
                 case SpellCheckEvent.IGNORE:
                   break;
                 case SpellCheckEvent.IGNOREALL:
-                  String ignoreWord = event.getReplaceWord();
-                  if (!ignoredWords.contains(ignoreWord))
-                    ignoredWords.add(ignoreWord);
+                  if (!ignoredWords.contains(word))
+                    ignoredWords.add(word);
                   break;
                 case SpellCheckEvent.REPLACE:
-                  String newWord = event.getReplaceWord();
-                  //JMH TBD
+                  tokenizer.replaceWord(event.getReplaceWord());
                   break;
                 case SpellCheckEvent.REPLACEALL:
                   String replaceAllWord = event.getReplaceWord();
                   if (!autoReplaceWords.containsKey(word)) {
                     autoReplaceWords.put(word, replaceAllWord);
                   }
-                  //JMH TBD
+                  tokenizer.replaceWord(replaceAllWord);
                   break;
                   //JMH TBD        case SpellCheckEvent.ADDTODICT:
+                  case SpellCheckEvent.CANCEL:
+                    terminated = true;
+                    break;
                 default:
                   throw  new IllegalArgumentException("Unhandled case.");
               }
             }
           }
         }
-        long elapsedTime = System.currentTimeMillis() - startTime;
-        if (elapsedTime != 0) {
-          long wordsPerSecond = (wordCount)*1000/(elapsedTime);
-          System.out.println("Word count=" + wordCount + " Elapsed Time =" +
-              (elapsedTime));
-          System.out.println("Checking rate = " + wordsPerSecond + " words Per second");
-        }
       }
-      //JMH return a corrected text
-      return  text;
     }
-    return  null;
   }
 }
 

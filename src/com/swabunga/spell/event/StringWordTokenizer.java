@@ -82,6 +82,13 @@ public class StringWordTokenizer implements WordTokenizer {
     return currentWordPos;
   }
 
+  /** Returns the current end word position in the text
+   *
+   */
+  public int getCurrentWordEnd() {
+    return currentWordEnd;
+  }
+
   /** Returns the next word in the text
    *
    */

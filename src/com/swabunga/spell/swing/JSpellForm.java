@@ -47,6 +47,11 @@ public class JSpellForm extends JPanel implements ActionListener, ListSelectionL
   /** The resource for the Suggestions label*/
   private static final String SUGGESTIONS_RES = "SUGGESTIONS";
   private static final String INVALIDWORD_RES = "INVALIDWORD";
+  /** Add word confirm*/
+  public static final String ADDWORD_1 = "ADDWORD_1";
+  public static final String ADDWORD_2 = "ADDWORD_2";
+  public static final String ADDWORD_3 = "ADDWORD_3";
+  
   private JLabel wrongWordLabel;
 
   /* Accessible GUI Components */
@@ -198,7 +203,8 @@ public class JSpellForm extends JPanel implements ActionListener, ListSelectionL
       String selected = (selObj == null ? "" : selObj.toString());
       String addString = (inField.equals(selected) ? spellEvent.getInvalidWord() : inField);
 
-      int n = JOptionPane.showConfirmDialog(this, "Add '" + addString + "' to dictionary?", "Add Word?", JOptionPane.YES_NO_OPTION);
+      int n = JOptionPane.showConfirmDialog(this, messages.getString(ADDWORD_1) + " '" + addString + "' " +
+	  	messages.getString(ADDWORD_2), messages.getString(ADDWORD_3), JOptionPane.YES_NO_OPTION);
 
       if (n == JOptionPane.YES_OPTION) {
         spellEvent.addToDictionary(addString);

@@ -78,7 +78,7 @@ public class DocumentWordTokenizer implements WordTokenizer {
         return text.getIndex();
       }
     }
-    return text.getEndIndex();;
+    return text.getEndIndex();
   }
 
 

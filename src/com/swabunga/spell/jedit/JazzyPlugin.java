@@ -1,5 +1,5 @@
 /*
- * $Date: 2002/12/13 13:49:14 $
+ * $Date: 2003/01/28 11:24:54 $
  * $Author: ant-roy $
  *
  * Copyright (C) 2002 Anthony Roy
@@ -101,7 +101,8 @@ public class JazzyPlugin
     }
 
     String text = jta.getSelectedText();
-    int caretPosn = 0;
+    int caretPosn = 0,
+		    offset    = 0;
     boolean wholeDocument = false;
     
     if (text == null) {
@@ -109,9 +110,13 @@ public class JazzyPlugin
       caretPosn = jta.getCaretPosition();
       text = jta.getText();
       jta.selectAll();
-    }
+    }else{
+			offset = jta.getSelection()[0].getStart();
+		}
 
-    String out = jazzyChecker.checkText(text);
+    String mode = view.getBuffer().getMode().toString();
+    
+    String out = jazzyChecker.checkText(text, mode, offset);
     
     if (!out.equals(text)){ jta.setSelectedText(out);}
     if (wholeDocument){ jta.setCaretPosition(caretPosn);}

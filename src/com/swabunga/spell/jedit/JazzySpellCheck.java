@@ -1,5 +1,5 @@
 /*
- * $Date: 2002/12/13 13:49:14 $
+ * $Date: 2003/01/28 11:24:54 $
  * $Author: ant-roy $
  *
  * Copyright (C) 2002 Anthony Roy
@@ -23,14 +23,15 @@ package com.swabunga.spell.jedit;
 import com.swabunga.spell.engine.SpellDictionary;
 import com.swabunga.spell.event.SpellCheckEvent;
 import com.swabunga.spell.event.SpellCheckListener;
-import com.swabunga.spell.event.SpellChecker;
+import com.swabunga.spell.event.*;
 import com.swabunga.spell.event.StringWordTokenizer;
 import com.swabunga.spell.swing.JSpellDialog;
 
 import java.io.File;
 
 import org.gjt.sp.jedit.jEdit;
-
+import org.gjt.sp.jedit.textarea.Selection;
+import org.gjt.sp.jedit.textarea.JEditTextArea;
 
 public class JazzySpellCheck
   implements SpellCheckListener {
@@ -43,7 +44,8 @@ public class JazzySpellCheck
   private File dictionaryFile;
   private JSpellDialog dlg;
   private SpellChecker spellChecker;
-  private int flags;
+  private int flags,
+	            offset;
   private boolean LOADED = false;
 
   //~ Constructors ............................................................
@@ -82,13 +84,22 @@ public class JazzySpellCheck
    * @param input ¤
    * @return ¤ 
    */
-  public String checkText(String input) {
+  public String checkText(String input, String mode, int offset) {
 
-    if (!LOADED)
+			if (!LOADED){
+				return null;
+			}
 
-      return null;
+			this.offset = offset;
+		
+      WordFinder wf;
 
-    StringWordTokenizer toks = new StringWordTokenizer(input);
+      if (mode.equals("java")) {wf = new JavaWordFinder(input);}
+      else if (mode.equals("tex")) {wf = new TeXWordFinder(input);}
+      else if ((mode.equals("html"))||(mode.equals("xml"))) {wf = new XMLWordFinder(input);}
+      else  {wf = new DefaultWordFinder(input);}
+      
+    StringWordTokenizer toks = new StringWordTokenizer(wf);
     spellChecker.checkSpelling(toks);
 
     String output = toks.getFinalText();
@@ -129,6 +140,16 @@ public class JazzySpellCheck
    * @param event ¤
    */
   public void spellingError(SpellCheckEvent event) {
+		
+		JEditTextArea area = jEdit.getActiveView().getTextArea();
+		int start=event.getWordContextPosition() + offset;
+    int end=start+event.getInvalidWord().length();
+
+		Selection s = new Selection.Range(start, end);
+		area.setCaretPosition(start);
+		area.scrollToCaret(true);
+		area.setSelection(s);
+		
     dlg.show(event);
   }
 

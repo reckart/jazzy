@@ -1,8 +1,9 @@
+import java.applet.Applet;
 import java.io.*;
-import java.applet.*;
-import java.net.*;
 import java.util.*;
-import com.swabunga.spell.engine.*;
+
+import com.swabunga.spell.engine.Configuration;
+import com.swabunga.spell.engine.SpellDictionaryHashMap;
 import com.swabunga.spell.event.*;
 
 public class JSpellChecker extends Applet {
@@ -141,11 +142,11 @@ public class JSpellChecker extends Applet {
 		}
 	}
 
-	private String getText(){
-		if (tokens != null)
-			return tokens.getFinalText();
-		return null;
-	}
+//	private String getText(){
+//		if (tokens != null)
+//			return tokens.getFinalText();
+//		return null;
+//	}
 
 	private static void log(String s){
 		System.out.println(s);
@@ -157,24 +158,24 @@ public class JSpellChecker extends Applet {
 	private StringWordTokenizer tokens;
 	private JSpellCheckListener listener;
 
-	private static final int CASE_SENSITIVE          = 1;
+//	private static final int CASE_SENSITIVE          = 1;
 	private static final int IGNORE_ALL_CAPS_WORD    = 2;
 	private static final int IGNORE_CAPPED_WORD      = 4;
 	private static final int IGNORE_MIXED_CASE       = 8;
 	private static final int IGNORE_MIXED_DIGITS     = 16;
-	private static final int IGNORE_NON_ALPHA_WORD   = 32;
+//	private static final int IGNORE_NON_ALPHA_WORD   = 32;
 	private static final int REPORT_DOUBLED_WORD     = 64;
-	private static final int REPORT_MIXED_CASE       = 128;
-	private static final int REPORT_MIXED_DIGITS     = 256;
-	private static final int REPORT_SPELLING         = 512;
-	private static final int REPORT_UNCAPPED         = 1024;
-	private static final int SPLIT_CONTRACTED_WORDS  = 2048;
-	private static final int SPLIT_HYPHENATED_WORDS  = 4096;
-	private static final int SPLIT_WORDS             = 8192;
-	private static final int STRIP_POSSESSIVES       = 16384;
-	private static final int SUGGEST_SPLIT_WORDS     = 32768;
+//	private static final int REPORT_MIXED_CASE       = 128;
+//	private static final int REPORT_MIXED_DIGITS     = 256;
+//	private static final int REPORT_SPELLING         = 512;
+//	private static final int REPORT_UNCAPPED         = 1024;
+//	private static final int SPLIT_CONTRACTED_WORDS  = 2048;
+//	private static final int SPLIT_HYPHENATED_WORDS  = 4096;
+//	private static final int SPLIT_WORDS             = 8192;
+//	private static final int STRIP_POSSESSIVES       = 16384;
+//	private static final int SUGGEST_SPLIT_WORDS     = 32768;
 	private static final int IGNORE_DOMAIN_NAMES     = 0x10000;
-	private static final int ALLOW_ACCENTED_CAPS     = 0x20000;
+//	private static final int ALLOW_ACCENTED_CAPS     = 0x20000;
 
 	private static Hashtable configmap;
 
@@ -184,7 +185,7 @@ public class JSpellChecker extends Applet {
 		configmap.put(new Integer(IGNORE_DOMAIN_NAMES),  Configuration.SPELL_IGNOREINTERNETADDRESSES);
 		configmap.put(new Integer(IGNORE_MIXED_CASE),    Configuration.SPELL_IGNOREMIXEDCASE);
 		configmap.put(new Integer(REPORT_DOUBLED_WORD),  Configuration.SPELL_IGNOREMULTIPLEWORDS);
-		configmap.put(new Integer(IGNORE_CAPPED_WORD),   Configuration.SPELL_IGNORESENTANCECAPITALIZATION);
+		configmap.put(new Integer(IGNORE_CAPPED_WORD),   Configuration.SPELL_IGNORESENTENCECAPITALIZATION);
 		configmap.put(new Integer(IGNORE_ALL_CAPS_WORD), Configuration.SPELL_IGNOREUPPERCASE);
 	}
 }

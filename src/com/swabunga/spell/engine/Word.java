@@ -1,4 +1,5 @@
 package com.swabunga.spell.engine;
+import java.util.Comparator;
 
 /** 
  * The Word object holds information for one suggested spelling. 
@@ -7,13 +8,18 @@ package com.swabunga.spell.engine;
  *  <p>This class is now immutable.
  *  </p>
  */
-public class Word{ //implements Comparator {
+public class Word implements Comparator {
     private String word;
     private int score;
 
     public Word(String word, int score) {
       this.word = word;
       this.score = score;
+    }
+    
+    public Word(){
+    	this.word = "";
+    	this.score = 0;
     }
 
     /**

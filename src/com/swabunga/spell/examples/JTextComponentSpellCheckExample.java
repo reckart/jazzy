@@ -21,7 +21,8 @@ import  java.io.*;
  * @author Robert Gustavsson (robert@lindesign.se)
  */
 public class JTextComponentSpellCheckExample extends JFrame {
-  private static final String dictionaryFile = "dict/english.0";
+  private static final String dictionaryFile = "dict.sv";
+  private static final String phoneticFile = "swedish_phonet.dat";
   private SpellDictionary dictionary;
   JTextComponent text = null;
   JButton spell = null;
@@ -35,7 +36,8 @@ public class JTextComponentSpellCheckExample extends JFrame {
       }
     });
     try {
-      dictionary = new SpellDictionary(new File(dictionaryFile));
+      //dictionary = new SpellDictionary(new File(dictionaryFile));
+      dictionary = new GenericSpellDictionary(new File(dictionaryFile), new File(phoneticFile));
     } catch (Exception ex) {
       ex.printStackTrace();
     }

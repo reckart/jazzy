@@ -1,29 +1,14 @@
 package com.swabunga.spell.swing;
 
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Graphics;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.zip.ZipInputStream;
 
-import javax.swing.JApplet;
-import javax.swing.JButton;
-import javax.swing.JTextArea;
-import javax.swing.text.JTextComponent;
+import javax.swing.*;
 
 import com.swabunga.spell.engine.SpellDictionary;
 import com.swabunga.spell.engine.SpellDictionaryHashMap;
@@ -38,7 +23,7 @@ import com.swabunga.spell.engine.SpellDictionaryHashMap;
  */
 public class JSpellApplet extends JApplet {
 
-	private static final String dictionaryFile = "www/english.0.zip";
+	private static final String dictionaryFile = "dict/english.0.zip";
 	private SpellDictionary dictionary;
 	JTextArea text = null;
 	JButton spell = null;

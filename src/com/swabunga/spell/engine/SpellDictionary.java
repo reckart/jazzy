@@ -26,6 +26,12 @@ import  java.util.*;
  * JMH Consider a TreeSet which is always sorted for the suggestions.
  */
 public class SpellDictionary {
+  /** The replace list is used in the getSuggestions method*/
+  private static final char[] replacelist =  {
+        'A', 'B', 'X', 'S', 'K', 'J', 'T', 'F', 'H', 'L', 'M', 'N', 'P', 'R',
+            '0'
+      };
+
   /** A field indicating the initial hash map capacity (16KB) for the main
    *  dictionary hash map. Interested to see what the performance of a
    *  smaller initial capacity is like.
@@ -64,10 +70,9 @@ public class SpellDictionary {
    * Each word in the reader should be on a seperate line.
    * <p>
    * This is a very slow function. On my machine it takes quite a while to
-   * load the data in. I suspect that we could speen this up quite alot.
+   * load the data in. I suspect that we could speed this up quite alot.
    */
-  private void createDictionary (BufferedReader in) throws IOException {
-    long start_time = System.currentTimeMillis();
+  protected void createDictionary (BufferedReader in) throws IOException {
     String line = "";
     while (line != null) {
       line = in.readLine();
@@ -75,9 +80,6 @@ public class SpellDictionary {
         putWord(line);
       }
     }
-    long elapsedTime = System.currentTimeMillis() - start_time;
-    System.out.println("It took " + elapsedTime + "ms to create the dictionary");
-//JMH    System.out.println("Hash Map capacity =" + mainDictionary.size());
   }
 
   /**
@@ -145,12 +147,7 @@ public class SpellDictionary {
       //called. Would prefer the more lightweight LinkedList.
       HashSet similars = new HashSet();
       similars.addAll(getWords(code));
-//jmh      EditDistance distance = new EditDistance();
       // do some tranformations to pick up more results
-      char[] replacelist =  {
-        'A', 'B', 'X', 'S', 'K', 'J', 'T', 'F', 'H', 'L', 'M', 'N', 'P', 'R',
-            '0'
-      };
       //interchange
       char[] charArray = code.toCharArray();
       for (int i = 0; i < code.length() - 1; i++) {

@@ -19,7 +19,7 @@ package  com.swabunga.spell.engine;
  *   The function call SlavoGermaic was called repeatedly in the process function, it is now only called once.
  *
  */
-class DoubleMeta {
+class DoubleMeta implements Transformator{
 
     private static final String[] myList = {
         "GN", "KN", "PN", "WR", "PS", ""
@@ -392,7 +392,7 @@ class DoubleMeta {
    * @param word The word to process.
    * @return
    */
-  public static final String process (String word) {
+  public final String transform (String word) {
     StringBuffer primary = new StringBuffer();
     StringBuffer secondary = new StringBuffer();
     String in = word + "     ";

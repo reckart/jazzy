@@ -2,18 +2,21 @@ package com.swabunga.spell.swing;
 
 import com.swabunga.spell.engine.SpellDictionary;
 import com.swabunga.spell.engine.SpellDictionaryHashMap;
+import com.swabunga.spell.engine.SpellDictionaryCachedDichoDisk;
 import com.swabunga.spell.event.DocumentWordTokenizer;
 import com.swabunga.spell.event.SpellCheckEvent;
 import com.swabunga.spell.event.SpellCheckListener;
 import com.swabunga.spell.event.SpellChecker;
+import com.swabunga.spell.swing.autospell.AutoSpellEditorKit;
 
 import javax.swing.*;
-import javax.swing.text.JTextComponent;
+import javax.swing.text.*;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import com.swabunga.spell.swing.autospell.*;
 
 /** This class spellchecks a JTextComponent throwing up a Dialog everytime
  *  it encounters a misspelled word.
@@ -24,13 +27,15 @@ import java.util.ResourceBundle;
 public class JTextComponentSpellChecker implements SpellCheckListener {
 
 //    private static final String COMPLETED="COMPLETED";
-  private String dialogTitle = null;
+  private String 					dialogTitle = null;
 
-  private SpellChecker spellCheck = null;
-  private JSpellDialog dlg = null;
-  private JTextComponent textComp = null;
-  private ResourceBundle messages;
-
+  private SpellChecker      		spellCheck = null;
+  private JSpellDialog      		dlg = null;
+  private JTextComponent    		textComp = null;
+  private ResourceBundle    		messages;
+  private SpellDictionary   		mainDict=null;
+  private AutoSpellCheckHandler	markHandler;
+  
   // Constructor
   public JTextComponentSpellChecker(SpellDictionary dict) {
     this(dict, null, null);
@@ -51,12 +56,14 @@ public class JTextComponentSpellChecker implements SpellCheckListener {
 
   public JTextComponentSpellChecker(SpellDictionary dict, SpellDictionary userDict, String title) {
     spellCheck = new SpellChecker(dict);
+    mainDict=dict;
     spellCheck.setCache();
     if(userDict!=null)
         spellCheck.setUserDictionary(userDict);
     spellCheck.addSpellCheckListener(this);
     dialogTitle = title;
     messages = ResourceBundle.getBundle("com.swabunga.spell.swing.messages", Locale.getDefault());
+    markHandler=new AutoSpellCheckHandler(spellCheck, messages);
   }
 
   // MEMBER METHODS
@@ -111,9 +118,45 @@ public class JTextComponentSpellChecker implements SpellCheckListener {
     textComp.requestFocus();
     textComp.setCaretPosition(0);
     this.textComp = null;
+    try{
+        if(mainDict instanceof SpellDictionaryCachedDichoDisk)
+            ((SpellDictionaryCachedDichoDisk)mainDict).saveCache();
+    }catch(IOException ex){
+        System.err.println(ex.getMessage());
+    }
     return exitStatus;
   }
 
+  /**
+   * 
+   * @param pane
+   */
+  public void startAutoSpellCheck(JEditorPane pane){
+  	Document	doc=pane.getDocument();
+  	pane.setEditorKit(new AutoSpellEditorKit((StyledEditorKit)pane.getEditorKit()));
+  	pane.setDocument(doc);
+  	markHandler.addJEditorPane(pane);
+  }
+  
+  /**
+   * 
+   * @param pane
+   */
+  public void stopAutoSpellCheck(JEditorPane pane){
+  	EditorKit	kit;
+  	Document	doc;
+  	if(pane.getEditorKit() instanceof com.swabunga.spell.swing.autospell.AutoSpellEditorKit){
+  		doc=pane.getDocument();
+  		kit=((com.swabunga.spell.swing.autospell.AutoSpellEditorKit)pane.getEditorKit()).getStyledEditorKit();
+  		pane.setEditorKit(kit);
+  		pane.setDocument(doc);
+  	}
+  	markHandler.removeJEditorPane(pane);
+  }
+  
+  /**
+   * 
+   */
   public void spellingError(SpellCheckEvent event) {
 
 //        java.util.List suggestions = event.getSuggestions();

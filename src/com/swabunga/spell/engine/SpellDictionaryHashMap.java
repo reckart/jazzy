@@ -9,7 +9,7 @@ import java.io.*;
 import java.util.*;
 
 /**
- * The SpellDictionary class holds the instance of the dictionary.
+ * The SpellDictionaryHashMap holds the dictionary
  * <p>
  * This class is thread safe. Derived classes should ensure that this preserved.
  * </p>
@@ -101,7 +101,7 @@ public class SpellDictionaryHashMap extends SpellDictionaryASpell implements Spe
 		String line = "";
 		while (line != null) {
 			line = in.readLine();
-			if (line != null) {
+			if (line != null && line.length() > 0) {
 				line = new String(line.toCharArray());
 				putWord(line);
 			}

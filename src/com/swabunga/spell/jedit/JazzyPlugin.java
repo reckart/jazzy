@@ -1,6 +1,6 @@
 /*
- * $Date: 2003/02/05 13:11:35 $
- * $Author: ant-roy $
+ * $Date: 2003/03/04 21:40:31 $
+ * $Author: tech_monkey $
  *
  * Copyright (C) 2002 Anthony Roy
  *
@@ -87,10 +87,10 @@ public class JazzyPlugin
         String text           = jta.getSelectedText();
         int caretPosn         = 0;
         int offset            = 0;
-        boolean wholeDocument = false;
+//        boolean wholeDocument = false;
 
         if (text == null) {
-            wholeDocument = true;
+//            wholeDocument = true;
             caretPosn     = jta.getCaretPosition();
             text          = jta.getText();
             jta.selectAll();
@@ -100,7 +100,7 @@ public class JazzyPlugin
         }
 
         String mode = view.getBuffer().getMode().toString();
-        String out  = jazzyChecker.checkText(text, mode, offset, caretPosn);
+        jazzyChecker.checkText(text, mode, offset, caretPosn);
     }
 
     /**

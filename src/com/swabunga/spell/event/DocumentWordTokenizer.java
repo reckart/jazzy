@@ -35,7 +35,7 @@ public class DocumentWordTokenizer implements WordTokenizer {
   private boolean first = true;
   private BreakIterator sentenceIterator;
   private boolean startsSentence = true;
-
+  
   public DocumentWordTokenizer(Document document) {
     this.document = document;
     //Create a text segment over the etire document
@@ -44,7 +44,7 @@ public class DocumentWordTokenizer implements WordTokenizer {
     try {
       document.getText(0, document.getLength(), text);
       sentenceIterator.setText(text);
-      currentWordPos = getNextWordStart(text, 0);
+      currentWordPos = getNextWordStart(text, text.getBeginIndex());
       //If the current word pos is -1 then the string was all white space
       if (currentWordPos != -1) {
         currentWordEnd = getNextWordEnd(text, currentWordPos);
@@ -94,7 +94,38 @@ public class DocumentWordTokenizer implements WordTokenizer {
   public boolean hasMoreWords() {
     return moreTokens;
   }
-
+  
+  /**
+   * Sets the current word position at the start of the word containing
+   * the char at position pos. This way a call to nextWord() will return
+   * this word.
+   * 
+   * @param pos position in the word we want to set as current.
+   */
+  public void posStartFullWordFrom(int pos){
+  	currentWordPos=text.getBeginIndex();
+  	if(pos>text.getEndIndex())
+  		pos=text.getEndIndex();
+  	for (char ch = text.setIndex(pos); ch != Segment.DONE; ch = text.previous()) {
+  		if (!Character.isLetterOrDigit(ch)) {
+  			if (ch == '-' || ch == '\'') { // handle ' and - inside words
+  				char ch2 = text.previous();
+  				text.next();
+  				if (ch2 != Segment.DONE && Character.isLetterOrDigit(ch2))
+  					continue;
+  			}
+  			currentWordPos=text.getIndex()+1;
+  			break;
+  		}
+  	}
+  	//System.out.println("CurPos:"+currentWordPos);
+  	if(currentWordPos==0)
+  		first=true;
+  	moreTokens=true;
+  	currentWordEnd = getNextWordEnd(text, currentWordPos);
+  	nextWordPos = getNextWordStart(text, currentWordEnd + 1);
+  }
+  
   /** Returns the current character position in the text
    *
    */

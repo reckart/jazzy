@@ -292,7 +292,11 @@ public class SpellChecker {
       userdictionary.addWord(word);
   }
   
-  private boolean isCorrect(String word) {
+  public boolean isIgnored(String word){
+  	return ignoredWords.contains(word);
+  }
+  
+  public boolean isCorrect(String word) {
     if (userdictionary.isCorrect(word)) return true;
     for (Enumeration e = dictionaries.elements(); e.hasMoreElements();) {
       SpellDictionary dictionary = (SpellDictionary) e.nextElement();
@@ -379,7 +383,7 @@ public class SpellChecker {
         } else {
           //We cant ignore this misspelt word
           //For this invalid word are we ignoring the misspelling?
-          if (!ignoredWords.contains(word)) {
+          if (!isIgnored(word)) {
             errors++;
             //Is this word being automagically replaced
             if (autoReplaceWords.containsKey(word)) {

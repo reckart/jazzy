@@ -25,11 +25,17 @@ public class SpellDictionaryDisk extends SpellDictionaryASpell implements SpellD
     private final static String FILE_DB = "words.db";
     private final static String FILE_INDEX = "words.idx";
 
+    /* maximum number of words an index entry can represent */
+    private final static int INDEX_SIZE_MAX = 200;
+
     private File base;
     private File words;
     private File db;
     private Map index;
     private boolean ready;
+
+    /* used at time of creation of index to speed up determining the number of words per index entry */
+    private List indexCodeCache = null;
 
     /**
      * NOTE: Do *not* create two instances of this class pointing to the same <code>File</code> unless
@@ -95,7 +101,9 @@ public class SpellDictionaryDisk extends SpellDictionaryASpell implements SpellD
     }
 
     public List getWords(String code) {
-        List words = new ArrayList();
+        List words;
+
+        words = new ArrayList();
 
         int[] posLen = getStartPosAndLen(code);
         if (posLen != null) {
@@ -202,7 +210,7 @@ public class SpellDictionaryDisk extends SpellDictionaryASpell implements SpellD
         Collections.sort(w);
 
         // FIXME - error handling for running out of disk space would be nice.
-        File file = File.createTempFile("jazzy", "sorted", words);
+        File file = File.createTempFile("jazzy", "sorted");
         BufferedWriter writer = new BufferedWriter(new FileWriter(file));
         String prev = null;
         for (int i = 0; i < w.size(); i++) {
@@ -239,7 +247,8 @@ public class SpellDictionaryDisk extends SpellDictionaryASpell implements SpellD
         for (int i = 0; i < codeList.size(); i++) {
             CodeWord cw = (CodeWord) codeList.get(i);
             String thisCode = cw.getCode();
-            if (thisCode.length() > 3) thisCode = thisCode.substring(0, 3);
+//            if (thisCode.length() > 3) thisCode = thisCode.substring(0, 3);
+            thisCode = getIndexCode(thisCode, codeList);
             String toWrite = cw.getCode() + "," + cw.getWord() + "\n";
             byte[] bytes = toWrite.getBytes();
 
@@ -307,6 +316,46 @@ public class SpellDictionaryDisk extends SpellDictionaryASpell implements SpellD
             }
         }
         return null;
+    }
+
+    private String getIndexCode(String code, List codes) {
+        if (indexCodeCache == null) indexCodeCache = new ArrayList();
+
+        if (code.length() <= 1) return code;
+
+        for (int i = 0; i < indexCodeCache.size(); i++) {
+            String c = (String) indexCodeCache.get(i);
+            if (code.startsWith(c)) return c;
+        }
+
+        int foundSize = -1;
+        boolean cacheable = false;
+        for (int z = 1; z < code.length(); z++) {
+            String thisCode = code.substring(0, z);
+            int count = 0;
+            for (int i = 0; i < codes.size(); ) {
+                if (i == 0) {
+                    i = Collections.binarySearch(codes, new CodeWord(thisCode, ""));
+                    if (i < 0) i = 0;
+                }
+
+                CodeWord cw = (CodeWord) codes.get(i);
+                if (cw.getCode().startsWith(thisCode)) {
+                    count++;
+                    if (count > INDEX_SIZE_MAX) break;
+                } else if (cw.getCode().compareTo(thisCode) > 0) break;
+                i++;
+            }
+            if (count <= INDEX_SIZE_MAX) {
+                cacheable = true;
+                foundSize = z;
+                break;
+            }
+        }
+
+        String newCode = (foundSize == -1) ? code : code.substring(0, foundSize);
+        if (cacheable) indexCodeCache.add(newCode);
+        return newCode;
     }
 
     private class CodeWord implements Comparable {

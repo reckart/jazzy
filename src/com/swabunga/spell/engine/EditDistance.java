@@ -87,8 +87,8 @@ public class EditDistance {
 				String strOtherChar = "" + otherChar;
 				
 				if( strSrcChar.compareToIgnoreCase(strOtherChar) == 0 )
-					costOfCaseChange = costOfChangingCase; //to do put somewhere.
-					
+					costOfCaseChange = costOfChangingCase + matrix[i - 1][j - 1];
+										
 				matrix[i][j] = minimum(costOfSubst,costOfSwap,costOfDelete,costOfInsertion, costOfCaseChange);
 			}
 		}

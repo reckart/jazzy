@@ -17,16 +17,17 @@ public class SpellCheckExample2 implements SpellCheckListener {
 
   public SpellCheckExample2() {
     try {
-      BufferedReader in = new BufferedReader(new FileReader("README.TXT"));
+
+      BufferedReader in = new BufferedReader(new FileReader("example2.txt"));
       SpellDictionary dictionary = new SpellDictionaryHashMap(new File(dictFile));
       spellCheck = new SpellChecker(dictionary);
       spellCheck.addSpellCheckListener(this);
 
       while (true) {
-	String line = in.readLine();
+		String line = in.readLine();
 
-	if (line.length() == -1)
-	  break;
+		if (line == null || line.length() == -1)
+	  		break;
 
 		spellCheck.checkSpelling( new StringWordTokenizer(line) );
       }
@@ -37,11 +38,19 @@ public class SpellCheckExample2 implements SpellCheckListener {
   }
 
   public void spellingError(SpellCheckEvent event) {
-    List suggestions = event.getSuggestions();
-    for (Iterator suggestedWord=suggestions.iterator(); suggestedWord.hasNext();) {
-      System.out.println("Suggested Word: ="+suggestedWord.next());
-    }
-    //Null actions
+	List suggestions = event.getSuggestions();
+	if (suggestions.size() > 0) {
+	  System.out.println("MISSPELT WORD: "+event.getInvalidWord());
+	  for (Iterator suggestedWord=suggestions.iterator(); suggestedWord.hasNext();) {
+		System.out.println("\tSuggested Word: "+suggestedWord.next());
+	  }
+	}
+	else
+	{
+		System.out.println("MISSPELT WORD: "+ event.getInvalidWord());
+		System.out.println("\tNo suggestions");
+	}
+
   }
 
   public static void main(String[] args) {

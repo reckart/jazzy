@@ -12,12 +12,14 @@ import com.swabunga.spell.engine.*;
 public class SpellCheckExample implements SpellCheckListener {
 
   private static String dictFile = "dict/english.0";
+  private static String phonetFile = "dict/phonet.en";
+  
   private SpellChecker spellCheck = null;
 
 
   public SpellCheckExample() {
     try {
-      SpellDictionary dictionary = new SpellDictionaryHashMap(new File(dictFile));
+      SpellDictionary dictionary = new SpellDictionaryHashMap(new File(dictFile), new File(phonetFile) );
 
       spellCheck = new SpellChecker(dictionary);
       spellCheck.addSpellCheckListener(this);
@@ -41,8 +43,13 @@ public class SpellCheckExample implements SpellCheckListener {
     if (suggestions.size() > 0) {
       System.out.println("MISSPELT WORD: "+event.getInvalidWord());
       for (Iterator suggestedWord=suggestions.iterator(); suggestedWord.hasNext();) {
-        System.out.println("Suggested Word: ="+suggestedWord.next());
+        System.out.println("\tSuggested Word: "+suggestedWord.next());
       }
+    }
+    else
+    {
+		System.out.println("MISSPELT WORD: "+ event.getInvalidWord());
+		System.out.println("\tNo suggestions");
     }
     //Null actions
   }

@@ -18,15 +18,6 @@ public class SpellCheckExample implements SpellCheckListener {
   public SpellCheckExample() {
     try {
       SpellDictionary dictionary = new SpellDictionary(new File(dictFile));
-/*      System.out.println("invilid code:"+dictionary.getCode("invilid"));
-      System.out.println("Invilid code:"+dictionary.getCode("Invilid"));
-
-      List suggestions = dictionary.getSuggestions("invilid", 200);
-      System.out.println("invilid suggestions:"+suggestions.size());
-      suggestions = dictionary.getSuggestions("Invilid", 200);
-      System.out.println("Invilid suggestions:"+suggestions.size());
-      System.out.println("Invilid suggestion:"+suggestions.get(0));
-*/
 
       spellCheck = new SpellChecker(dictionary);
       spellCheck.addSpellCheckListener(this);

@@ -9,7 +9,7 @@ import java.util.*;
  */
 public abstract class SpellDictionaryASpell implements SpellDictionary {
     /** The replace list is used in the getSuggestions method*/
-    protected static final char[] replacelist =
+    protected static char[] replacelist =
         {
             'A',
             'B',

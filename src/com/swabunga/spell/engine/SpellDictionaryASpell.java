@@ -1,6 +1,7 @@
 /* Created by bgalbs on Jan 30, 2003 at 11:45:25 PM */
 package com.swabunga.spell.engine;
 
+import java.security.InvalidParameterException;
 import java.util.*;
 
 /**
@@ -136,7 +137,9 @@ public abstract class SpellDictionaryASpell implements SpellDictionary {
 	 */
 	private void addBestGuess(String word, Vector wordList)
 	{
-		assert wordList.size() == 0;
+		if (wordList.size() != 0)
+			throw new InvalidParameterException("the wordList vector must be empty");
+			
 		int bestScore = Integer.MAX_VALUE;
 
 		String code = getCode(word);

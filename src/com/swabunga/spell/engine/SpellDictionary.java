@@ -175,9 +175,15 @@ public class SpellDictionary {
    */
   public LinkedList getSuggestions (String word, int threshold) {
     //JMH Probably a TreeSet would be cool here since it would always be sorted.
-    //LinkedList nearmiss = new LinkedList();
+    LinkedList nearmiss = new LinkedList();
     String code = getCode(word);
-    LinkedList nearmiss=getWords(code);
+    LinkedList firstSuggests=getWords(code);
+    for (Iterator i = firstSuggests.iterator();i.hasNext();) {
+      String s = (String)i.next();
+      int d = EditDistance.getDistance(word, s, distanceWeights);
+      Word w = new Word(s, d);
+      nearmiss.add(w);
+    }   
     
     //JMH No need to use a hashset here, since the contains method is not
     //called. Would prefer the more lightweight LinkedList.

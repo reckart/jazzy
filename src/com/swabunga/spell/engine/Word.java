@@ -38,6 +38,10 @@ public class Word implements Comparator {
     return 1;
   }
 
+  public boolean equals(Object o) {
+    return(((Word)o).getWord().equals(getWord()));
+  }
+  
   /**
    * gets suggested spelling
    * @return the actual text of the suggest spelling

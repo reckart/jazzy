@@ -133,18 +133,4 @@ public class SpellDictionaryHashMap extends SpellDictionaryASpell {
 			return new Vector();
 		return mainDictResult;
 	}
-
-	/**
-	 * Returns true if the word is correctly spelled against the current word list.
-	 */
-	public boolean isCorrect(String word) {
-		List possible = getWords(getCode(word));
-		if (possible.contains(word))
-			return true;
-		//JMH should we always try the lowercase version. If I dont then capitalised
-		//words are always returned as incorrect.
-		else if (possible.contains(word.toLowerCase()))
-			return true;
-		return false;
-	}
 }

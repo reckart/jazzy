@@ -202,4 +202,18 @@ public abstract class SpellDictionaryASpell implements SpellDictionary {
      * Returns a list of words that have the same phonetic code.
      */
     protected abstract List getWords(String phoneticCode);
+
+    /**
+     * Returns true if the word is correctly spelled against the current word list.
+     */
+    public boolean isCorrect(String word) {
+        List possible = getWords(getCode(word));
+        if (possible.contains(word))
+            return true;
+        //JMH should we always try the lowercase version. If I dont then capitalised
+        //words are always returned as incorrect.
+        else if (possible.contains(word.toLowerCase()))
+            return true;
+        return false;
+    }
 }

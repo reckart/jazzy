@@ -127,18 +127,6 @@ public class SpellDictionaryDisk extends SpellDictionaryASpell{
         return words;
     }
 
-    /**
-     * Note -- this implementation can be optimized, if needs be.
-     *
-     * @param word
-     * @return true if the word is spelled correctly
-     */
-    public boolean isCorrect(String word) {
-        List words = getWords(getCode(word));
-        if (words.contains(word)) return true;
-        return false;
-    }
-
     public boolean isReady() {
         return ready;
     }

@@ -55,22 +55,34 @@ public class JSpellApplet extends JApplet {
 	 */
 	public void init() {
 		super.init();
-	
-		URL resource = null;
+
 		try {
-			resource = new URL(getCodeBase().toExternalForm() + dictionaryFile);
-			ZipInputStream zip = new ZipInputStream(resource.openStream());
+			URL resource = null;
+			ZipInputStream zip = null;
+			try {
+				resource =
+					new URL(getCodeBase().toExternalForm() + dictionaryFile);
+				zip = new ZipInputStream(resource.openStream());
+				/* getCodeBase() throws a NullPointerException when run 
+				 * outside the context of a browser 
+				 */
+			} catch (NullPointerException e) {
+				FileInputStream fin = new FileInputStream(dictionaryFile);
+				zip = new ZipInputStream(fin);
+			}
 			zip.getNextEntry();
 			dictionary =
 				new SpellDictionary(
-					new BufferedReader(
-						new InputStreamReader(zip)));
+					new BufferedReader(new InputStreamReader(zip)));
+
+			initGUI();
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		initGUI();
 
 	}
 

@@ -100,10 +100,10 @@ public class SpellDictionaryDisk extends SpellDictionaryASpell implements SpellD
         throw new UnsupportedOperationException("addWord not yet implemented (sorry)");
     }
 
-    public List getWords(String code) {
-        List words;
+    public Vector getWords(String code) {
+        Vector words;
 
-        words = new ArrayList();
+        words = new Vector();
 
         int[] posLen = getStartPosAndLen(code);
         if (posLen != null) {
@@ -118,7 +118,7 @@ public class SpellDictionaryDisk extends SpellDictionaryASpell implements SpellD
                 String[] lines = split(data,"\n");
                 for (int i = 0; i < lines.length; i++) {
                     String[] s = split(lines[i],",");
-                    if (s[0].equals(code)) words.add(s[1]);
+                    if (s[0].equals(code)) words.addElement(s[1]);
                 }
             } catch (Exception e) {
                 e.printStackTrace();

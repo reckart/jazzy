@@ -33,20 +33,20 @@ public abstract class SpellDictionaryASpell implements SpellDictionary {
     protected Transformator tf = new DoubleMeta();
 
     /**
-     * Returns a linked list of Word objects that are the suggestions to an
+     * Returns a list of Word objects that are the suggestions to an
      * incorrect word.
      * <p>
      * @param word Suggestions for given mispelt word
      * @param threshold The lower boundary of similarity to mispelt word
-     * @return LinkedList a List of suggestions
+     * @return Vector a List of suggestions
      */
-    public List getSuggestions(String word, int threshold) {
+    public Vector getSuggestions(String word, int threshold) {
 
-        HashSet nearmisscodes = new HashSet();
+		Hashtable nearmisscodes = new Hashtable();
         String code = getCode(word);
 
         // add all words that have the same codeword
-        nearmisscodes.add(code);
+		nearmisscodes.put(code, code);
 
         // do some tranformations to pick up more results
         //interchange
@@ -56,7 +56,8 @@ public abstract class SpellDictionaryASpell implements SpellDictionary {
             char b = charArray[i + 1];
             charArray[i] = b;
             charArray[i + 1] = a;
-            nearmisscodes.add(getCode(new String(charArray)));
+            String s = getCode(new String(charArray));
+			nearmisscodes.put(s, s);
             charArray[i] = a;
             charArray[i + 1] = b;
         }
@@ -66,8 +67,9 @@ public abstract class SpellDictionaryASpell implements SpellDictionary {
             char original = charArray[i];
             for (int j = 0; j < replacelist.length; j++) {
                 charArray[i] = replacelist[j];
-                nearmisscodes.add(getCode(new String(charArray)));
-            }
+                String s = getCode(new String(charArray));
+				nearmisscodes.put(s, s);
+			}
             charArray[i] = original;
         }
         //add
@@ -76,8 +78,9 @@ public abstract class SpellDictionaryASpell implements SpellDictionary {
         while (true) {
             for (int j = 0; j < replacelist.length; j++) {
                 charArray[iy] = replacelist[j];
-                nearmisscodes.add(getCode(new String(charArray)));
-            }
+				String s = getCode(new String(charArray));
+				nearmisscodes.put(s, s);
+			}
             if (iy == 0)
                 break;
             charArray[iy] = charArray[iy - 1];
@@ -94,7 +97,8 @@ public abstract class SpellDictionaryASpell implements SpellDictionary {
         a = charArray[charArray.length - 1];
         int ii = charArray2.length;
         while (true) {
-            nearmisscodes.add(getCode(new String(charArray)));
+			String s = getCode(new String(charArray));
+			nearmisscodes.put(s, s);
             if (ii == 0)
                 break;
             b = a;
@@ -103,30 +107,30 @@ public abstract class SpellDictionaryASpell implements SpellDictionary {
             --ii;
         }
 
-        LinkedList wordlist = getWordsFromCode(word, nearmisscodes);
-        // We sort a linkedlist at the end instead of maintaining a
+        Vector wordlist = getWordsFromCode(word, nearmisscodes);
+		// We sort a Vector at the end instead of maintaining a
         // continously sorted TreeSet because everytime you add a collection
         // to a treeset it has to be resorted. It's better to do this operation
         // once at the end.
-        Collections.sort( wordlist, new Word());
+		//Collections.sort( wordlist, new Word());
         return wordlist;
     }
 
-    private LinkedList getWordsFromCode(String word, Collection codes) {
+	private Vector getWordsFromCode(String word, Hashtable codes) {
         Configuration config = Configuration.getConfiguration();
-        LinkedList result = new LinkedList();
-        for (Iterator i = codes.iterator(); i.hasNext();) {
-            String code = (String) i.next();
-            List simwordlist = getWords(code);
-            for (Iterator j = simwordlist.iterator(); j.hasNext();) {
-                String similar = (String) j.next();
+		Vector result = new Vector();
+		for (Enumeration i = codes.keys();i.hasMoreElements();) {
+			String code = (String) i.nextElement();
+			Vector simwordlist = getWords(code);
+			for (Enumeration j = simwordlist.elements(); j.hasMoreElements();) {
+				String similar = (String) j.nextElement();
                 int distance = EditDistance.getDistance(word, similar);
                 if (distance < config.getInteger(Configuration.SPELL_THRESHOLD)) {
                     Word w = new Word(similar, distance);
-                    result.add(w);
-                }
-            }
-        }
+					result.addElement(w);
+				}
+			}
+		}
         return result;
     }
 
@@ -140,5 +144,5 @@ public abstract class SpellDictionaryASpell implements SpellDictionary {
     /**
      * Returns a list of strings (words) for the code.
      */
-    protected abstract List getWords(String code);
+    protected abstract Vector getWords(String code);
 }

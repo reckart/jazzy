@@ -1,6 +1,6 @@
 package com.swabunga.spell.engine;
 
-import java.util.List;
+import java.util.*;
 
 public interface SpellDictionary {
 	/**
@@ -20,7 +20,7 @@ public interface SpellDictionary {
 	 * <p>
 	 * @param word Suggestions for given mispelt word
 	 * @param threshold The lower boundary of similarity to mispelt word
-	 * @return List a List of suggestions
+	 * @return Vector a List of suggestions
 	 */
-	public List getSuggestions(String word, int threshold);
+	public Vector getSuggestions(String word, int threshold);
 }

@@ -33,10 +33,16 @@ public class SpellDictionaryHashMap extends SpellDictionaryASpell implements Spe
 	 * The hashmap that contains the word dictionary. The map is hashed on the doublemeta
 	 * code. The map entry contains a LinkedList of words that have the same double meta code.
 	 */
-	protected HashMap mainDictionary = new HashMap(INITIAL_CAPACITY);
+	protected Hashtable mainDictionary = new Hashtable(INITIAL_CAPACITY);
 
 	/** Holds the dictionary file for appending*/
 	private File dictFile = null;
+
+	/**
+	 * Dictionary Constructor.
+	 */
+	public SpellDictionaryHashMap(){
+	}
 
 	/**
 	 * Dictionary Constructor.
@@ -107,12 +113,12 @@ public class SpellDictionaryHashMap extends SpellDictionaryASpell implements Spe
 	 */
 	protected void putWord(String word) {
 		String code = getCode(word);
-		LinkedList list = (LinkedList) mainDictionary.get(code);
+		Vector list = (Vector) mainDictionary.get(code);
 		if (list != null) {
-			list.add(word);
+			list.addElement(word);
 		} else {
-			list = new LinkedList();
-			list.add(word);
+			list = new Vector();
+			list.addElement(word);
 			mainDictionary.put(code, list);
 		}
 	}
@@ -120,11 +126,11 @@ public class SpellDictionaryHashMap extends SpellDictionaryASpell implements Spe
 	/**
 	 * Returns a list of strings (words) for the code.
 	 */
-	public List getWords(String code) {
+	public Vector getWords(String code) {
 		//Check the main dictionary.
-		LinkedList mainDictResult = (LinkedList) mainDictionary.get(code);
+		Vector mainDictResult = (Vector) mainDictionary.get(code);
 		if (mainDictResult == null)
-			return new LinkedList();
+			return new Vector();
 		return mainDictResult;
 	}
 
@@ -132,7 +138,7 @@ public class SpellDictionaryHashMap extends SpellDictionaryASpell implements Spe
 	 * Returns true if the word is correctly spelled against the current word list.
 	 */
 	public boolean isCorrect(String word) {
-		List possible = getWords(getCode(word));
+		Vector possible = getWords(getCode(word));
 		if (possible.contains(word))
 			return true;
 		//JMH should we always try the lowercase version. If I dont then capitalised

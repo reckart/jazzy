@@ -30,8 +30,11 @@ public abstract class Configuration {
 	public abstract void setBoolean(String key, boolean value);
 	
 	public static final Configuration getConfiguration() {
+        return getConfiguration(null);
+    }
+    
+	public static final Configuration getConfiguration(String config) {
 		Configuration result;
-		String config = System.getProperty("jazzy.config");
 		if (config != null && config.length() > 0) {
 			try {
 				result = (Configuration)Class.forName(config).newInstance();

@@ -1,14 +1,15 @@
 package com.swabunga.spell.event;
 
+import com.swabunga.util.*;
 import com.swabunga.spell.engine.*;
 import com.swabunga.spell.engine.Word;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
+/*import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.Set;*/
 
 /**
  * This is the main class for spell checking (using the new event based spell
@@ -23,15 +24,21 @@ public class SpellChecker {
   /** Flag indicating that the Spell Check completed due to user cancellation*/
   public static final int SPELLCHECK_CANCEL=-2;
 
-  private List eventListeners = new ArrayList();
-  private SpellDictionary dictionary;
+  private Vector eventListeners = new Vector();
+  private Vector dictionaries = new Vector();
+  private SpellDictionary userdictionary = new SpellDictionaryHashMap();
   
   private Configuration config = Configuration.getConfiguration();
 
   /**This variable holds all of the words that are to be always ignored */
-  private Set ignoredWords = new HashSet();
-  private Map autoReplaceWords = new HashMap();
+  private Vector ignoredWords = new Vector();
+  private Hashtable autoReplaceWords = new Hashtable();
 
+  /**
+   * Constructs the SpellChecker.
+   */
+  public SpellChecker() {
+  }
 
   /**
    * Constructs the SpellChecker. The default threshold is used
@@ -39,10 +46,7 @@ public class SpellChecker {
    * @param  dictionary  Description of the Parameter
    */
   public SpellChecker(SpellDictionary dictionary) {
-    if (dictionary == null) {
-      throw new IllegalArgumentException("dictionary must non-null");
-    }
-    this.dictionary = dictionary;
+      addDictionary(dictionary);
   }
 
 
@@ -57,6 +61,20 @@ public class SpellChecker {
     config.setInteger( Configuration.SPELL_THRESHOLD, threshold );
   }
 
+  public void addDictionary(SpellDictionary dictionary){
+      if (dictionary == null) {
+        throw new IllegalArgumentException("dictionary must non-null");
+      }
+      this.dictionaries.addElement(dictionary);
+  }
+
+  /**
+   * 
+   * @return Current Configuration
+   */
+  public Configuration getConfiguration(){
+      return config;
+  }
 
   /**
    *Adds a SpellCheckListener
@@ -64,7 +82,7 @@ public class SpellChecker {
    * @param  listener  The feature to be added to the SpellCheckListener attribute
    */
   public void addSpellCheckListener(SpellCheckListener listener) {
-    eventListeners.add(listener);
+    eventListeners.addElement(listener);
   }
 
 
@@ -74,7 +92,7 @@ public class SpellChecker {
    * @param  listener  Description of the Parameter
    */
   public void removeSpellCheckListener(SpellCheckListener listener) {
-    eventListeners.remove(listener);
+    eventListeners.removeElement(listener);
   }
 
 
@@ -85,7 +103,7 @@ public class SpellChecker {
    */
   protected void fireSpellCheckEvent(SpellCheckEvent event) {
     for (int i = eventListeners.size() - 1; i >= 0; i--) {
-      ((SpellCheckListener) eventListeners.get(i)).spellingError(event);
+      ((SpellCheckListener) eventListeners.elementAt(i)).spellingError(event);
     }
   }
 
@@ -95,8 +113,8 @@ public class SpellChecker {
    *  Ignore All words and Replace All words.
    */
   public void reset() {
-    ignoredWords.clear();
-    autoReplaceWords.clear();
+    ignoredWords = new Vector();
+    autoReplaceWords = new Hashtable();
   }
 
 
@@ -210,7 +228,7 @@ public class SpellChecker {
         break;
       case SpellCheckEvent.IGNOREALL:
         if (!ignoredWords.contains(word)) {
-          ignoredWords.add(word);
+          ignoredWords.addElement(word);
         }
         break;
       case SpellCheckEvent.REPLACE:
@@ -226,7 +244,7 @@ public class SpellChecker {
       case SpellCheckEvent.ADDTODICT:
         String addWord = event.getReplaceWord();
         tokenizer.replaceWord(addWord);
-        dictionary.addWord(addWord);
+        userdictionary.addWord(addWord);
         break;
       case SpellCheckEvent.CANCEL:
         return true;
@@ -236,7 +254,23 @@ public class SpellChecker {
     return false;
   }
 
+  private boolean isCorrect(String word){
+      if (userdictionary.isCorrect(word)) return true;
+      for(Enumeration e = dictionaries.elements();e.hasMoreElements();){
+          SpellDictionary dictionary = (SpellDictionary)e.nextElement();
+          if (dictionary.isCorrect(word)) return true;
+      }
+      return false;
+  }
 
+  public Vector getSuggestions(String word, int threshold) {
+      Vector suggestions = userdictionary.getSuggestions(word, threshold);
+      for(Enumeration e = dictionaries.elements();e.hasMoreElements();){
+          SpellDictionary dictionary = (SpellDictionary)e.nextElement();
+          VectorUtility.addAll(suggestions, dictionary.getSuggestions(word, threshold), false);
+      }
+      return suggestions;
+  }
   /**
    * This method is called to check the spelling of the words that are returned
    * by the WordTokenizer.
@@ -253,7 +287,7 @@ public class SpellChecker {
     while (tokenizer.hasMoreWords() && !terminated) {
       String word = tokenizer.nextWord();
       //Check the spelling of the word
-      if (!dictionary.isCorrect(word)) {
+      if (!isCorrect(word)) {
  		if (
           	  (config.getBoolean(Configuration.SPELL_IGNOREMIXEDCASE) && isMixedCaseWord(word, tokenizer.isNewSentance())) ||
               (config.getBoolean(Configuration.SPELL_IGNOREUPPERCASE) && isUpperCaseWord(word)) ||
@@ -273,7 +307,7 @@ public class SpellChecker {
               //JMH Need to somehow capitalise the suggestions if
               //ignoreSentanceCapitalisation is not set to true
               //Fire the event.
-              SpellCheckEvent event = new BasicSpellCheckEvent(word, dictionary.getSuggestions(word,
+              SpellCheckEvent event = new BasicSpellCheckEvent(word, getSuggestions(word,
                   config.getInteger(Configuration.SPELL_THRESHOLD)), tokenizer);
               terminated = fireAndHandleEvent(tokenizer, event);
             }
@@ -292,8 +326,8 @@ public class SpellChecker {
           errors++;
           StringBuffer buf = new StringBuffer(word);
           buf.setCharAt(0, Character.toUpperCase(word.charAt(0)));
-          List suggestion = new LinkedList();
-          suggestion.add(new Word(buf.toString(), 0));
+          Vector suggestion = new Vector();
+          suggestion.addElement(new Word(buf.toString(), 0));
           SpellCheckEvent event = new BasicSpellCheckEvent(word, suggestion,
               tokenizer);
           terminated = fireAndHandleEvent(tokenizer, event);

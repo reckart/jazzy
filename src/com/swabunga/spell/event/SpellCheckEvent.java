@@ -28,7 +28,7 @@ public interface SpellCheckEvent {
   public static final short INITIAL = -1;
 
   /** Returns the list of suggested Word objects*/
-  public List getSuggestions();
+  public Vector getSuggestions();
 
   /** Returns the currently misspelt word*/
   public String getInvalidWord();

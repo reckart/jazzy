@@ -1,12 +1,12 @@
 package com.swabunga.spell.engine;
 
-import java.util.Comparator;
+//import java.util.Comparator;
 
 /** The Word object holds both the string and the score.
  *  <p>This class is now immutable.
  *  </p>
  */
-public class Word implements Comparator {
+public class Word{ //implements Comparator {
     private String word;
     private int score;
 

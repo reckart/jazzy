@@ -51,6 +51,7 @@ public class JTextComponentSpellChecker implements SpellCheckListener {
 
   public JTextComponentSpellChecker(SpellDictionary dict, String title) {
     spellCheck = new SpellChecker(dict);
+    spellCheck.setCache();
     spellCheck.addSpellCheckListener(this);
     dialogTitle = title;
     messages = ResourceBundle.getBundle("com.swabunga.spell.swing.messages", Locale.getDefault());

@@ -18,10 +18,10 @@ import javax.swing.text.ViewFactory;
 import javax.swing.text.Position.Bias;
 
 /**
- * @author rogus
- *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
+ * This View just forward all calls to the original view but also paints
+ * the waved line if the Elements is marked as misspelled.
+ * 
+ * @author Robert Gustavsson (robert@lindesign.se)
  */
 public class AutoSpellView extends View implements AutoSpellConstants{
 

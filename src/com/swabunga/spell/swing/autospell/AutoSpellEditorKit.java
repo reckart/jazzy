@@ -16,10 +16,11 @@ import javax.swing.*;
 import javax.swing.text.*;
 
 /**
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
+ * This editorkit just forwards all method calls to the original EditorKit
+ * for all method but getAction where it also adds a "MarkAsMisspelled" action 
+ * and getViewFactory where we return our own ViewFactory (Based on the original).
  * 
- * @author rogus
+ * @author Robert Gustavsson (robert@lindesign.se)
  *
  */
 public class AutoSpellEditorKit extends StyledEditorKit implements AutoSpellConstants{

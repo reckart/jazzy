@@ -11,10 +11,11 @@ import javax.swing.text.View;
 import javax.swing.text.ViewFactory;
 
 /**
- * @author rogus
- *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
+ * Gets the views from the original ViewFactory and but all of them in a
+ * AutoSpellView to support the waved line style. (Maybe this should only
+ * be done for elements actually marked as misspelled, maybe...)
+ * 
+ * @author Robert Gustavsson (robert@lindesign.se)
  */
 public class AutoSpellViewFactory implements ViewFactory{
 

@@ -1,9 +1,3 @@
-/*
- * Created on 2004-apr-26
- *
- * To change the template for this generated file go to
- * Window - Preferences - Java - Code Generation - Code and Comments
- */
 package com.swabunga.spell.swing.autospell;
 
 import java.awt.*;
@@ -16,10 +10,10 @@ import com.swabunga.spell.event.*;
 import com.swabunga.spell.engine.*;
 
 /**
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
+ * This class handles the actual autospelling by implementing some listeners
+ * on the spellchecked JEditorPane and Document.
  * 
- * @author rogus
+ * @author Robert Gustavsson (robert@lindesign.se)
  *
  */
 public class AutoSpellCheckHandler extends MouseAdapter implements DocumentListener, 

@@ -1,8 +1,8 @@
 package com.swabunga.spell.event;
 
-import java.util.*;
+import java.util.List;
 
-/** 
+/**
  * This event is fired off by the SpellChecker and is passed to the
  * registered SpellCheckListeners
  * <p/>
@@ -23,7 +23,7 @@ public interface SpellCheckEvent {
   /** Field indicating that the incorrect word should be replaced always*/
   public static final short REPLACEALL = 3;
   /** Field indicating that the incorrect word should be added to the dictionary*/
-  public static final short ADDTODICT  = 4;
+  public static final short ADDTODICT = 4;
   /** Field indicating that the spell checking should be terminated*/
   public static final short CANCEL = 5;
   /** Initial case for the action */
@@ -35,7 +35,7 @@ public interface SpellCheckEvent {
   /** Returns the currently misspelt word*/
   public String getInvalidWord();
 
- /** Returns the context in which the misspelt word is used*/
+  /** Returns the context in which the misspelt word is used*/
   public String getWordContext();
 
   /** Returns the start position of the misspelt word in the context*/
@@ -46,14 +46,14 @@ public interface SpellCheckEvent {
   public String getReplaceWord();
 
   /** Set the action to replace the currently misspelt word with the new word
-   *  @param String newWord The word to replace the currently misspelt word
-   *  @param boolean replaceAll If set to true, the SpellChecker will replace all
+   *  @param newWord The word to replace the currently misspelt word
+   *  @param replaceAll If set to true, the SpellChecker will replace all
    *  further occurances of the misspelt word without firing a SpellCheckEvent.
    */
   public void replaceWord(String newWord, boolean replaceAll);
 
   /** Set the action it ignore the currently misspelt word.
-   *  @param boolean ignoreAll If set to true, the SpellChecker will replace all
+   *  @param ignoreAll If set to true, the SpellChecker will replace all
    *  further occurances of the misspelt word without firing a SpellCheckEvent.
    */
   public void ignoreWord(boolean ignoreAll);

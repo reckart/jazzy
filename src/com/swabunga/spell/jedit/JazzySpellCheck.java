@@ -1,6 +1,6 @@
 /*
- * $Date: 2003/03/07 20:40:57 $
- * $Author: tech_monkey $
+ * $Date: 2003/06/02 16:40:54 $
+ * $Author: happyclown $
  *
  * Copyright (C) 2002 Anthony Roy
  *
@@ -20,25 +20,12 @@
  */
 package com.swabunga.spell.jedit;
 
+import com.swabunga.spell.engine.Configuration;
 import com.swabunga.spell.engine.SpellDictionary;
 import com.swabunga.spell.engine.SpellDictionaryDisk;
 import com.swabunga.spell.engine.SpellDictionaryHashMap;
-import com.swabunga.spell.engine.Configuration;
-import com.swabunga.spell.event.SpellCheckListener;
-import com.swabunga.spell.event.SpellChecker;
-import com.swabunga.spell.event.SpellCheckEvent;
-import com.swabunga.spell.event.WordFinder;
-import com.swabunga.spell.event.JavaWordFinder;
-import com.swabunga.spell.event.TeXWordFinder;
-import com.swabunga.spell.event.XMLWordFinder;
-import com.swabunga.spell.event.DefaultWordFinder;
-import com.swabunga.spell.event.StringWordTokenizer;
+import com.swabunga.spell.event.*;
 import com.swabunga.spell.swing.JSpellDialog;
-
-import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
 import org.gjt.sp.jedit.Macros;
 import org.gjt.sp.jedit.View;
 import org.gjt.sp.jedit.jEdit;
@@ -46,239 +33,228 @@ import org.gjt.sp.jedit.textarea.JEditTextArea;
 import org.gjt.sp.jedit.textarea.Selection;
 import org.gjt.sp.util.Log;
 
+import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
-public class JazzySpellCheck
-    implements SpellCheckListener {
 
-    //~ Instance/static variables .............................................
+public class JazzySpellCheck implements SpellCheckListener {
 
-    public static final int LOAD_DICTIONARY    = 1;
-    public static final int RESET_SPELLCHECKER = 2;
-    private boolean LOADED                     = false;
-    private JEditTextArea area;
-    private int caretPosn;
-    private SpellDictionary dictionary;
-    private JSpellDialog dlg;
-    private int flags;
-    private boolean noerrors                   = true;
-    private int offset;
-    private SpellChecker spellChecker;
-    private Configuration config = Configuration.getConfiguration();
+  //~ Instance/static variables .............................................
 
-    //~ Constructors ..........................................................
+  public static final int LOAD_DICTIONARY = 1;
+  public static final int RESET_SPELLCHECKER = 2;
+  private boolean LOADED = false;
+  private JEditTextArea area;
+  private int caretPosn;
+  private SpellDictionary dictionary;
+  private JSpellDialog dlg;
+  private int flags;
+  private boolean noerrors = true;
+  private int offset;
+  private SpellChecker spellChecker;
+  private Configuration config = Configuration.getConfiguration();
 
-    /**
-     * Creates a new JazzySpellCheck object.
-     * 
-     * @param flags ¤
-     */
-    public JazzySpellCheck(int flags) {
-        this.flags                             = flags;
-        
-        boolean loadNow = ((flags & LOAD_DICTIONARY) == LOAD_DICTIONARY);
+  //~ Constructors ..........................................................
 
-        if (loadNow) {
+  /**
+   * Creates a new JazzySpellCheck object.
+   *
+   * @param flags ï¿½
+   */
+  public JazzySpellCheck(int flags) {
+    this.flags = flags;
 
-              Thread t = new Thread() {
-                    public void run() {
-                        loadDictionary();
-                    }
-              };
-              t.start();
+    boolean loadNow = ((flags & LOAD_DICTIONARY) == LOAD_DICTIONARY);
+
+    if (loadNow) {
+
+      Thread t = new Thread() {
+        public void run() {
+          loadDictionary();
         }
-
-        
-        config.setBoolean(Configuration.SPELL_IGNOREDIGITWORDS, 
-                          jEdit.getBooleanProperty("options.jazzy.SPELL_IGNOREDIGITWORDS", false));
-
-        Log.log(Log.MESSAGE,this,"Ignore Digits? "+config.getBoolean(Configuration.SPELL_IGNOREDIGITWORDS));
-                          
-        setupDialog();
+      };
+      t.start();
     }
 
-    //~ Methods ...............................................................
 
-    /**
-     * ¤
-     * 
-     * @return ¤
-     */
-    public boolean isLoaded() {
+    config.setBoolean(Configuration.SPELL_IGNOREDIGITWORDS, jEdit.getBooleanProperty("options.jazzy.SPELL_IGNOREDIGITWORDS", false));
 
-        return LOADED;
+    Log.log(Log.MESSAGE, this, "Ignore Digits? " + config.getBoolean(Configuration.SPELL_IGNOREDIGITWORDS));
+
+    setupDialog();
+  }
+
+  //~ Methods ...............................................................
+
+  /**
+   * ï¿½
+   *
+   * @return ï¿½
+   */
+  public boolean isLoaded() {
+
+    return LOADED;
+  }
+
+  /**
+   * ï¿½
+   *
+   * @param input ï¿½
+   * @param mode ï¿½
+   * @param offset ï¿½
+   * @param caret ï¿½
+   * @return ï¿½
+   */
+  public String checkText(String input, String mode, int offset, int caret) {
+
+    if (!LOADED) {
+
+      return null;
     }
 
-    /**
-     * ¤
-     * 
-     * @param input ¤
-     * @param mode ¤
-     * @param offset ¤
-     * @param caret ¤
-     * @return ¤
-     */
-    public String checkText(String input, String mode, int offset, int caret) {
+    this.offset = offset;
+    this.caretPosn = caret;
+    WordFinder wf;
+    View view = jEdit.getActiveView();
+    area = view.getTextArea();
+    boolean defaultChecker = jEdit.getBooleanProperty("options.jazzy.default-checker", false);
 
-        if (!LOADED) {
+    if (!defaultChecker) {
 
-            return null;
-        }
+      if (mode.equals("java")) {
+        wf = new JavaWordFinder(input);
+      } else if (mode.equals("tex")) {
+        wf = new TeXWordFinder(input);
+      } else if ((mode.equals("html")) || (mode.equals("xml"))) {
+        wf = new XMLWordFinder(input);
+      } else {
+        wf = new DefaultWordFinder(input);
+      }
+    } else {
+      wf = new DefaultWordFinder(input);
+    }
 
-        this.offset    = offset;
-        this.caretPosn = caret;
-        WordFinder wf;
-        View view      = jEdit.getActiveView();
-        area           = view.getTextArea();
-        boolean defaultChecker = jEdit.getBooleanProperty(
-                                         "options.jazzy.default-checker", 
-                                         false);
+    StringWordTokenizer toks = new StringWordTokenizer(wf);
+    spellChecker.checkSpelling(toks);
 
-        if (!defaultChecker) {
+    if (noerrors) {
+      Macros.message(view, "No Spelling Errors Found");
+    } else {
+      noerrors = true;
+    }
 
-            if (mode.equals("java")) {
-                wf = new JavaWordFinder(input);
-            } else if (mode.equals("tex")) {
-                wf = new TeXWordFinder(input);
-            } else if ((mode.equals("html")) || (mode.equals("xml"))) {
-                wf = new XMLWordFinder(input);
-            } else {
-                wf = new DefaultWordFinder(input);
-            }
+    area.setCaretPosition(caretPosn);
+    String output = toks.getContext();
+
+    if ((flags & RESET_SPELLCHECKER) == RESET_SPELLCHECKER) {
+      resetSpellChecker();
+    }
+
+    return output;
+  }
+
+  /**
+   * ï¿½
+   *
+   * @return ï¿½
+   */
+  public synchronized boolean loadDictionary() {
+
+    if (LOADED) return true;
+
+    File dictionaryFile = new File(jEdit.getProperty("options.jazzy.dictionary", ""));
+
+    if (dictionaryFile.exists()) {
+
+      try {
+
+        if (jEdit.getBooleanProperty("options.jazzy.disk-based", false)) {
+          dictionary = new SpellDictionaryDisk(dictionaryFile.getParentFile(), null, true);
+          Log.log(Log.MESSAGE, this, "Disk-based SpellChecker Loaded.");
         } else {
-            wf = new DefaultWordFinder(input);
+          dictionary = new SpellDictionaryHashMap(dictionaryFile);
+          Log.log(Log.MESSAGE, this, "Memory-based SpellChecker Loaded with custom dictionary.");
         }
+        LOADED = true;
+      } catch (Exception e) {
+        Log.log(Log.MESSAGE, this, "TextSpellCheck: error loading dictionary: " + e);
+        LOADED = false;
+      }
 
-        StringWordTokenizer toks = new StringWordTokenizer(wf);
-        spellChecker.checkSpelling(toks);
+    } else {
 
-        if (noerrors) {
-            Macros.message(view, "No Spelling Errors Found");
-        } else {
-            noerrors = true;
-        }
-
-        area.setCaretPosition(caretPosn);
-        String output = toks.getContext();
-
-        if ((flags & RESET_SPELLCHECKER) == RESET_SPELLCHECKER) {
-            resetSpellChecker();
-        }
-
-        return output;
+      try {
+        InputStream in = this.getClass().getResourceAsStream("/english.0");
+        InputStreamReader reader = new InputStreamReader(in);
+        dictionary = new SpellDictionaryHashMap(reader);
+        Log.log(Log.MESSAGE, this, "Memory-based SpellChecker Loaded with default dictionary.");
+        LOADED = true;
+      } catch (Exception e) {
+        Log.log(Log.MESSAGE, this, "TextSpellCheck: error loading default dictionary: " + e);
+        LOADED = false;
+      }
     }
 
-    /**
-     * ¤
-     * 
-     * @return ¤
-     */
-    public synchronized boolean loadDictionary() {
-      
-      if (LOADED) return true;
-      
-        File dictionaryFile = new File(jEdit.getProperty(
-                                               "options.jazzy.dictionary", ""));
-
-        if (dictionaryFile.exists()) {
-
-            try {
-
-                if (jEdit.getBooleanProperty("options.jazzy.disk-based", false)) {
-                    dictionary = new SpellDictionaryDisk(dictionaryFile.getParentFile(), 
-                    									null,
-                                                        true);
-                    Log.log(Log.MESSAGE, this, 
-                            "Disk-based SpellChecker Loaded.");
-                } else {
-                    dictionary = new SpellDictionaryHashMap(dictionaryFile);
-                    Log.log(Log.MESSAGE, this, 
-                            "Memory-based SpellChecker Loaded with custom dictionary.");
-                }
-                LOADED = true;
-             } catch (Exception e) {
-                Log.log(Log.MESSAGE, this, 
-                        "TextSpellCheck: error loading dictionary: " + e);
-                LOADED = false;
-            }
-
-        } else {
-
-            try {
-                InputStream in           = this.getClass().getResourceAsStream(
-                                                   "/english.0");
-                InputStreamReader reader = new InputStreamReader(in);
-                dictionary               = new SpellDictionaryHashMap(reader);
-                Log.log(Log.MESSAGE, this, 
-                        "Memory-based SpellChecker Loaded with default dictionary.");
-                LOADED = true;
-            } catch (Exception e) {
-                Log.log(Log.MESSAGE, this, 
-                        "TextSpellCheck: error loading default dictionary: " + e);
-                LOADED = false;
-            }
-       }
-
-        if (LOADED){
-            spellChecker = new SpellChecker(dictionary);
-            spellChecker.addSpellCheckListener(this);
-        }
-
-       
-        return LOADED;
+    if (LOADED) {
+      spellChecker = new SpellChecker(dictionary);
+      spellChecker.addSpellCheckListener(this);
     }
 
-    /**
-     * Resets list of ignored words.
-     */
-    public void resetSpellChecker() {
-        spellChecker.reset();
+
+    return LOADED;
+  }
+
+  /**
+   * Resets list of ignored words.
+   */
+  public void resetSpellChecker() {
+    spellChecker.reset();
+  }
+
+  /**
+   * ï¿½
+   *
+   * @param event ï¿½
+   */
+  public void spellingError(SpellCheckEvent event) {
+    noerrors = false;
+    String oldWord = event.getInvalidWord();
+    int oldLength = oldWord.length();
+    int start = event.getWordContextPosition() + offset;
+    int end = start + oldLength;
+    Selection s = new Selection.Range(start, end);
+    area.setCaretPosition(start);
+    area.scrollToCaret(true);
+    area.setSelection(s);
+    dlg.show(event);
+    String replace = event.getReplaceWord();
+
+    if (replace != null && !replace.equals(oldWord)) {
+      area.setSelectedText(replace);
+
+      if (caretPosn > start) {
+        int diff = replace.length() - oldLength;
+        caretPosn += diff;
+      }
     }
+  }
 
-    /**
-     * ¤
-     * 
-     * @param event ¤
-     */
-    public void spellingError(SpellCheckEvent event) {
-        noerrors = false;
-        String oldWord = event.getInvalidWord();
-        int oldLength = oldWord.length();
-        int start     = event.getWordContextPosition() + offset;
-        int end       = start + oldLength;
-        Selection s   = new Selection.Range(start, end);
-        area.setCaretPosition(start);
-        area.scrollToCaret(true);
-        area.setSelection(s);
-        dlg.show(event);
-        String replace = event.getReplaceWord();
+  /**
+   * ï¿½
+   */
+  public void unloadDictionary() {
 
-        if (replace != null && !replace.equals(oldWord)) {
-            area.setSelectedText(replace);
-
-            if (caretPosn > start) {
-                int diff = replace.length() - oldLength;
-                caretPosn += diff;
-            }
-        }
+    if (LOADED) {
+      spellChecker.removeSpellCheckListener(this);
+      spellChecker = null;
+      dictionary = null;
+      LOADED = false;
+      System.gc();
     }
+  }
 
-    /**
-     * ¤
-     */
-    public void unloadDictionary() {
-
-        if (LOADED) {
-            spellChecker.removeSpellCheckListener(this);
-            spellChecker = null;
-            dictionary   = null;
-            LOADED       = false;
-            System.gc();
-        }
-    }
-
-    private void setupDialog() {
-        dlg = new JSpellDialog(jEdit.getActiveView(), 
-                               "Spell", 
-                               true);
-    }
+  private void setupDialog() {
+    dlg = new JSpellDialog(jEdit.getActiveView(), "Spell", true);
+  }
 }

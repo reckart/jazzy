@@ -1,11 +1,11 @@
 package com.swabunga.spell.event;
 
 /**
- * <p>An interface for objects which take a text-based media as input, and iterate through 
+ * <p>An interface for objects which take a text-based media as input, and iterate through
  * the words in the text stored in that media. Examples of such media could be Strings,
  * Documents, Files, TextComponents etc.
  * </P>
- * 
+ *
  * <P>
  * When the object is instantiated, and before the first call to <CODE>next()</CODE> is made,
  * the following methods should throw a <CODE>WordNotFoundException</CODE>:<br>
@@ -63,7 +63,7 @@ public interface WordTokenizer {
 
   /**
    * This returns the next word in the iteration. Note that any implementation should return
-   * the current word, and then replace the current word with the next word found in the 
+   * the current word, and then replace the current word with the next word found in the
    * input text (if one exists).
    * @return the next word in the iteration.
    * @throws WordNotFoundException search string contains no more words.
@@ -72,7 +72,7 @@ public interface WordTokenizer {
 
   /**
    * Replaces the current word token
-   * 
+   *
    * <p/>
    * When a word is replaced care should be taken that the WordTokenizer
    * repositions itself such that the words that were added aren't rechecked.

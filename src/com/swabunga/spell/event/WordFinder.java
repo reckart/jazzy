@@ -1,10 +1,10 @@
 package com.swabunga.spell.event;
 
 /**
- * <p>An interface for objects which take a String as input, and iterates through 
+ * <p>An interface for objects which take a String as input, and iterates through
  * the words in the string.
  * </P>
- * 
+ *
  * <P>
  * When the object is instantiated, and before the first call to <CODE>next()</CODE> is made,
  * the following methods should throw a <CODE>WordNotFoundException</CODE>:<br>
@@ -24,16 +24,16 @@ public interface WordFinder {
   /**
    * This method returns the text through which the WordFinder is iterating.
    * The text may have been modified through calls to replace().
-   * 
+   *
    * @return the (possibly modified) text being searched.
    */
   public String getText();
 
   /**
    * This method should return the  Word object representing the current word
-   * in the iteration. 
+   * in the iteration.
    * This method should not affect the state of the  WordFinder object.
-   * 
+   *
    * @return the current Word object.
    * @throws WordNotFoundException current word has not yet been set.
    */
@@ -41,7 +41,7 @@ public interface WordFinder {
 
   /**
    * Tests the finder to see if any more words are available.
-   * 
+   *
    * @return true if more words are available.
    */
   public boolean hasNext();
@@ -49,7 +49,7 @@ public interface WordFinder {
   /**
    * This method should return the  Word object representing the next word
    * in the iteration (the first word if next() has not yet been called.)
-   * 
+   *
    * @return the next Word in the iteration.
    * @throws WordNotFoundException search string contains no more words.
    */
@@ -58,7 +58,7 @@ public interface WordFinder {
   /**
    * This method should replace the current Word object with a Word object
    * representing the String newWord.
-   * 
+   *
    * @param newWord the word to replace the current word with.
    * @throws WordNotFoundException current word has not yet been set.
    */

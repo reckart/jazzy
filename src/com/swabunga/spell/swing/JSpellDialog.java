@@ -1,12 +1,13 @@
 package com.swabunga.spell.swing;
 
-import java.awt.Dialog;
-import java.awt.Frame;
-import java.awt.event.*;
-
-import javax.swing.JDialog;
-
 import com.swabunga.spell.event.SpellCheckEvent;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 /** Implementation of a spell check dialog.
  *
@@ -36,7 +37,7 @@ public class JSpellDialog extends JDialog implements ActionListener, WindowListe
 
 
   public void show(SpellCheckEvent e) {
-   // System.out.println("Show");
+    // System.out.println("Show");
     this.event = e;
     form.setSpellEvent(e);
     show();
@@ -46,21 +47,27 @@ public class JSpellDialog extends JDialog implements ActionListener, WindowListe
     hide();
   }
 
-  public void windowOpened(WindowEvent e)  {
+  public void windowOpened(WindowEvent e) {
   }
+
   /** Cancel the event if the Dialog Close button is pressed*/
   public void windowClosing(WindowEvent e) {
     if (event != null)
       event.cancel();
   }
+
   public void windowClosed(WindowEvent e) {
   }
+
   public void windowIconified(WindowEvent e) {
   }
+
   public void windowDeiconified(WindowEvent e) {
   }
+
   public void windowActivated(WindowEvent e) {
   }
+
   public void windowDeactivated(WindowEvent e) {
   }
 }

@@ -1,17 +1,17 @@
 package com.swabunga.spell.event;
 
-import com.swabunga.util.*;
-import com.swabunga.spell.engine.*;
+import com.swabunga.spell.engine.Configuration;
+import com.swabunga.spell.engine.SpellDictionary;
+import com.swabunga.spell.engine.SpellDictionaryHashMap;
 import com.swabunga.spell.engine.Word;
+import com.swabunga.util.VectorUtility;
 
 import java.io.IOException;
-import java.util.*;
-/*import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;*/
+import java.util.Vector;
+
 
 /**
  * This is the main class for spell checking (using the new event based spell
@@ -22,14 +22,14 @@ import java.util.Set;*/
  */
 public class SpellChecker {
   /** Flag indicating that the Spell Check completed without any errors present*/
-  public static final int SPELLCHECK_OK=-1;
+  public static final int SPELLCHECK_OK = -1;
   /** Flag indicating that the Spell Check completed due to user cancellation*/
-  public static final int SPELLCHECK_CANCEL=-2;
+  public static final int SPELLCHECK_CANCEL = -2;
 
   private Vector eventListeners = new Vector();
   private Vector dictionaries = new Vector();
   private SpellDictionary userdictionary;
-  
+
   private Configuration config = Configuration.getConfiguration();
 
   /**This variable holds all of the words that are to be always ignored */
@@ -40,14 +40,11 @@ public class SpellChecker {
    * Constructs the SpellChecker.
    */
   public SpellChecker() {
-	try
-	{
-		userdictionary = new SpellDictionaryHashMap();
-	}
-	catch (IOException e)
-	{
-		throw new RuntimeException("this exception should never happen because we are using null phonetic file");
-	}
+    try {
+      userdictionary = new SpellDictionaryHashMap();
+    } catch (IOException e) {
+      throw new RuntimeException("this exception should never happen because we are using null phonetic file");
+    }
   }
 
   /**
@@ -56,8 +53,8 @@ public class SpellChecker {
    * @param  dictionary  Description of the Parameter
    */
   public SpellChecker(SpellDictionary dictionary) {
-	this();
-	addDictionary(dictionary);
+    this();
+    addDictionary(dictionary);
   }
 
 
@@ -69,22 +66,22 @@ public class SpellChecker {
    */
   public SpellChecker(SpellDictionary dictionary, int threshold) {
     this(dictionary);
-    config.setInteger( Configuration.SPELL_THRESHOLD, threshold );
+    config.setInteger(Configuration.SPELL_THRESHOLD, threshold);
   }
 
-  public void addDictionary(SpellDictionary dictionary){
-      if (dictionary == null) {
-        throw new IllegalArgumentException("dictionary must non-null");
-      }
-      this.dictionaries.addElement(dictionary);
+  public void addDictionary(SpellDictionary dictionary) {
+    if (dictionary == null) {
+      throw new IllegalArgumentException("dictionary must non-null");
+    }
+    this.dictionaries.addElement(dictionary);
   }
 
   /**
-   * 
+   *
    * @return Current Configuration
    */
-  public Configuration getConfiguration(){
-      return config;
+  public Configuration getConfiguration() {
+    return config;
   }
 
   /**
@@ -265,30 +262,31 @@ public class SpellChecker {
     return false;
   }
 
-  private boolean isCorrect(String word){
-      if (userdictionary.isCorrect(word)) return true;
-      for(Enumeration e = dictionaries.elements();e.hasMoreElements();){
-          SpellDictionary dictionary = (SpellDictionary)e.nextElement();
-          if (dictionary.isCorrect(word)) return true;
-      }
-      return false;
+  private boolean isCorrect(String word) {
+    if (userdictionary.isCorrect(word)) return true;
+    for (Enumeration e = dictionaries.elements(); e.hasMoreElements();) {
+      SpellDictionary dictionary = (SpellDictionary) e.nextElement();
+      if (dictionary.isCorrect(word)) return true;
+    }
+    return false;
   }
 
   public List getSuggestions(String word, int threshold) {
-      List suggestions = userdictionary.getSuggestions(word, threshold);
-      for(Enumeration e = dictionaries.elements();e.hasMoreElements();){
-          SpellDictionary dictionary = (SpellDictionary)e.nextElement();
-          VectorUtility.addAll(suggestions, dictionary.getSuggestions(word, threshold), false);
-      }
-      return suggestions;
+    List suggestions = userdictionary.getSuggestions(word, threshold);
+    for (Enumeration e = dictionaries.elements(); e.hasMoreElements();) {
+      SpellDictionary dictionary = (SpellDictionary) e.nextElement();
+      VectorUtility.addAll(suggestions, dictionary.getSuggestions(word, threshold), false);
+    }
+    return suggestions;
   }
+
   /**
    * This method is called to check the spelling of the words that are returned
    * by the WordTokenizer.
    * <p>For each invalid word the action listeners will be informed with a new SpellCheckEvent</p>
    *
    * @param  tokenizer  Description of the Parameter
-   * @return Either SPELLCHECK_OK, SPELLCHECK_CANCEL or the number of errors found. The number of errors are those that 
+   * @return Either SPELLCHECK_OK, SPELLCHECK_CANCEL or the number of errors found. The number of errors are those that
    * are found BEFORE any corrections are made.
    */
   public final int checkSpelling(WordTokenizer tokenizer) {
@@ -300,11 +298,7 @@ public class SpellChecker {
       String word = tokenizer.nextWord();
       //Check the spelling of the word
       if (!isCorrect(word)) {
- 		if (
-          	  (config.getBoolean(Configuration.SPELL_IGNOREMIXEDCASE) && isMixedCaseWord(word, tokenizer.isNewSentence())) ||
-              (config.getBoolean(Configuration.SPELL_IGNOREUPPERCASE) && isUpperCaseWord(word)) ||
-              (config.getBoolean(Configuration.SPELL_IGNOREDIGITWORDS) && isDigitWord(word)) ||
-              (config.getBoolean(Configuration.SPELL_IGNOREINTERNETADDRESSES) && isINETWord(word))) {
+        if ((config.getBoolean(Configuration.SPELL_IGNOREMIXEDCASE) && isMixedCaseWord(word, tokenizer.isNewSentence())) || (config.getBoolean(Configuration.SPELL_IGNOREUPPERCASE) && isUpperCaseWord(word)) || (config.getBoolean(Configuration.SPELL_IGNOREDIGITWORDS) && isDigitWord(word)) || (config.getBoolean(Configuration.SPELL_IGNOREINTERNETADDRESSES) && isINETWord(word))) {
           //Null event. Since we are ignoring this word due
           //to one of the above cases.
         } else {
@@ -319,8 +313,7 @@ public class SpellChecker {
               //JMH Need to somehow capitalise the suggestions if
               //ignoreSentenceCapitalisation is not set to true
               //Fire the event.
-              SpellCheckEvent event = new BasicSpellCheckEvent(word, getSuggestions(word,
-                  config.getInteger(Configuration.SPELL_THRESHOLD)), tokenizer);
+              SpellCheckEvent event = new BasicSpellCheckEvent(word, getSuggestions(word, config.getInteger(Configuration.SPELL_THRESHOLD)), tokenizer);
               terminated = fireAndHandleEvent(tokenizer, event);
             }
           }
@@ -333,15 +326,13 @@ public class SpellChecker {
          *  }
          */
         //Check for capitalisation
-        if ((!config.getBoolean(Configuration.SPELL_IGNORESENTENCECAPITALIZATION)) && (tokenizer.isNewSentence())
-            && (Character.isLowerCase(word.charAt(0)))) {
+        if ((!config.getBoolean(Configuration.SPELL_IGNORESENTENCECAPITALIZATION)) && (tokenizer.isNewSentence()) && (Character.isLowerCase(word.charAt(0)))) {
           errors++;
           StringBuffer buf = new StringBuffer(word);
           buf.setCharAt(0, Character.toUpperCase(word.charAt(0)));
           Vector suggestion = new Vector();
           suggestion.addElement(new Word(buf.toString(), 0));
-          SpellCheckEvent event = new BasicSpellCheckEvent(word, suggestion,
-              tokenizer);
+          SpellCheckEvent event = new BasicSpellCheckEvent(word, suggestion, tokenizer);
           terminated = fireAndHandleEvent(tokenizer, event);
         }
       }
@@ -350,7 +341,8 @@ public class SpellChecker {
       return SPELLCHECK_CANCEL;
     else if (errors == 0)
       return SPELLCHECK_OK;
-    else return errors;
+    else
+      return errors;
   }
 }
 

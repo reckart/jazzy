@@ -12,7 +12,7 @@ public class Word {
 
   /**
    * Creates a new Word object.
-   * 
+   *
    * @param text the String representing the word.
    * @param start the start index of the word.
    */
@@ -24,7 +24,7 @@ public class Word {
 
   /**
    * Creates a new Word object by cloning an existing Word object.
-   * 
+   *
    * @param w the word object to clone.
    */
   public Word(Word w) {
@@ -43,7 +43,7 @@ public class Word {
 
   /**
    * Set the start index of the word.
-   * 
+   *
    * @param s the start index.
    */
   public void setStart(int s) {
@@ -61,7 +61,7 @@ public class Word {
 
   /**
    * Set the text to a new string value.
-   * 
+   *
    * @param s the new text
    */
   public void setText(String s) {
@@ -79,7 +79,7 @@ public class Word {
 
   /**
    * Sets the value of this Word to be a copy of another.
-   * 
+   *
    * @param w the Word to copy.
    */
   public void copy(Word w) {
@@ -106,7 +106,7 @@ public class Word {
 
   /**
    * Set the end index of the word.
-   * 
+   *
    */
   private void setEnd() {
     end = start + text.length();

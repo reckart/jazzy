@@ -5,14 +5,13 @@ import java.io.File;
 
 /**
  * This class tokenizes a input file.
- * 
+ *
  * <p>
  * Any takers to do this efficiently?? Doesnt need to replace any words to
  * start with . I need this to get an idea of how quick the spell checker is.
  * </p>
  */
-public class FileWordTokenizer
-  extends AbstractWordTokenizer {
+public class FileWordTokenizer extends AbstractWordTokenizer {
 
   //~ Instance/static variables ...............................................
 
@@ -22,8 +21,8 @@ public class FileWordTokenizer
 
   /**
    * Creates a new FileWordTokenizer object.
-   * 
-   * @param inputFile ¤
+   *
+   * @param inputFile ï¿½
    */
   public FileWordTokenizer(File inputFile) {
     super(stringValue(inputFile));
@@ -32,9 +31,9 @@ public class FileWordTokenizer
   //~ Methods .................................................................
 
   /**
-   * ¤
-   * 
-   * @param s ¤
+   * ï¿½
+   *
+   * @param s ï¿½
    * @throws WordNotFoundException current word not yet set.
    */
   public void replaceWord(String s) {

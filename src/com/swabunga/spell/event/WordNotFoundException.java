@@ -1,7 +1,6 @@
 package com.swabunga.spell.event;
 
-public class WordNotFoundException
-  extends RuntimeException {
+public class WordNotFoundException extends RuntimeException {
 
   //~ Constructors ............................................................
 
@@ -14,7 +13,7 @@ public class WordNotFoundException
 
   /**
    * Creates a new WordNotFoundException object.
-   * 
+   *
    * @param s a message.
    */
   public WordNotFoundException(String s) {

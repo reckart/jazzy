@@ -1,6 +1,6 @@
 package com.swabunga.spell.event;
 
-import java.util.*;
+import java.util.EventListener;
 
 /**
  * This is the event based listener interface.

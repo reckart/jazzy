@@ -1,6 +1,6 @@
 package com.swabunga.spell.event;
 
-import java.util.*;
+import java.util.List;
 
 /** This event is fired off by the SpellChecker and is passed to the
  *  registered SpellCheckListeners
@@ -8,7 +8,7 @@ import java.util.*;
  * @author Jason Height (jheight@chariot.net.au)
  */
 class BasicSpellCheckEvent implements SpellCheckEvent {
-  
+
   /**The list holding the suggested Word objects for the misspelt word*/
   private List suggestions;
   /**The misspelt word*/
@@ -23,9 +23,9 @@ class BasicSpellCheckEvent implements SpellCheckEvent {
 
 
   /**Consructs the SpellCheckEvent
-   * @param String invalidWord The word that is misspelt
-   * @param List suggestions A list of Word objects that are suggested to replace the currently mispelt word
-   * @param WordTokenizer tokenizer The reference to the tokenizer that caused this
+   * @param invalidWord The word that is misspelt
+   * @param suggestions A list of Word objects that are suggested to replace the currently mispelt word
+   * @param tokenizer The reference to the tokenizer that caused this
    * event to fire.
    */
   public BasicSpellCheckEvent(String invalidWord, List suggestions, WordTokenizer tokenizer) {
@@ -73,7 +73,8 @@ class BasicSpellCheckEvent implements SpellCheckEvent {
       throw new IllegalStateException("The action can can only be set once");
     if (replaceAll)
       action = REPLACEALL;
-    else action = REPLACE;
+    else
+      action = REPLACE;
     replaceWord = newWord;
   }
 
@@ -86,7 +87,8 @@ class BasicSpellCheckEvent implements SpellCheckEvent {
       throw new IllegalStateException("The action can can only be set once");
     if (ignoreAll)
       action = IGNOREALL;
-    else action = IGNORE;
+    else
+      action = IGNORE;
   }
 
   /** Set the action to add a new word into the dictionary. This will also replace the

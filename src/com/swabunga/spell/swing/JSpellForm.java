@@ -103,7 +103,7 @@ public class JSpellForm extends JPanel
     JPanel jPanel3 = new JPanel();
     JLabel lbl1 = new JLabel(messages.getString(INVALIDWORD_RES));
     wrongWordLabel = new JLabel("");
-    wrongWordLabel.setForeground(Color.RED);
+    wrongWordLabel.setForeground(Color.red); //Changed Color.RED to Color.red for 1.3 compatibility.
     jPanel3.add(lbl1);
     jPanel3.add(wrongWordLabel);
     jPanel2.add(jPanel3);

@@ -39,14 +39,14 @@ public class SpellDictionaryHashMap extends SpellDictionaryASpell {
 	 * Dictionary Constructor.
 	 */
 	public SpellDictionaryHashMap() throws IOException{
-		super(null);
+		super((File)null);
 	}
 
 	/**
 	 * Dictionary Constructor.
 	 */
 	public SpellDictionaryHashMap(Reader wordList) throws IOException {
-		super(null);
+		super((File)null);
 		createDictionary(new BufferedReader(wordList));
 	}
 
@@ -70,6 +70,40 @@ public class SpellDictionaryHashMap extends SpellDictionaryASpell {
 		createDictionary(new BufferedReader(new FileReader(wordList)));
 	}
 
+	/**
+	* Dictionary constructor that uses an aspell phonetic file to
+	* build the transformation table.
+	*/
+	public SpellDictionaryHashMap(Reader wordList, Reader phonetic) throws IOException
+	{
+		super(phonetic);	
+		dictFile = null;
+		createDictionary(new BufferedReader(wordList));
+	}
+	
+	/**
+	 * Add words from a file to existing dictionary hashmap. 
+	 * This function can be called as many times as needed to 
+	 * build the internal word list. Duplicates are not added. 
+	 * <p>
+	 * Note that adding a dictionary does not affect the target
+	 * dictionary file for the addWord method. That is, addWord() continues
+	 * to make additions to the dictionary file specified in createDictionary()
+	 * <P>
+	 * @param wordList a File object that contains the words, on word per line.
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
+	public void addDictionary(File wordList)
+		throws FileNotFoundException, IOException {
+			addDictionaryHelper(new BufferedReader(new FileReader(wordList)));
+	}
+
+	public void addDictionary(Reader wordList) throws IOException
+	{
+		addDictionaryHelper(new BufferedReader(wordList));
+	}
+	
 	/**
 	 * Add a word permanantly to the dictionary (and the dictionary file).
 	 * <p>This needs to be made thread safe (synchronized)</p>
@@ -107,6 +141,31 @@ public class SpellDictionaryHashMap extends SpellDictionaryASpell {
 			}
 		}
 	}
+	
+	/**
+	 * Adds to the existing dictionary from a word list file. If the word
+	 * already exists in the dictionary, a new entry is not added.
+	 * <p>
+	 * Each word in the reader should be on a seperate line.
+	 * <p>
+	 * Note: for whatever reason that I haven't yet looked into, the phonetic codes
+	 * for a particular word map to a vector of words rather than a hash table.
+	 * This is a drag since in order to check for duplicates you have to iterate
+	 * through all the words that use the phonetic code.
+	 * If the vector-based implementation is important, it may be better 
+	 * to subclass for the cases where duplicates are bad.
+	 */
+	protected void addDictionaryHelper(BufferedReader in) throws IOException {
+		
+		String line = "";
+		while (line != null) {
+			line = in.readLine();
+			if (line != null && line.length() > 0) {
+				line = new String(line.toCharArray());
+				putWordUnique(line);
+			}
+		}
+	}
 
 	/**
 	 * Allocates a word in the dictionary
@@ -120,6 +179,35 @@ public class SpellDictionaryHashMap extends SpellDictionaryASpell {
 			list = new Vector();
 			list.addElement(word);
 			mainDictionary.put(code, list);
+		}
+	}
+	
+	protected void putWordUnique(String word) {
+		
+		String code = getCode(word);
+		Vector list = (Vector) mainDictionary.get(code);
+		
+		if (list != null) {
+			
+			boolean isAlready = false;
+			
+			for( int i = 0; i < list.size(); i++ ){
+				
+				if( word.compareTo((String)list.elementAt(i)) == 0 ){
+					isAlready = true;
+					break;
+				}
+			}
+			
+			if( !isAlready )
+				list.addElement(word);
+				
+		} else {
+			
+			list = new Vector();
+			list.addElement(word);
+			mainDictionary.put(code, list);
+			
 		}
 	}
 

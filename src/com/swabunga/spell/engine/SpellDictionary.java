@@ -42,23 +42,22 @@ public class SpellDictionary {
    * code. The map entry contains a LinkedList of words that have the same double meta code.
    */
   protected HashMap mainDictionary = new HashMap(INITIAL_CAPACITY);
-  /**The reference to the Double meta calculator.
+  /**The reference to a Transformator, used to transform a word into it's.
+   * phonetic code.
    */
-  private final DoubleMeta dm = new DoubleMeta();
+  private Transformator tf = null;
   /**The distance weights*/
   private final EditDistanceWeights distanceWeights = new EditDistanceWeights();
 
   /** Holds the dictionary file for appending*/
-  protected File dictFile = null;
+  private File dictFile = null;
 
   /**
    * Dictionary Constructor.
    */
-  protected SpellDictionary(){
-  }
-
   public SpellDictionary (Reader wordList) throws IOException
   {
+    tf=new DoubleMeta();
     createDictionary(new BufferedReader(wordList));
   }
 
@@ -69,6 +68,17 @@ public class SpellDictionary {
   {
     this(new FileReader(wordList));
     dictFile=wordList;
+  }
+
+  /**
+  * Dictionary constructor that uses an aspell phonetic file to
+  * build the transformation table.
+  */
+  public SpellDictionary (File wordList, File phonetic) throws FileNotFoundException, IOException
+  {
+      tf=new GenericTransformator(phonetic);
+      dictFile=wordList;
+      createDictionary(new BufferedReader(new FileReader(wordList)));
   }
 
   /**
@@ -111,7 +121,7 @@ public class SpellDictionary {
    * Returns the code representing the word.
    */
   public String getCode (String word) {
-    return  dm.process(word);
+    return  tf.transform(word);
   }
 
   /**

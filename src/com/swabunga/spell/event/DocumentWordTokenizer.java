@@ -1,6 +1,7 @@
 package com.swabunga.spell.event;
 
 import java.util.*;
+import java.text.*;
 import javax.swing.text.Document;
 import javax.swing.text.Segment;
 import javax.swing.text.BadLocationException;
@@ -30,12 +31,18 @@ public class DocumentWordTokenizer implements WordTokenizer {
    */
   private boolean first = true;
 
+  private BreakIterator sentanceIterator;
+  private boolean startsSentance = true;
+
+
   public DocumentWordTokenizer(Document document) {
     this.document = document;
     //Create a text segment over the etire document
     text = new Segment();
+    sentanceIterator = BreakIterator.getSentenceInstance();
     try {
       document.getText(0, document.getLength(), text);
+      sentanceIterator.setText(text);
       currentWordPos = getNextWordStart(text, 0);
       //If the current word pos is -1 then the string was all white space
       if (currentWordPos != -1) {
@@ -105,6 +112,15 @@ public class DocumentWordTokenizer implements WordTokenizer {
       currentWordPos = nextWordPos;
       currentWordEnd = getNextWordEnd(text, currentWordPos);
       nextWordPos = getNextWordStart(text, currentWordEnd+1);
+      int current = sentanceIterator.current();
+      if (current == currentWordPos)
+        startsSentance = true;
+      else {
+        startsSentance = false;
+        if (currentWordEnd > current)
+          sentanceIterator.next();
+      }
+
     }
     //The nextWordPos has already been populated
     String word = null;
@@ -145,6 +161,8 @@ public class DocumentWordTokenizer implements WordTokenizer {
       if (currentWordPos != -1) {
         currentWordEnd = getNextWordEnd(text, currentWordPos);
         nextWordPos = getNextWordStart(text, currentWordEnd);
+        sentanceIterator.setText(text);
+        sentanceIterator.following(currentWordPos);
       } else moreTokens = false;
     }
   }
@@ -155,4 +173,10 @@ public class DocumentWordTokenizer implements WordTokenizer {
   public String getContext() {
     return text.toString();
   }
+
+  /** Returns true iif the current word is at the start of a sentance*/
+  public boolean isNewSentance() {
+    return startsSentance;
+  }
+
 }

@@ -1,6 +1,7 @@
 package com.swabunga.spell.event;
 
 import java.util.*;
+import java.text.*;
 
 /** This class tokenizes a input string.
  *  <p>
@@ -27,7 +28,14 @@ public class StringWordTokenizer implements WordTokenizer {
    */
   private boolean first = true;
 
+  private BreakIterator sentanceIterator;
+  private boolean startsSentance = true;
+
+
   public StringWordTokenizer(String text) {
+    sentanceIterator = BreakIterator.getSentenceInstance();
+    sentanceIterator.setText(text);
+    sentanceIterator.first();
     //Wrap a string buffer to hopefully make things a bit easier and efficient to
     //replace words etc.
     this.text = new StringBuffer(text);
@@ -97,6 +105,14 @@ public class StringWordTokenizer implements WordTokenizer {
       currentWordPos = nextWordPos;
       currentWordEnd = getNextWordEnd(text, currentWordPos);
       nextWordPos = getNextWordStart(text, currentWordEnd+1);
+      int current = sentanceIterator.current();
+      if (current == currentWordPos)
+        startsSentance = true;
+      else {
+        startsSentance = false;
+        if (currentWordEnd > current)
+          sentanceIterator.next();
+      }
     }
     //The nextWordPos has already been populated
     String word = text.substring(currentWordPos, currentWordEnd);
@@ -124,8 +140,15 @@ public class StringWordTokenizer implements WordTokenizer {
       if (currentWordPos != -1) {
         currentWordEnd = getNextWordEnd(text, currentWordPos);
         nextWordPos = getNextWordStart(text, currentWordEnd);
+        sentanceIterator.setText(text.toString());
+        sentanceIterator.following(currentWordPos);
       } else moreTokens = false;
     }
+  }
+
+  /** returns true iif the current word is at the start of a sentance*/
+  public boolean isNewSentance() {
+    return startsSentance;
   }
 
   /** Returns the current text that is being tokenized (includes any changes
@@ -156,6 +179,13 @@ public class StringWordTokenizer implements WordTokenizer {
       System.out.println("Word is '"+word+"'");
     }
     System.out.println("End text is: '"+t.getFinalText()+"'");
-  }
 
+    t = new StringWordTokenizer("This is a acronym (A.C.M.E). This is the second sentance.");
+    while(t.hasMoreWords()) {
+      String word = t.nextWord();
+      System.out.println("Word is '"+word+"'. Starts Sentance?="+t.isNewSentance());
+      if (word.equals("acronym"))
+        t.replaceWord("test");
+    }
+  }
 }

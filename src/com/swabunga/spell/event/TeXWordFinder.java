@@ -72,12 +72,12 @@ search:
       char currentLetter = text.charAt(i);
 
 //{{{ Find words.
-      if (!started && Character.isLetter(currentLetter)) {
+      if (!started && isWordChar(currentLetter)) {
         nextWord.setStart(i++);
         started = true;
         continue search;
       } else if (started) {
-          if (Character.isLetter(currentLetter)){
+          if (isWordChar(currentLetter)){
 						i++;
 						continue search;
           }else {

@@ -119,11 +119,11 @@ public class DefaultWordFinder
       char currentLetter = text.charAt(i);
 
       //Find words.
-      if (!started && Character.isLetter(currentLetter)) {
+      if (!started && isWordChar(currentLetter)) {
         nextWord.setStart(i);
         started = true;
       }
-			else if (started && !Character.isLetter(currentLetter)) {
+			else if (started && !isWordChar(currentLetter)) {
         nextWord.setText(text.substring(nextWord.getStart(), i));
         finished = true;
 				break search;

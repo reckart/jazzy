@@ -187,6 +187,16 @@ public abstract class AbstractWordFinder
 		return newIndex;
 	} //}}}
 
+  protected boolean isWordChar(char c){
+    boolean out = false;
+    if (Character.isLetter(c) || 
+          c == '\''){
+            out = true;
+    }
+    
+    return out;    
+  }
+  
   /**
    * Return the text being searched. May have changed since first set through
    * calls to replace.

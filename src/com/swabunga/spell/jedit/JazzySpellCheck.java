@@ -1,6 +1,6 @@
 /*
- * $Date: 2003/01/31 07:45:59 $
- * $Author: bgalbs $
+ * $Date: 2003/02/03 12:08:06 $
+ * $Author: ant-roy $
  *
  * Copyright (C) 2002 Anthony Roy
  *
@@ -21,6 +21,7 @@
 package com.swabunga.spell.jedit;
 
 import com.swabunga.spell.engine.SpellDictionary;
+import com.swabunga.spell.engine.SpellDictionaryHashMap;
 import com.swabunga.spell.event.SpellCheckEvent;
 import com.swabunga.spell.event.SpellCheckListener;
 import com.swabunga.spell.event.*;

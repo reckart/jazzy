@@ -88,16 +88,16 @@ public class JavaWordFinder
 					i++;
 				continue search;
 			  }
-				else if (!Character.isLetter(currentLetter)){
+				else if (!isWordChar(currentLetter)){
 					i++;
 					continue search;
 				}
 				//Find words.
 				while (i < text.length()-1) {
-					if (!started && Character.isLetter(currentLetter)) {
+					if (!started && isWordChar(currentLetter)) {
 						nextWord.setStart(i);
 						started = true;
-					} else if (started && !Character.isLetter(currentLetter)) {
+					} else if (started && !isWordChar(currentLetter)) {
 						nextWord.setText(text.substring(nextWord.getStart(), i));
 						finished = true;
 						break search;

@@ -74,6 +74,12 @@ public class DocumentWordTokenizer implements WordTokenizer {
   private static int getNextWordEnd(Segment text, int startPos) {
     for (char ch = text.setIndex(startPos); ch != Segment.DONE; ch = text.next()) {
       if (!Character.isLetterOrDigit(ch)) {
+        if (ch == '-' || ch == '\'') { // handle ' and - inside words
+          char ch2 = text.next();
+          text.previous();
+          if (ch2 != Segment.DONE && Character.isLetterOrDigit(ch2))
+            continue;
+        }
         return text.getIndex();
       }
     }

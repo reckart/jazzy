@@ -19,38 +19,14 @@ import java.util.*;
  */
 public class GenericSpellDictionary extends SpellDictionaryASpell {
 
-    /**
-     * This replace list is used if no phonetic file is supplied or it doesn't
-     * contain the alphabet.
-     */
-    protected static final char[] englishAlphabet = 
-    {
-        'A',
-        'B',
-        'C',
-        'D',
-        'E',
-        'F',
-        'G',
-        'H',
-        'I',
-        'J',
-        'K',
-        'L',
-        'M',
-        'N',
-        'O',
-        'P',
-        'Q',
-        'R',
-        'S',
-        'T',
-        'U',
-        'V',
-        'W',
-        'X',
-        'Y',
-        'Z'};
+//tech_monkey: the alphabet / replace list stuff has been moved into the Transformator classes, 
+//since they are so closely tied to how the phonetic transformations are done. 
+//    /**
+//     * This replace list is used if no phonetic file is supplied or it doesn't
+//     * contain the alphabet.
+//     */
+//    protected static final char[] englishAlphabet = 
+
 
     /** A field indicating the initial hash map capacity (16KB) for the main
      *  dictionary hash map. Interested to see what the performance of a
@@ -85,50 +61,12 @@ public class GenericSpellDictionary extends SpellDictionaryASpell {
     */
     public GenericSpellDictionary(File wordList, File phonetic)
     throws FileNotFoundException, IOException {
-
-        dictFile = wordList;
-		char[] alphabet = null;
 		
-        if (phonetic != null){
-			tf=new GenericTransformator(phonetic);
-			alphabet = ((GenericTransformator)tf).getAlphaReplaceList();
-        }
-
-        // If no alphabet is availible use english.
-        if(alphabet == null)
-            alphabet = englishAlphabet;
-
-        replacelist = washAlphabetIntoReplaceList(alphabet);
+		super(phonetic);
+        dictFile = wordList;
         createDictionary(new BufferedReader(new FileReader(wordList)));
     }
 
-    /**
-     * Goes through an alphabet and makes sure that only one of those letters
-     * that are coded equally will be in the replace list. This is done to 
-     * improve speed in the getSuggestion method,
-     * 
-     * @param alphabet The complete alphabet to wash.
-     * @return The washed alphabet to be used as replace list.
-     */
-    private char[] washAlphabetIntoReplaceList(char[] alphabet){
-
-        HashMap letters = new HashMap(alphabet.length);
-
-        for(int i=0;i<alphabet.length;i++){
-            String tmp=String.valueOf(alphabet[i]);
-            String code=tf.transform(tmp);
-            if(!letters.containsKey(code)){
-                letters.put(code,new Character(alphabet[i]));
-            }
-        }
-
-		Object[] tmpCharacters=letters.values().toArray();
-		char[] washedArray=new char[tmpCharacters.length];
-        for(int i=0;i<tmpCharacters.length;i++){
-            washedArray[i]=((Character)tmpCharacters[i]).charValue();
-        }
-        return washedArray;
-    }
 
     /**
      * Add a word permanantly to the dictionary (and the dictionary file).

@@ -49,7 +49,8 @@ public class SpellDictionaryDisk extends SpellDictionaryASpell{
      * and return when done. If block is false, this method will create a thread to create the new
      * dictionary and return immediately.
      */
-    public SpellDictionaryDisk(File base, boolean block) throws FileNotFoundException, IOException {
+    public SpellDictionaryDisk(File base, File phonetic, boolean block) throws FileNotFoundException, IOException {
+        super(phonetic);
         this.ready = false;
 
         this.base = base;

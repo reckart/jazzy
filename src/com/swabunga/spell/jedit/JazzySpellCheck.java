@@ -1,6 +1,6 @@
 /*
- * $Date: 2003/02/19 10:34:17 $
- * $Author: ant-roy $
+ * $Date: 2003/03/07 20:40:57 $
+ * $Author: tech_monkey $
  *
  * Copyright (C) 2002 Anthony Roy
  *
@@ -185,7 +185,8 @@ public class JazzySpellCheck
 
                 if (jEdit.getBooleanProperty("options.jazzy.disk-based", false)) {
                     dictionary = new SpellDictionaryDisk(dictionaryFile.getParentFile(), 
-                                                         true);
+                    									null,
+                                                        true);
                     Log.log(Log.MESSAGE, this, 
                             "Disk-based SpellChecker Loaded.");
                 } else {

@@ -11,6 +11,43 @@ import com.swabunga.util.*;
  * @author Robert Gustavsson (robert@lindesign.se)
  */
 public class GenericTransformator implements Transformator{
+
+
+	/**
+	 * This replace list is used if no phonetic file is supplied or it doesn't
+	 * contain the alphabet.
+	 */
+	private static final char[] defaultEnglishAlphabet = 
+	{
+		'A',
+		'B',
+		'C',
+		'D',
+		'E',
+		'F',
+		'G',
+		'H',
+		'I',
+		'J',
+		'K',
+		'L',
+		'M',
+		'N',
+		'O',
+		'P',
+		'Q',
+		'R',
+		'S',
+		'T',
+		'U',
+		'V',
+		'W',
+		'X',
+		'Y',
+		'Z'
+	};
+
+
     
     public static final char        ALPHABET_START='[';
     public static final char        ALPHABET_END=']';
@@ -25,11 +62,47 @@ public class GenericTransformator implements Transformator{
     public static final String  REPLACEVOID="_";
 
     private Object[]    ruleArray=null;
-    private String      alphabetString=null;
+    private char[]      alphabetString = defaultEnglishAlphabet;
 
     public GenericTransformator(File phonetic)throws IOException{
         buildRules(new BufferedReader(new FileReader(phonetic)));
+		alphabetString = washAlphabetIntoReplaceList(getReplaceList());
+
     }
+
+	/**
+	 * Goes through an alphabet and makes sure that only one of those letters
+	 * that are coded equally will be in the replace list. 
+	 * In other words, it removes any letters in the alphabet
+	 * that are redundant phonetically.
+	 * 
+	 * This is done to improve speed in the getSuggestion method.
+	 * 
+	 * @param alphabet The complete alphabet to wash.
+	 * @return The washed alphabet to be used as replace list.
+	 */
+	private char[] washAlphabetIntoReplaceList(char[] alphabet){
+
+		HashMap letters = new HashMap(alphabet.length);
+
+		for(int i=0;i<alphabet.length;i++){
+			String tmp=String.valueOf(alphabet[i]);
+			String code= transform(tmp);
+			if(!letters.containsKey(code)){
+				letters.put(code,new Character(alphabet[i]));
+			}
+		}
+
+		Object[] tmpCharacters = letters.values().toArray();
+		char[] washedArray = new char[tmpCharacters.length];
+
+		for(int i=0;i<tmpCharacters.length;i++){
+			washedArray[i]=((Character)tmpCharacters[i]).charValue();
+		}
+        
+		return washedArray;
+	}
+
 
     /**
 	 * Takes out all single character replacements and put them in a char array. 
@@ -60,10 +133,8 @@ public class GenericTransformator implements Transformator{
 	 * alphabet tag in the phonetic file.
 	 * @return char[] An array of chars representing the alphabet or null if no alphabet was available.
 	 */
-    public char[] getAlphaReplaceList(){
-        if(alphabetString!=null)
-            return alphabetString.toCharArray();
-        return null;
+    public char[] getReplaceList(){
+		return alphabetString;
     }
 
     /**
@@ -136,7 +207,7 @@ public class GenericTransformator implements Transformator{
             int start=str.indexOf(ALPHABET_START);
             int end=str.lastIndexOf(ALPHABET_END);
             if(end!=-1 && start!=-1){
-                alphabetString=str.substring(++start,end);
+                alphabetString=str.substring(++start,end).toCharArray();
             }
             return;
         }

@@ -25,6 +25,35 @@ package  com.swabunga.spell.engine;
  */
 public class DoubleMeta implements Transformator{
 
+	/** 
+	 * The replace list is used in the getSuggestions method.
+	 * All of the letters in the misspelled word are replaced with the characters from 
+	 * this list to try and generate more suggestions, which implies l*n tries,
+	 * if l is the size of the string, and n is the size of this list.
+	 * 
+	 * In addition to that, each of these letters is added to the mispelled word. 
+	 */
+	private static char[] replaceList =
+	{
+		'A',	
+		'B',
+		'X',
+		'S',
+		'K',
+		'J',
+		'T',
+		'F',
+		'H',
+		'L',
+		'M',
+		'N',
+		'P',
+		'R',
+		'0' 
+	};
+
+
+
     private static final String[] myList = {
         "GN", "KN", "PN", "WR", "PS", ""
     };
@@ -912,6 +941,14 @@ public class DoubleMeta implements Transformator{
     }
     return  primary.toString();
   }
+
+	/**
+	 * @see com.swabunga.spell.engine.Transformator#getReplaceList()
+	 */
+	public char[] getReplaceList()
+	{
+		return replaceList;
+	}
 }
 
 

@@ -38,13 +38,15 @@ public class SpellDictionaryHashMap extends SpellDictionaryASpell {
 	/**
 	 * Dictionary Constructor.
 	 */
-	public SpellDictionaryHashMap(){
+	public SpellDictionaryHashMap() throws IOException{
+		super(null);
 	}
 
 	/**
 	 * Dictionary Constructor.
 	 */
 	public SpellDictionaryHashMap(Reader wordList) throws IOException {
+		super(null);
 		createDictionary(new BufferedReader(wordList));
 	}
 
@@ -63,6 +65,7 @@ public class SpellDictionaryHashMap extends SpellDictionaryASpell {
 	*/
 	public SpellDictionaryHashMap(File wordList, File phonetic)
 		throws FileNotFoundException, IOException {
+		super(phonetic);	
 		dictFile = wordList;
 		createDictionary(new BufferedReader(new FileReader(wordList)));
 	}

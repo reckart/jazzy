@@ -3,6 +3,8 @@ package com.swabunga.spell.event;
 import com.swabunga.util.*;
 import com.swabunga.spell.engine.*;
 import com.swabunga.spell.engine.Word;
+
+import java.io.IOException;
 import java.util.*;
 /*import java.util.HashMap;
 import java.util.HashSet;
@@ -26,7 +28,7 @@ public class SpellChecker {
 
   private Vector eventListeners = new Vector();
   private Vector dictionaries = new Vector();
-  private SpellDictionary userdictionary = new SpellDictionaryHashMap();
+  private SpellDictionary userdictionary;
   
   private Configuration config = Configuration.getConfiguration();
 
@@ -38,6 +40,14 @@ public class SpellChecker {
    * Constructs the SpellChecker.
    */
   public SpellChecker() {
+	try
+	{
+		userdictionary = new SpellDictionaryHashMap();
+	}
+	catch (IOException e)
+	{
+		throw new RuntimeException("this exception should never happen because we are using null phonetic file",e);
+	}
   }
 
   /**
@@ -46,7 +56,8 @@ public class SpellChecker {
    * @param  dictionary  Description of the Parameter
    */
   public SpellChecker(SpellDictionary dictionary) {
-      addDictionary(dictionary);
+	this();
+	addDictionary(dictionary);
   }
 
 

@@ -15,11 +15,15 @@ public class SpellCheckExample2 implements SpellCheckListener {
   private SpellChecker spellCheck = null;
 
 
-  public SpellCheckExample2() {
+  public SpellCheckExample2(String phoneticFileName) {
     try {
 
       BufferedReader in = new BufferedReader(new FileReader("example2.txt"));
-      SpellDictionary dictionary = new SpellDictionaryHashMap(new File(dictFile));
+      File phonetic = null;
+      if (phoneticFileName != null)
+      	phonetic = new File(phoneticFileName);
+      	
+      SpellDictionary dictionary = new SpellDictionaryHashMap(new File(dictFile),phonetic);
       spellCheck = new SpellChecker(dictionary);
       spellCheck.addSpellCheckListener(this);
 
@@ -54,6 +58,11 @@ public class SpellCheckExample2 implements SpellCheckListener {
   }
 
   public static void main(String[] args) {
-    new SpellCheckExample2();
+  	
+  	System.out.println("Running spell check against DoubleMeta");
+    new SpellCheckExample2(null);
+	
+	System.out.println("\n\nRunning spell check against GenericTransformator");
+	new SpellCheckExample2("dict/phonet.en");
   }
 }

@@ -1,6 +1,8 @@
 /* Created by bgalbs on Jan 30, 2003 at 11:45:25 PM */
 package com.swabunga.spell.engine;
 
+import java.io.File;
+import java.io.IOException;
 import java.security.InvalidParameterException;
 import java.util.*;
 
@@ -13,33 +15,18 @@ import java.util.*;
  */
 public abstract class SpellDictionaryASpell implements SpellDictionary {
 
-    /** 
-     * The replace list is used in the getSuggestions method.
-     * All of the letters in the misspelled word are replaced with the characters from 
-     * this list to try and generate more suggestions. 
-     */
-    protected static char[] replacelist =
-        {
-            'A',	
-            'B',
-            'X',
-            'S',
-            'K',
-            'J',
-            'T',
-            'F',
-            'H',
-            'L',
-            'M',
-            'N',
-            'P',
-            'R',
-            '0' };
 
     /** The reference to a Transformator, used to transform a word into it's phonetic code. */
-    protected Transformator tf = new DoubleMeta();
+    protected Transformator tf;
 
-
+	public SpellDictionaryASpell(File phonetic) throws IOException
+	{
+		if (phonetic == null)
+			tf = new DoubleMeta();
+		else
+			tf = new GenericTransformator(phonetic);
+	}
+	
     /**
      * Returns a list of Word objects that are the suggestions to an
      * incorrect word.
@@ -71,6 +58,9 @@ public abstract class SpellDictionaryASpell implements SpellDictionary {
             charArray[i] = a;
             charArray[i + 1] = b;
         }
+        
+        char[] replacelist = tf.getReplaceList();
+        
         //change
         charArray = word.toCharArray();
         for (int i = 0; i < word.length(); i++) {
@@ -82,6 +72,7 @@ public abstract class SpellDictionaryASpell implements SpellDictionary {
 			}
             charArray[i] = original;
         }
+        
         //add
         charArray = (word += " ").toCharArray();
         int iy = charArray.length - 1;
@@ -96,6 +87,7 @@ public abstract class SpellDictionaryASpell implements SpellDictionary {
             charArray[iy] = charArray[iy - 1];
             --iy;
         }
+        
         //delete
         word = word.trim();
         charArray = word.toCharArray();
@@ -120,14 +112,16 @@ public abstract class SpellDictionaryASpell implements SpellDictionary {
 		nearmisscodes.remove(code); //already accounted for in phoneticList
 
         Vector wordlist = getWordsFromCode(word, nearmisscodes);
+
+		if (wordlist.size() == 0 && phoneticList.size() == 0)
+			addBestGuess(word,phoneticList);
+        
+		
 		// We sort a Vector at the end instead of maintaining a
         // continously sorted TreeSet because everytime you add a collection
         // to a treeset it has to be resorted. It's better to do this operation
         // once at the end.
 
-        if (wordlist.size() == 0 && phoneticList.size() == 0)
-        	addBestGuess(word,phoneticList);
-        
 //		Collections.sort( phoneticList, new Word()); //always sort phonetic matches along the top
 //        Collections.sort( wordlist, new Word()); //the non-phonetic matches can be listed below
         
@@ -137,7 +131,7 @@ public abstract class SpellDictionaryASpell implements SpellDictionary {
 
 	/**	 
 	 * When we don't come up with any suggestions (probably because the threshold was too strict), 
-	 * then pick the best guesses from the those words that have the same phonetic coce. 
+	 * then pick the best guesses from the those words that have the same phonetic code. 
 	 * @param word - the word we are trying spell correct
 	 * @param wordList - the linked list that will get the best guess
 	 */

@@ -26,7 +26,7 @@ public class SpellDictionary {
 
 
 	/** The replace list is used in the getSuggestions method*/
-	private static final char[] replacelist =
+	private static char[] replacelist =
 		{
 			'A',
 			'B',
@@ -87,6 +87,7 @@ public class SpellDictionary {
 	public SpellDictionary(File wordList, File phonetic)
 		throws FileNotFoundException, IOException {
 		tf = new GenericTransformator(phonetic);
+                replacelist=((GenericTransformator)tf).getReplaceList();
 		dictFile = wordList;
 		createDictionary(new BufferedReader(new FileReader(wordList)));
 	}
@@ -190,37 +191,37 @@ public class SpellDictionary {
 		String code = getCode(word);
 
 		// add all words that have the same codeword
-		nearmisscodes.add(code);
+                nearmisscodes.add(code);
 
 		// do some tranformations to pick up more results
 		//interchange 
-		char[] charArray = word.toCharArray();
-		for (int i = 0; i < word.length() - 1; i++) {
+		char[] charArray = code.toCharArray();
+		for (int i = 0; i < code.length() - 1; i++) {
 			char a = charArray[i];
 			char b = charArray[i + 1];
 			charArray[i] = b;
 			charArray[i + 1] = a;
-			nearmisscodes.add(getCode(new String(charArray)));
+			nearmisscodes.add(new String(charArray));
 			charArray[i] = a;
 			charArray[i + 1] = b;
 		}
 		//change
-		charArray = word.toCharArray();
-		for (int i = 0; i < word.length(); i++) {
+		charArray = code.toCharArray();
+		for (int i = 0; i < code.length(); i++) {
 			char original = charArray[i];
 			for (int j = 0; j < replacelist.length; j++) {
 				charArray[i] = replacelist[j];
-				nearmisscodes.add(getCode(new String(charArray)));
+				nearmisscodes.add(new String(charArray));
 			}
 			charArray[i] = original;
 		}
 		//add
-		charArray = (word += " ").toCharArray();
+		charArray = (code += " ").toCharArray();
 		int iy = charArray.length - 1;
 		while (true) {
 			for (int j = 0; j < replacelist.length; j++) {
 				charArray[iy] = replacelist[j];
-				nearmisscodes.add(getCode(new String(charArray)));
+				nearmisscodes.add(new String(charArray));
 			}
 			if (iy == 0)
 				break;
@@ -228,8 +229,8 @@ public class SpellDictionary {
 			--iy;
 		}
 		//delete
-		word = word.trim();
-		charArray = word.toCharArray();
+		word = code.trim();
+		charArray = code.toCharArray();
 		char[] charArray2 = new char[charArray.length - 1];
 		for (int ix = 0; ix < charArray2.length; ix++) {
 			charArray2[ix] = charArray[ix];
@@ -238,7 +239,7 @@ public class SpellDictionary {
 		a = charArray[charArray.length - 1];
 		int ii = charArray2.length;
 		while (true) {
-			nearmisscodes.add(getCode(new String(charArray)));
+			nearmisscodes.add(new String(charArray));
 			if (ii == 0)
 				break;
 			b = a;

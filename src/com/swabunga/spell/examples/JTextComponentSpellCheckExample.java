@@ -22,7 +22,7 @@ import  java.io.*;
  */
 public class JTextComponentSpellCheckExample extends JFrame {
   private static final String dictionaryFile = "dict.sv";
-  private static final String phoneticFile = "swedish_phonet.dat";
+  private static final String phoneticFile = "phonet.sv";
   private SpellDictionary dictionary;
   JTextComponent text = null;
   JButton spell = null;
@@ -36,7 +36,8 @@ public class JTextComponentSpellCheckExample extends JFrame {
       }
     });
     try {
-      dictionary = new SpellDictionary(new File(dictionaryFile), new File(phoneticFile));
+      dictionary = new SpellDictionary(new File("dict/"+dictionaryFile),
+                                       new File("dict/"+phoneticFile));
     } catch (Exception ex) {
       ex.printStackTrace();
     }

@@ -103,13 +103,6 @@ public class SpellDictionaryHashMap extends SpellDictionaryASpell implements Spe
 	}
 
 	/**
-	 * Returns the code representing the word.
-	 */
-	public String getCode(String word) {
-		return tf.transform(word);
-	}
-
-	/**
 	 * Allocates a word in the dictionary
 	 */
 	protected void putWord(String word) {

@@ -10,16 +10,6 @@ public interface SpellDictionary {
 	public void addWord(String word);
 
 	/**
-	 * Returns the code representing the word.
-	 */
-	public String getCode(String word);
-
-	/**
-	 * Returns a list of strings (words) for the code.
-	 */
-	public List getWords(String code);
-
-	/**
 	 * Returns true if the word is correctly spelled against the current word list.
 	 */
 	public boolean isCorrect(String word);

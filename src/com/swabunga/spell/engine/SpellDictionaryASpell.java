@@ -129,4 +129,16 @@ public abstract class SpellDictionaryASpell implements SpellDictionary {
         }
         return result;
     }
+
+    /**
+     * Returns the code representing the word.
+     */
+    public String getCode(String word) {
+        return tf.transform(word);
+    }
+
+    /**
+     * Returns a list of strings (words) for the code.
+     */
+    protected abstract List getWords(String code);
 }

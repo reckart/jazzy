@@ -1,6 +1,6 @@
 /*
- * $Date: 2003/01/28 15:50:52 $
- * $Author: ant-roy $
+ * $Date: 2003/01/31 07:45:59 $
+ * $Author: bgalbs $
  *
  * Copyright (C) 2002 Anthony Roy
  *
@@ -140,7 +140,7 @@ public class JazzySpellCheck
     if (!LOADED && dictionaryFile.exists()) {
 
       try {
-        dictionary = new SpellDictionary(dictionaryFile);
+        dictionary = new SpellDictionaryHashMap(dictionaryFile);
       } catch (Exception e) {
         Log.log(Log.MESSAGE,this,"TextSpellCheck: error loading dictionary: " + e);
         LOADED = false;
@@ -154,7 +154,7 @@ public class JazzySpellCheck
       try{
         InputStream in = this.getClass().getResourceAsStream("/english.0");
         InputStreamReader reader = new InputStreamReader(in);
-        dictionary = new SpellDictionary(reader);      
+        dictionary = new SpellDictionaryHashMap(reader);
       }catch(Exception e) {
         Log.log(Log.MESSAGE,this,"TextSpellCheck: error loading default dictionary: " + e);
         LOADED = false;

@@ -17,7 +17,7 @@ public class SpellCheckExample implements SpellCheckListener {
 
   public SpellCheckExample() {
     try {
-      SpellDictionary dictionary = new SpellDictionary(new File(dictFile));
+      SpellDictionary dictionary = new SpellDictionaryHashMap(new File(dictFile));
 
       spellCheck = new SpellChecker(dictionary);
       spellCheck.addSpellCheckListener(this);

@@ -26,6 +26,7 @@ import javax.swing.JTextArea;
 import javax.swing.text.JTextComponent;
 
 import com.swabunga.spell.engine.SpellDictionary;
+import com.swabunga.spell.engine.SpellDictionaryHashMap;
 
 /**
  * @author aim4min
@@ -72,7 +73,7 @@ public class JSpellApplet extends JApplet {
 			}
 			zip.getNextEntry();
 			dictionary =
-				new SpellDictionary(
+				new SpellDictionaryHashMap(
 					new BufferedReader(new InputStreamReader(zip)));
 
 			initGUI();

@@ -15,7 +15,7 @@ import java.util.Set;
  *  checking).
  *
  * @author     Jason Height (jheight@chariot.net.au)
- * @created    19 June 2002
+ * 19 June 2002
  */
 public class SpellChecker {
   /** Flag indicating that the Spell Check completed without any errors present*/

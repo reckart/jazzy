@@ -18,7 +18,7 @@ public class SpellCheckExample2 implements SpellCheckListener {
   public SpellCheckExample2() {
     try {
       BufferedReader in = new BufferedReader(new FileReader("README.TXT"));
-      SpellDictionary dictionary = new SpellDictionary(new File(dictFile));
+      SpellDictionary dictionary = new SpellDictionaryHashMap(new File(dictFile));
       spellCheck = new SpellChecker(dictionary);
       spellCheck.addSpellCheckListener(this);
 

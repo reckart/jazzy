@@ -36,7 +36,7 @@ public class JTextComponentSpellCheckExample extends JFrame {
       }
     });
     try {
-      dictionary = new SpellDictionary(new File("dict/"+dictionaryFile),
+      dictionary = new SpellDictionaryHashMap(new File("dict/"+dictionaryFile),
                                        new File("dict/"+phoneticFile));
     } catch (Exception ex) {
       ex.printStackTrace();

@@ -23,11 +23,12 @@ import java.awt.event.*;
 import javax.swing.plaf.TextUI;
 
 import java.util.LinkedList;
-
+import java.util.List;
 
 
 import com.swabunga.spell.engine.SpellDictionary;
 import com.swabunga.spell.engine.Word;
+import com.swabunga.spell.engine.SpellDictionaryHashMap;
 
 /**
  * 
@@ -39,8 +40,8 @@ import com.swabunga.spell.engine.Word;
  * 
  * 
  *
- *@author     Stig Tanggaard
- *@created    April 14, 2002
+ * @author     Stig Tanggaard
+ * April 14, 2002
  */
 public class SpellEditorKit extends StyledEditorKit {
 
@@ -64,7 +65,7 @@ public class SpellEditorKit extends StyledEditorKit {
 
 		try {
 
-			o = new SpellDictionary(file);
+			o = new SpellDictionaryHashMap(file);
 
 		} catch (Exception f) {
 
@@ -150,7 +151,7 @@ public class SpellEditorKit extends StyledEditorKit {
 								elem.getEndOffset() - elem.getStartOffset());
 
 						
-						LinkedList list = dictionary.getSuggestions(word, 5);
+						List list = dictionary.getSuggestions(word, 5);
 
 						JPopupMenu popup = new JPopupMenu();
 

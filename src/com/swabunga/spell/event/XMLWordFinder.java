@@ -1,3 +1,4 @@
+//:folding=indent:
 package com.swabunga.spell.event;
 
 import java.text.BreakIterator;
@@ -60,17 +61,16 @@ public class XMLWordFinder
     boolean started = false;
     boolean ignore = false;
   
-	search:
+	  search:      /* Find words. */
     while (i < text.length() && !finished) {
-
-      char currentLetter = text.charAt(i);
-//{{{ Find words.
-      if (!started && isWordChar(currentLetter)) {
+      /* Changed isWordChar() method in following block to use new improved position based version (11 Feb '03) */
+      //char currentLetter = text.charAt(i);
+      if (!started && isWordChar(i)) {
         nextWord.setStart(i++);
         started = true;
         continue search;
       } else if (started) {
-          if (isWordChar(currentLetter)){
+          if (isWordChar(i)){
 						i++;
 						continue search;
           }else {
@@ -78,7 +78,7 @@ public class XMLWordFinder
 						finished = true;
 						break search;
 					}
-      }  //}}}
+      } 
 
       //Ignore things inside tags.
 			i = ignore(i,'<','>');

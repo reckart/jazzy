@@ -69,15 +69,16 @@ public class TeXWordFinder
 search: 
     while (i < text.length() && !finished) {
 
-      char currentLetter = text.charAt(i);
+			/* Changed isWordChar() method in this block to use new improved position based version (11 Feb '03) */
+//      char currentLetter = text.charAt(i);
 
 //{{{ Find words.
-      if (!started && isWordChar(currentLetter)) {
+      if (!started && isWordChar(i)) {
         nextWord.setStart(i++);
         started = true;
         continue search;
       } else if (started) {
-          if (isWordChar(currentLetter)){
+          if (isWordChar(i)){
 						i++;
 						continue search;
           }else {

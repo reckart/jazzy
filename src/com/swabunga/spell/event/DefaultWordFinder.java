@@ -116,14 +116,16 @@ public class DefaultWordFinder
 	search:
     while (i < text.length() && !finished) {
 
-      char currentLetter = text.charAt(i);
+      //removed following line, as isWordChar now requires an int for the word position.(11 Feb '03)
+      
+//      char currentLetter = text.charAt(i);
 
-      //Find words.
-      if (!started && isWordChar(currentLetter)) {
+      //Find words. Changed to use more intelligent character recognition. (11 Feb '03)
+      if (!started && isWordChar(i)) {
         nextWord.setStart(i);
         started = true;
       }
-			else if (started && !isWordChar(currentLetter)) {
+			else if (started && !isWordChar(i)) {
         nextWord.setText(text.substring(nextWord.getStart(), i));
         finished = true;
 				break search;

@@ -80,7 +80,7 @@ public class JavaWordFinder
 			if (i >= text.length()) break search;
       
       char currentLetter = text.charAt(i);
-			
+			/* Changed isWordChar() method in following block to use new improved position based version (11 Feb '03) */
 			if (inComment){
 				//Reset on new line.
 				if (currentLetter == '\n'){
@@ -88,16 +88,16 @@ public class JavaWordFinder
 					i++;
 				continue search;
 			  }
-				else if (!isWordChar(currentLetter)){
+				else if (!isWordChar(i)){
 					i++;
 					continue search;
 				}
 				//Find words.
 				while (i < text.length()-1) {
-					if (!started && isWordChar(currentLetter)) {
+					if (!started && isWordChar(i)) {
 						nextWord.setStart(i);
 						started = true;
-					} else if (started && !isWordChar(currentLetter)) {
+					} else if (started && !isWordChar(i)) {
 						nextWord.setText(text.substring(nextWord.getStart(), i));
 						finished = true;
 						break search;

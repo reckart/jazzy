@@ -70,6 +70,11 @@ public class GenericTransformator implements Transformator{
 
     }
 
+	public GenericTransformator(Reader phonetic)throws IOException{
+		buildRules(new BufferedReader(phonetic));
+		alphabetString = washAlphabetIntoReplaceList(getReplaceList());
+	}
+
 	/**
 	 * Goes through an alphabet and makes sure that only one of those letters
 	 * that are coded equally will be in the replace list. 
@@ -168,14 +173,18 @@ public class GenericTransformator implements Transformator{
                     continue;
                 }
                 if(rule.isMatching(str,startPos)){
-                    StringUtility.replace(str, startPos,startPos+rule.getTakeOut(),rule.getReplaceExp());
-                    add=rule.getReplaceExp().length();
+                    String replaceExp = rule.getReplaceExp();
+                    
+					add=replaceExp.length();	
+					StringUtility.replace(str, startPos,startPos+rule.getTakeOut(),replaceExp);
                     strLength-=rule.getTakeOut();
                     strLength+=add;
                     //System.out.println("Replacing with rule#:"+i+" add="+add);
                     break;
                 }
             }
+            if(add < 1 ) //wrs: there used to be an infinite loop on "user7" since replaceExp.length returned 0
+            	add = 1;
             startPos+=add;
         }
         return str.toString();

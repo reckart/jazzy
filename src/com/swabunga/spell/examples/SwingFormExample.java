@@ -19,7 +19,7 @@ public class SwingFormExample extends JFrame implements SpellCheckListener, Acti
   private static String dictFile = "dict/english.0";
   private SpellChecker spellCheck = null;
   private JTextArea textArea;
-  private JSpellDialog dlg = new JSpellDialog(null, "Check spelling", true);
+  private JSpellDialog dlg = new JSpellDialog(this, "Check spelling", true);
 
   public SwingFormExample() {
     try {
@@ -40,10 +40,10 @@ public class SwingFormExample extends JFrame implements SpellCheckListener, Acti
   }
 
   public void actionPerformed(ActionEvent e) {
-    //spellCheck.checkSpelling(new DocumentWordTokenizer(textArea.getDocument()));
-    StringWordTokenizer tokenizer = new StringWordTokenizer(textArea.getText());
-    spellCheck.checkSpelling(tokenizer);
-    textArea.setText(tokenizer.getFinalText());
+    spellCheck.checkSpelling(new DocumentWordTokenizer(textArea.getDocument()));
+    //StringWordTokenizer tokenizer = new StringWordTokenizer(textArea.getText());
+    //spellCheck.checkSpelling(tokenizer);
+    //textArea.setText(tokenizer.getFinalText());
   }
 
   public void spellingError(SpellCheckEvent event) {

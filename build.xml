@@ -129,7 +129,7 @@
          excludes="www/dict/**,bin/**,dist/**,dict/**,src/**/jedit/**,test/**,javadoc/**"/>
   </target>
 
-  <target name="binary-release" depends="compile,library-core,library-swing,examples,javadoc,website">
+  <target name="binary-release" depends="compile,library-core,library-swing,examples">
 <!--   	<zip zipfile="${dist}/jazzy-bin.zip" basedir="." excludes="dict/**,bin/**,**/jazzy-bin.zip,**/english.0.zip,**/jazzy-src.zip"/> -->
    	<zip zipfile="${dist}/jazzy-bin.zip" basedir="${dist}/lib" includes="jazzy-core.jar,jazzy-swing.jar,jazzy-examples.jar"/>
  	<!-- DMV

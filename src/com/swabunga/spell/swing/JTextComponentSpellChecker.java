@@ -16,6 +16,9 @@ import com.swabunga.spell.engine.*;
 
 public class JTextComponentSpellChecker implements SpellCheckListener {
 
+    public static final int EXIT_OK=0;
+    public static final int EXIT_CANCEL=1;
+
     private static final String COMPLETED="COMPLETED";
     private String dialogTitle=null;
 
@@ -23,7 +26,14 @@ public class JTextComponentSpellChecker implements SpellCheckListener {
     private JSpellDialog dlg=null;
     private JTextComponent textComp=null;
     private ResourceBundle messages;
+    private int exitState=EXIT_OK;
 
+    // Constructor
+    public JTextComponentSpellChecker(SpellDictionary dict){
+        this(dict, null);
+    }
+
+    // Convinient Constructors, for those lazy guys.
     public JTextComponentSpellChecker(String dictFile)
                                                         throws IOException{
         this(dictFile, null);
@@ -34,8 +44,12 @@ public class JTextComponentSpellChecker implements SpellCheckListener {
         this(new SpellDictionary(new File(dictFile)),title);
     }
 
-    public JTextComponentSpellChecker(SpellDictionary dict){
-        this(dict, null);
+    public JTextComponentSpellChecker(String dictFile,
+                                      String phoneticFile,
+                                      String title)throws IOException{
+        this(new SpellDictionary(new File(dictFile),
+                                 new File(phoneticFile)),
+             title);
     }
 
     public JTextComponentSpellChecker(SpellDictionary dict, String title){
@@ -45,6 +59,7 @@ public class JTextComponentSpellChecker implements SpellCheckListener {
         messages = ResourceBundle.getBundle("com.swabunga.spell.swing.messages", Locale.getDefault());
     }
 
+    // MEMBER METHODS
     private void setupDialog(JTextComponent textComp){
 
         Component comp=SwingUtilities.getRoot(textComp);
@@ -70,7 +85,8 @@ public class JTextComponentSpellChecker implements SpellCheckListener {
         }
     }
 
-    public synchronized void spellCheck(JTextComponent textComp){
+    public synchronized int spellCheck(JTextComponent textComp){
+        exitState=EXIT_OK;
         setupDialog(textComp);
         this.textComp=textComp;
 
@@ -80,6 +96,7 @@ public class JTextComponentSpellChecker implements SpellCheckListener {
         textComp.requestFocus();
         textComp.setCaretPosition(0);
         this.textComp=null;
+        return exitState;
     }
 
     public void spellingError(SpellCheckEvent event) {
@@ -95,5 +112,8 @@ public class JTextComponentSpellChecker implements SpellCheckListener {
         textComp.moveCaretPosition(end);
 
         dlg.show(event);
+
+        if(event.getAction()==SpellCheckEvent.CANCEL)
+            exitState=EXIT_CANCEL;
     }
 }

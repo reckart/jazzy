@@ -3,7 +3,13 @@
  * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
 
-
+/* 
+ * Changes 11 Jan 2003 Anthony Roy:
+ *
+ * 1) Changed checkText from a JTextArea to a JTextField (lines 51 and 115)
+ * 2) Altered the ADD_CMD action (Line 196). Now adds the misspelled word to the dictionary unless
+ *    a new word is typed which does not match the current suggestion. A confirm dialog is shown.
+ */
 package  com.swabunga.spell.swing;
 
 import com.swabunga.spell.engine.Word;
@@ -43,7 +49,7 @@ public class JSpellForm extends JPanel
 
   /* Accessible GUI Components */
   protected JList suggestList;
-  protected JTextArea checkText;
+  protected JTextField checkText;
   /* The current spell check event */
   protected SpellCheckEvent spellEvent;
   /** The listener list (holds actionlisteners) */
@@ -107,8 +113,8 @@ public class JSpellForm extends JPanel
     jPanel3.add(lbl1);
     jPanel3.add(wrongWordLabel);
     jPanel2.add(jPanel3);
-    checkText = new JTextArea();
-    jPanel2.add(new JScrollPane(checkText));
+    checkText = new JTextField();
+    jPanel2.add(checkText);
     JLabel lbl2 = new JLabel(messages.getString(SUGGESTIONS_RES));
     jPanel2.add(lbl2);
     suggestList = new JList();
@@ -189,7 +195,22 @@ public class JSpellForm extends JPanel
       spellEvent.replaceWord(checkText.getText(), true);
     }
     else if (ADD_CMD.equals(e.getActionCommand())) {
-      spellEvent.addToDictionary(checkText.getText());
+      String inField = checkText.getText();
+      Object selObj = suggestList.getSelectedValue();
+      String selected = (selObj == null ? "" : selObj.toString());
+      String addString = (inField.equals(selected) ? spellEvent.getInvalidWord() : inField);
+      
+      int n = JOptionPane.showConfirmDialog(
+                this,
+                "Add '" + addString + "' to dictionary?",
+                "Add Word?",
+                JOptionPane.YES_NO_OPTION);
+      
+      if (n == JOptionPane.YES_OPTION){
+        spellEvent.addToDictionary(addString);
+      }else{
+        return;
+      }
     }
     else if (CANCEL_CMD.equals(e.getActionCommand())) {
       spellEvent.cancel();

@@ -100,10 +100,8 @@ public class SpellDictionaryDisk extends SpellDictionaryASpell implements SpellD
         throw new UnsupportedOperationException("addWord not yet implemented (sorry)");
     }
 
-    public Vector getWords(String code) {
-        Vector words;
-
-        words = new Vector();
+    public List getWords(String code) {
+        Vector words = new Vector();
 
         int[] posLen = getStartPosAndLen(code);
         if (posLen != null) {

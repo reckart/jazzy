@@ -22,7 +22,7 @@ import  java.io.*;
  */
 public class JTextComponentSpellCheckExample extends JFrame {
     private static final String dictionaryFile = "english.0";
-    private static final String phoneticFile = "phonet.sv";
+    private static final String phoneticFile = "phonet.en";
     protected SpellDictionary dictionary;
     JTextComponent text = null;
     JButton spell = null;

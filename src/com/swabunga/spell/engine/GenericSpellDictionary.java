@@ -181,9 +181,9 @@ public class GenericSpellDictionary extends SpellDictionaryASpell {
     /**
      * Returns a list of strings (words) for the code.
      */
-    public Vector getWords(String code) {
+    public List getWords(String code) {
         //Check the main dictionary.
-        Vector mainDictResult = (Vector) mainDictionary.get(code);
+        List mainDictResult = (List) mainDictionary.get(code);
         if (mainDictResult == null)
             return new Vector();
         return mainDictResult;

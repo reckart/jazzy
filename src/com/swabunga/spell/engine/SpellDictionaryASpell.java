@@ -177,9 +177,10 @@ public abstract class SpellDictionaryASpell implements SpellDictionary {
 		for (Enumeration i = codes.keys();i.hasMoreElements();) {		
 			String code = (String) i.nextElement();
 			
-			Vector simwordlist = getWords(code);
-			for (Enumeration j = simwordlist.elements(); j.hasMoreElements();) {
-				String similar = (String) j.nextElement();
+			List simwordlist = getWords(code);
+			for (Iterator iter = simwordlist.iterator(); iter.hasNext();)
+			{
+				String similar = (String) iter.next();
                 int distance = EditDistance.getDistance(word, similar);
 				if (distance < configDistance) {
                     Word w = new Word(similar, distance);
@@ -200,5 +201,5 @@ public abstract class SpellDictionaryASpell implements SpellDictionary {
     /**
      * Returns a list of words that have the same phonetic code.
      */
-    protected abstract Vector getWords(String phoneticCode);
+    protected abstract List getWords(String phoneticCode);
 }

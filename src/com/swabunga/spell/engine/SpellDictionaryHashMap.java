@@ -126,7 +126,7 @@ public class SpellDictionaryHashMap extends SpellDictionaryASpell implements Spe
 	/**
 	 * Returns a list of strings (words) for the code.
 	 */
-	public Vector getWords(String code) {
+	public List getWords(String code) {
 		//Check the main dictionary.
 		Vector mainDictResult = (Vector) mainDictionary.get(code);
 		if (mainDictResult == null)
@@ -138,7 +138,7 @@ public class SpellDictionaryHashMap extends SpellDictionaryASpell implements Spe
 	 * Returns true if the word is correctly spelled against the current word list.
 	 */
 	public boolean isCorrect(String word) {
-		Vector possible = getWords(getCode(word));
+		List possible = getWords(getCode(word));
 		if (possible.contains(word))
 			return true;
 		//JMH should we always try the lowercase version. If I dont then capitalised

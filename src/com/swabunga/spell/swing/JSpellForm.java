@@ -12,15 +12,17 @@
  */
 package  com.swabunga.spell.swing;
 
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Locale;
+import java.util.ResourceBundle;
+
+import javax.swing.*;
+import javax.swing.event.*;
+
 import com.swabunga.spell.engine.Word;
-import  com.swabunga.spell.event.*;
-import  javax.swing.*;
-import  javax.swing.text.*;
-import  javax.swing.event.*;
-import  java.io.File;
-import  java.awt.*;
-import  java.awt.event.*;
-import java.util.*;
+import com.swabunga.spell.event.SpellCheckEvent;
 
 
 /** Implementation of a spell check form.

@@ -1,13 +1,11 @@
 package com.swabunga.spell.examples;
 
-import java.io.*;
-import java.util.*;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import com.swabunga.spell.event.*;
-import com.swabunga.spell.engine.*;
-import com.swabunga.spell.swing.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
+import javax.swing.JFrame;
+
+import com.swabunga.spell.swing.JSpellApplet;
 
 /** This class shows an example of how to use the spell checking capability
  *  for a text area on a swing form.

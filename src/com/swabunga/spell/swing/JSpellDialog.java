@@ -1,11 +1,12 @@
 package com.swabunga.spell.swing;
 
-import com.swabunga.spell.event.*;
-import javax.swing.*;
-import javax.swing.text.*;
-import java.io.File;
-import java.awt.*;
+import java.awt.Dialog;
+import java.awt.Frame;
 import java.awt.event.*;
+
+import javax.swing.JDialog;
+
+import com.swabunga.spell.event.SpellCheckEvent;
 
 /** Implementation of a spell check dialog.
  *

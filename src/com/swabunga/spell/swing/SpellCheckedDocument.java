@@ -1,16 +1,10 @@
 package com.swabunga.spell.swing;
 
-import javax.swing.text.*;
-
-import javax.swing.JToolTip;
-
 import java.awt.Color;
-
-import java.io.File;
-
 import java.util.StringTokenizer;
 
-import com.swabunga.spell.event.*;
+import javax.swing.text.*;
+
 import com.swabunga.spell.engine.SpellDictionary;
 
 /**

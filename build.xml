@@ -1,27 +1,29 @@
 <project name="JAZZY - Java Spell Checker" default="dist" basedir=".">
 
-  <!-- set global properties for this build -->
+  <!-- set global properties for this build (directory names) -->
   <property name="src" value="src"/>
   <property name="build" value="build"/>
   <property name="dist"  value="dist"/>
-
+  <property name="javadoc"  value="javadoc"/>
+ 
+  <!-- Build classpath -->
+  <path id="classpath">
+    <pathelement path="${classpath}"/>
+    <fileset dir="lib">
+      <include name="**/*.jar"/>
+    </fileset>
+  </path>
+ 
   <target name="init">
     <!-- Create the time stamp -->
     <tstamp/>
-    <!-- Create the build directory structure used by compile -->
-    <mkdir dir="${build}"/>
-    <mkdir dir="${dist}"/>
   </target>
 
   <target name="compile" depends="init">
+    <mkdir dir="${build}"/>
     <!-- Compile the java code from ${src} into ${build} -->
     <javac srcdir="${src}" destdir="${build}">
-      <classpath>
-        <pathelement path="${classpath}"/>
-        <fileset dir="lib">
-          <include name="**/*.jar"/>
-        </fileset>
-      </classpath>
+      <classpath refid="classpath"/>
     </javac>
     <copy todir="${build}" >
       <fileset dir="${src}" >
@@ -30,8 +32,17 @@
     </copy> 
   </target>
 
+  <target name="javadoc" depends="init">
+    <mkdir dir="${javadoc}"/>
+    <!-- Compile the javadoc from ${src} into ${javadoc} -->
+    <javadoc sourcepath="${src}" destdir="${javadoc}" packagenames="com.swabunga.spell.*">
+      <classpath refid="classpath"/>
+    </javadoc>
+  </target>
+  
   <target name="dist" depends="compile">
     <!-- Create the distribution directories -->
+    <mkdir dir="${dist}"/>
     <mkdir dir="${dist}/lib"/>
 
     <!-- Put everything in ${build} into the MyProject-${DSTAMP}.jar file -->
@@ -44,3 +55,4 @@
     <delete dir="${dist}"/>
   </target>
 </project>
+

@@ -21,7 +21,7 @@ public abstract class AbstractWordTokenizer
 
   protected Word currentWord;
   protected WordFinder finder;
-  protected BreakIterator sentanceIterator;
+  protected BreakIterator sentenceIterator;
 
   /** The cumulative word count that have been processed */
   protected int wordCount = 0;
@@ -130,12 +130,12 @@ public abstract class AbstractWordTokenizer
   }
 
   /**
-   * returns true if the current word is at the start of a sentance
+   * returns true if the current word is at the start of a sentence
    * 
    * @return true if the current word starts a sentence.
    * @throws WordNotFoundException current word has not yet been set.
    */
-  public boolean isNewSentance() {
+  public boolean isNewSentence() {
 
     return finder.startsSentence();
   }

@@ -2,15 +2,9 @@ package com.swabunga.spell.event;
 
 
 
-import java.util.*;
+import java.text.BreakIterator;
 
-import java.text.*;
-
-import javax.swing.text.Document;
-
-import javax.swing.text.Segment;
-
-import javax.swing.text.BadLocationException;
+import javax.swing.text.*;
 
 
 
@@ -64,9 +58,9 @@ public class DocumentWordTokenizer implements WordTokenizer {
 
 
 
-  private BreakIterator sentanceIterator;
+  private BreakIterator sentenceIterator;
 
-  private boolean startsSentance = true;
+  private boolean startsSentence = true;
 
 
 
@@ -80,13 +74,13 @@ public class DocumentWordTokenizer implements WordTokenizer {
 
     text = new Segment();
 
-    sentanceIterator = BreakIterator.getSentenceInstance();
+    sentenceIterator = BreakIterator.getSentenceInstance();
 
     try {
 
       document.getText(0, document.getLength(), text);
 
-      sentanceIterator.setText(text);
+      sentenceIterator.setText(text);
 
       currentWordPos = getNextWordStart(text, 0);
 
@@ -227,19 +221,19 @@ public class DocumentWordTokenizer implements WordTokenizer {
       nextWordPos = getNextWordStart(text, currentWordEnd+1);
     }
 
-      int current = sentanceIterator.current();
+      int current = sentenceIterator.current();
 
       if (current == currentWordPos)
 
-        startsSentance = true;
+        startsSentence = true;
 
       else {
 
-        startsSentance = false;
+        startsSentence = false;
 
         if (currentWordEnd > current)
 
-          sentanceIterator.next();
+          sentenceIterator.next();
 
       }
 
@@ -321,9 +315,9 @@ public class DocumentWordTokenizer implements WordTokenizer {
 
         nextWordPos = getNextWordStart(text, currentWordEnd);
 
-        sentanceIterator.setText(text);
+        sentenceIterator.setText(text);
 
-        sentanceIterator.following(currentWordPos);
+        sentenceIterator.following(currentWordPos);
 
       } else moreTokens = false;
 
@@ -347,11 +341,11 @@ public class DocumentWordTokenizer implements WordTokenizer {
 
 
 
-  /** Returns true if the current word is at the start of a sentance*/
+  /** Returns true if the current word is at the start of a sentence*/
 
-  public boolean isNewSentance() {
+  public boolean isNewSentence() {
 
-    return startsSentance;
+    return startsSentence;
 
   }
 

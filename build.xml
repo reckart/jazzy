@@ -44,7 +44,19 @@
     </copy> 
   </target>
 
-  <target name="debug-compile" depends="clean,init">
+  <target name="debug-compile" depends="init">
+    <!-- Compile the java code from ${src} into ${build} -->
+    <javac debug="true" srcdir="${src}" destdir="${build}" target="${target}">
+      <classpath refid="classpath"/>
+    </javac>
+    <copy todir="${build}" >
+      <fileset dir="${src}" >
+        <include name="**/*.properties"/>
+      </fileset>
+    </copy> 
+  </target>
+
+  <target name="clean-debug-compile" depends="clean,init">
     <!-- Compile the java code from ${src} into ${build} -->
     <javac debug="true" srcdir="${src}" destdir="${build}" target="${target}">
       <classpath refid="classpath"/>
@@ -135,7 +147,7 @@
    </copy>
   </target>
 
-  <target name="jedit-plugin" depends="compile,jedit-pack">
+  <target name="jedit-plugin" depends="clean-compile,jedit-pack">
   	<jar jarfile="${dist}/lib/jazzy${DSTAMP}.jar" basedir="${build}">
 	  <manifest>
 	    <attribute name="Built-By" value="${user.name}"/>
@@ -151,7 +163,7 @@
       <copy file="${dist}/lib/jazzy${DSTAMP}.jar" tofile="${local.jedit.jars}/jazzy.jar"/>
   </target>
   
-  <target name="test" depends="compile">
+  <target name="test" depends="debug-compile">
      <java classpath="%CLASSPATH%;${build}" 
            classname="${package}.DefaultWordFinder"/>
   </target>

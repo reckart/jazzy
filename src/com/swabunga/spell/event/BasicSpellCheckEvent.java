@@ -8,8 +8,9 @@ import java.util.*;
  * @author Jason Height (jheight@chariot.net.au)
  */
 class BasicSpellCheckEvent implements SpellCheckEvent {
+  
   /**The list holding the suggested Word objects for the misspelt word*/
-  private Vector suggestions;
+  private List suggestions;
   /**The misspelt word*/
   private String invalidWord;
   /**The action to be done when the event returns*/
@@ -27,7 +28,7 @@ class BasicSpellCheckEvent implements SpellCheckEvent {
    * @param WordTokenizer tokenizer The reference to the tokenizer that caused this
    * event to fire.
    */
-  public BasicSpellCheckEvent(String invalidWord, Vector suggestions, WordTokenizer tokenizer) {
+  public BasicSpellCheckEvent(String invalidWord, List suggestions, WordTokenizer tokenizer) {
     this.invalidWord = invalidWord;
     this.suggestions = suggestions;
     this.context = tokenizer.getContext();
@@ -35,7 +36,7 @@ class BasicSpellCheckEvent implements SpellCheckEvent {
   }
 
   /** Returns the list of suggested Word objects*/
-  public Vector getSuggestions() {
+  public List getSuggestions() {
     return suggestions;
   }
 

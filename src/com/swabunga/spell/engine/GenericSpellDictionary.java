@@ -75,50 +75,55 @@ public class GenericSpellDictionary extends SpellDictionaryASpell {
      */
     public GenericSpellDictionary(File wordList)
     throws FileNotFoundException, IOException {
-        dictFile = wordList;
-        replacelist=washAlphabetIntoReplaceList(englishAlphabet);
-        createDictionary(new BufferedReader(new FileReader(wordList)));
+		this(wordList,(File)null);
     }
 
     /**
     * Dictionary constructor that uses an aspell phonetic file to
     * build the transformation table.
+    * If phonetic is null, then DoubleMeta is used with the english alphabet
     */
     public GenericSpellDictionary(File wordList, File phonetic)
     throws FileNotFoundException, IOException {
-        char[]  alphabet=null;
+
         dictFile = wordList;
-        tf=new GenericTransformator(phonetic);
-        alphabet=((GenericTransformator)tf).getAlphaReplaceList();
-        // If no alphabet is availible use the english.
-        if(alphabet==null)
-            alphabet=englishAlphabet;
-        replacelist=washAlphabetIntoReplaceList(alphabet);
+		char[] alphabet = null;
+		
+        if (phonetic != null){
+			tf=new GenericTransformator(phonetic);
+			alphabet = ((GenericTransformator)tf).getAlphaReplaceList();
+        }
+
+        // If no alphabet is availible use english.
+        if(alphabet == null)
+            alphabet = englishAlphabet;
+
+        replacelist = washAlphabetIntoReplaceList(alphabet);
         createDictionary(new BufferedReader(new FileReader(wordList)));
     }
 
     /**
      * Goes through an alphabet and makes sure that only one of those letters
-     * that are coded equaly will be in the replace list. This is done to 
+     * that are coded equally will be in the replace list. This is done to 
      * improve speed in the getSuggestion method,
      * 
      * @param alphabet The complete alphabet to wash.
      * @return The washed alphabet to be used as replace list.
      */
     private char[] washAlphabetIntoReplaceList(char[] alphabet){
-        String      tmp,code;
-        HashMap     letters=new HashMap(alphabet.length);
-        Object[]    tmpCharacters;
-        char[]      washedArray;
+
+        HashMap letters = new HashMap(alphabet.length);
+
         for(int i=0;i<alphabet.length;i++){
-            tmp=String.valueOf(alphabet[i]);
-            code=tf.transform(tmp);
+            String tmp=String.valueOf(alphabet[i]);
+            String code=tf.transform(tmp);
             if(!letters.containsKey(code)){
                 letters.put(code,new Character(alphabet[i]));
             }
         }
-        tmpCharacters=letters.values().toArray();
-        washedArray=new char[tmpCharacters.length];
+
+		Object[] tmpCharacters=letters.values().toArray();
+		char[] washedArray=new char[tmpCharacters.length];
         for(int i=0;i<tmpCharacters.length;i++){
             washedArray[i]=((Character)tmpCharacters[i]).charValue();
         }

@@ -101,11 +101,17 @@ public class JSpellChecker extends Applet {
 		return listener.done();
 	}
 
-	private String getSuggestionList(Vector suggestions){
+	private String getSuggestionList(List suggestions){
 		String s = "";
-        for (int i = 0; i < suggestions.size(); i ++) {
-			s += ((com.swabunga.spell.engine.Word)suggestions.elementAt(i)).getWord() + "|";
+		for (Iterator i = suggestions.iterator(); i.hasNext();)
+		{
+			com.swabunga.spell.engine.Word element = (com.swabunga.spell.engine.Word) i.next();
+			s += element.getWord() + "|";
+			
 		}
+//        for (int i = 0; i < suggestions.size(); i ++) {
+//			s += ((com.swabunga.spell.engine.Word)suggestions.elementAt(i)).getWord() + "|";
+//		}
 		return s;
 	}
 

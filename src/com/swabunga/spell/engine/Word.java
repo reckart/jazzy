@@ -1,8 +1,9 @@
 package com.swabunga.spell.engine;
 
-//import java.util.Comparator;
-
-/** The Word object holds both the string and the score.
+/** 
+ * The Word object holds information for one suggested spelling. 
+ * It contains both the suggested word string and the distance cost, which represents how different the suggested
+ * word is from the misspelling.
  *  <p>This class is now immutable.
  *  </p>
  */
@@ -10,37 +11,47 @@ public class Word{ //implements Comparator {
     private String word;
     private int score;
 
-	public Word() {
-	}
-	
     public Word(String word, int score) {
       this.word = word;
       this.score = score;
     }
 
-    /** The comparator interface*/
+    /**
+	 * Compares two words, mostly for the purpose of sorting words. 
+	 * @param the first word
+	 * @param the second word
+	 * @return -1 if the first word is more similar to the mispelled word
+	 * <br>1 if the second word is more similar to the misspelled word
+	 * <br>0 if both words are equally similar
+	 * 
+	 */
     public int compare(Object o1, Object o2) {
-        if (((Word) o1).getScore() < ((Word) o2).getScore()) return -1;
-        if (((Word) o1).getScore() == ((Word) o2).getScore()) return 0;
+        if (((Word) o1).getCost() < ((Word) o2).getCost()) return -1;
+        if (((Word) o1).getCost() == ((Word) o2).getCost()) return 0;
         return 1;
     }
 
     /**
-	 * @return the actual text of the word
+	 * gets suggested spelling
+	 * @return the actual text of the suggest spelling
 	 */
 	public String getWord() {
         return word;
     }
 
     /**
-	 * @return the number that represents how good a match this word was, probably based on 
-	 * EditDistantce. The lower the score, the better the match. A score of 0 is an exact match. 
+	 * A cost measures how close a match this word was to the original word
+	 * @return 0 if an exact match. Higher numbers are worse matches.
+	 * @see EditDistance 
 	 */
-	public int getScore() {
+	public int getCost() {
         return score;
     }
 
-    public String toString() {
+    /** 
+	 * returns the suggested spelling
+	 */
+	public String toString() {
       return word;
     }
 }

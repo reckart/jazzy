@@ -10,19 +10,16 @@ import java.util.*;
 
 /**
  * The SpellDictionaryHashMap holds the dictionary
- * <p>
+ * <p/>
  * This class is thread safe. Derived classes should ensure that this preserved.
- * </p>
- * <p>
+ * <p/>
  * There are many open source dictionary files. For just a few see:
  * http://wordlist.sourceforge.net/
- * </p>
- * <p>
+ * <p/>
  * This dictionary class reads words one per line. Make sure that your word list
  * is formatted in this way (most are).
- * </p>
  */
-public class SpellDictionaryHashMap extends SpellDictionaryASpell implements SpellDictionary {
+public class SpellDictionaryHashMap extends SpellDictionaryASpell {
 	/** A field indicating the initial hash map capacity (16KB) for the main
 	 *  dictionary hash map. Interested to see what the performance of a
 	 *  smaller initial capacity is like.

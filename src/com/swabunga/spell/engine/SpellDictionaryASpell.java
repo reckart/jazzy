@@ -5,11 +5,19 @@ import java.security.InvalidParameterException;
 import java.util.*;
 
 /**
- * Container for various methods that any <code>SpellDictionary</code> based on the original
- * Jazzy aspell port will use.
+ * Container for various methods that any <code>SpellDictionary</code> will use. 
+ * Based on the original Jazzy <a href="http://aspell.net/">aspell</a> port.
+ * <p/>
+ * 
+ * 
  */
 public abstract class SpellDictionaryASpell implements SpellDictionary {
-    /** The replace list is used in the getSuggestions method*/
+
+    /** 
+     * The replace list is used in the getSuggestions method.
+     * All of the letters in the misspelled word are replaced with the characters from 
+     * this list to try and generate more suggestions. 
+     */
     protected static char[] replacelist =
         {
             'A',	
@@ -28,9 +36,7 @@ public abstract class SpellDictionaryASpell implements SpellDictionary {
             'R',
             '0' };
 
-    /**The reference to a Transformator, used to transform a word into it's.
-     * phonetic code.
-     */
+    /** The reference to a Transformator, used to transform a word into it's phonetic code. */
     protected Transformator tf = new DoubleMeta();
 
 
@@ -42,7 +48,7 @@ public abstract class SpellDictionaryASpell implements SpellDictionary {
      * @param threshold The lower boundary of similarity to mispelt word
      * @return Vector a List of suggestions
      */
-    public Vector getSuggestions(String word, int threshold) {
+    public List getSuggestions(String word, int threshold) {
 
 		Hashtable nearmisscodes = new Hashtable();
         String code = getCode(word);
@@ -163,7 +169,7 @@ public abstract class SpellDictionaryASpell implements SpellDictionary {
 		for (Iterator iter = candidates.iterator(); iter.hasNext();)
 		{
 			Word candidate = (Word) iter.next();
-			if (candidate.getScore() == bestScore)
+			if (candidate.getCost() == bestScore)
 				wordList.add(candidate);
 		}
 

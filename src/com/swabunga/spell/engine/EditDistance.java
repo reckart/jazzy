@@ -4,7 +4,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
 /**
- * This class is based on Levenshtein Distance algorithms, and it calculates how similar to word are. 
+ * This class is based on Levenshtein Distance algorithms, and it calculates how similar two words are. 
  * If the words are identitical, then the distance is 0. The more that the words have in common, the lower the distance value.
  * The distance value is based on how many operations it takes to get from one word to the other. Possible operations are  
  * swapping characters, adding a character, deleting a character, and substituting a character.  
@@ -15,10 +15,10 @@ import java.io.InputStreamReader;
  * with the "similar" word? Each operation has a cost, and these are added up to get the distance.
  * <br/>
  *  
- * @see com.swabunga.spell.engine.COST_REMOVE_CHAR
- * @see com.swabunga.spell.engine.EDIT_INSERTION_COST
- * @see com.swabunga.spell.engine.COST_SUBST_CHARS
- * @see com.swabunga.spell.engine.EDIT_SWAP
+ * @see com.swabunga.spell.engine.Configuration#COST_REMOVE_CHAR
+ * @see com.swabunga.spell.engine.Configuration#COST_INSERT_CHAR
+ * @see com.swabunga.spell.engine.Configuration#COST_SUBST_CHARS
+ * @see com.swabunga.spell.engine.Configuration#COST_SWAP_CHARS
  * 
  */
 

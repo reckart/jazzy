@@ -263,8 +263,8 @@ public class SpellChecker {
       return false;
   }
 
-  public Vector getSuggestions(String word, int threshold) {
-      Vector suggestions = userdictionary.getSuggestions(word, threshold);
+  public List getSuggestions(String word, int threshold) {
+      List suggestions = userdictionary.getSuggestions(word, threshold);
       for(Enumeration e = dictionaries.elements();e.hasMoreElements();){
           SpellDictionary dictionary = (SpellDictionary)e.nextElement();
           VectorUtility.addAll(suggestions, dictionary.getSuggestions(word, threshold), false);

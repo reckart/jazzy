@@ -18,7 +18,7 @@ import java.io.*;
  * @version 0.1
  * @since 0.5
  */
-public class SpellDictionaryDisk extends SpellDictionaryASpell implements SpellDictionary {
+public class SpellDictionaryDisk extends SpellDictionaryASpell{
     private final static String DIRECTORY_WORDS = "words";
     private final static String DIRECTORY_DB = "db";
     private final static String FILE_CONTENTS = "contents";
@@ -130,7 +130,7 @@ public class SpellDictionaryDisk extends SpellDictionaryASpell implements SpellD
      * Note -- this implementation can be optimized, if needs be.
      *
      * @param word
-     * @return
+     * @return true if the word is spelled correctly
      */
     public boolean isCorrect(String word) {
         List words = getWords(getCode(word));

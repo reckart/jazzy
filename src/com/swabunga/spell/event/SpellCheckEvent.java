@@ -2,12 +2,14 @@ package com.swabunga.spell.event;
 
 import java.util.*;
 
-/** This event is fired off by the SpellChecker and is passed to the
- *  registered SpellCheckListeners
- *  <p>AFAIK we will only require one implementation of the SpellCheckEvent
- *  (BasicSpellCheckEvent) but I have defnied this interface just in case. The
- *  BasicSpellCheckEvent implementation is currently package private.
- *  </p>
+/** 
+ * This event is fired off by the SpellChecker and is passed to the
+ * registered SpellCheckListeners
+ * <p/>
+ * AFAIK we will only require one implementation of the SpellCheckEvent
+ * (BasicSpellCheckEvent) but I have defnied this interface just in case. The
+ * BasicSpellCheckEvent implementation is currently package private.
+ * <p/>
  *
  * @author Jason Height (jheight@chariot.net.au)
  */
@@ -28,7 +30,7 @@ public interface SpellCheckEvent {
   public static final short INITIAL = -1;
 
   /** Returns the list of suggested Word objects*/
-  public Vector getSuggestions();
+  public List getSuggestions();
 
   /** Returns the currently misspelt word*/
   public String getInvalidWord();

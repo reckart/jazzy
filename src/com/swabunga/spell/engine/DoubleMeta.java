@@ -1,16 +1,8 @@
-/* This class is based on Lawrence Phillips original c++ code for this class.
- * Found here: http://aspell.sourceforge.net/metaphone/
- *
- */
-
-
 package  com.swabunga.spell.engine;
 
 
 /**
- * Double Meta class
- * <p>
- * A phonetic encoding algorith that takes an english word and computes a phonetic version of it. This
+ * A phonetic encoding algorithm that takes an English word and computes a phonetic version of it. This
  * allows for phonetic matches in a spell checker. This class is a port of the C++ DoubleMetaphone() class,
  * which was intended to return two possible phonetic translations for certain words, although the Java version
  * only seems to be concerned with one, making the "double" part erroneous.
@@ -23,15 +15,15 @@ package  com.swabunga.spell.engine;
  * surrounding each character within the input string. 
  * <p>
  * Things that were changed:
- *   The alternate flag could be set to true but was never checked so why bother with it. REMOVED
- *   Why was this class serializable?
- *   The primary, in, length and last variables could be initialized and local to the
+ *   <br/>The alternate flag could be set to true but was never checked so why bother with it. REMOVED
+ *   <br/>Why was this class serializable?
+ *   <br/>The primary, in, length and last variables could be initialized and local to the
  *   process method and references passed arround the appropriate methods. As such there are
  *   no class variables and this class becomes firstly threadsafe and secondly could be static final.
- *   The function call SlavoGermaic was called repeatedly in the process function, it is now only called once.
+ *   <br/>The function call SlavoGermaic was called repeatedly in the process function, it is now only called once.
  *
  */
-class DoubleMeta implements Transformator{
+public class DoubleMeta implements Transformator{
 
     private static final String[] myList = {
         "GN", "KN", "PN", "WR", "PS", ""
@@ -391,9 +383,10 @@ class DoubleMeta implements Transformator{
   }
 
   /**
-   * put your documentation comment here
-   * @param word The word to process.
-   * @return
+   * Take the given word, and return the best phonetic hash for it. 
+   * Vowels are minimized as much as possible, and consenants 
+   * that have similiar sounds are converted to the same consenant
+   * for example, 'v' and 'f' are both converted to 'f'
    */
   public final String transform (String word) {
     StringBuffer primary = new StringBuffer( word.length() + 5 );

@@ -73,6 +73,17 @@ public class SpellDictionaryHashMap extends SpellDictionaryASpell {
   /**
    * Dictionary constructor that uses an aspell phonetic file to
    * build the transformation table.
+   * encoding is used for phonetic file only; default encoding is used for wordList
+   */
+  public SpellDictionaryHashMap(File wordList, File phonetic, String phoneticEncoding) throws FileNotFoundException, IOException {
+    super(phonetic, phoneticEncoding);
+    dictFile = wordList;
+    createDictionary(new BufferedReader(new FileReader(wordList)));
+  }
+
+  /**
+   * Dictionary constructor that uses an aspell phonetic file to
+   * build the transformation table.
    */
   public SpellDictionaryHashMap(Reader wordList, Reader phonetic) throws IOException {
     super(phonetic);

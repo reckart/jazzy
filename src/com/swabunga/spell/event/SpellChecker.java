@@ -46,7 +46,7 @@ public class SpellChecker {
 	}
 	catch (IOException e)
 	{
-		throw new RuntimeException("this exception should never happen because we are using null phonetic file",e);
+		throw new RuntimeException("this exception should never happen because we are using null phonetic file");
 	}
   }
 

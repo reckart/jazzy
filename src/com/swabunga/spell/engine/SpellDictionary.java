@@ -49,11 +49,14 @@ public class SpellDictionary {
   private final EditDistanceWeights distanceWeights = new EditDistanceWeights();
 
   /** Holds the dictionary file for appending*/
-  private File dictFile = null;
+  protected File dictFile = null;
 
   /**
    * Dictionary Constructor.
    */
+  protected SpellDictionary(){
+  }
+
   public SpellDictionary (Reader wordList) throws IOException
   {
     createDictionary(new BufferedReader(wordList));
@@ -162,13 +165,15 @@ public class SpellDictionary {
    */
   public LinkedList getSuggestions (String word, int threshold) {
     //JMH Probably a TreeSet would be cool here since it would always be sorted.
-    LinkedList nearmiss = new LinkedList();
+    //LinkedList nearmiss = new LinkedList();
+    String code = getCode(word);
+    LinkedList nearmiss=getWords(code);
+    
+    //JMH No need to use a hashset here, since the contains method is not
+    //called. Would prefer the more lightweight LinkedList.
+    HashSet similars = new HashSet();
+    
     try {
-      String code = getCode(word);
-      //JMH No need to use a hashset here, since the contains method is not
-      //called. Would prefer the more lightweight LinkedList.
-      HashSet similars = new HashSet();
-      similars.addAll(getWords(code));
       // do some tranformations to pick up more results
       //interchange
       char[] charArray = code.toCharArray();

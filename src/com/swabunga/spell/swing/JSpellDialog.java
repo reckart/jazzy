@@ -16,11 +16,21 @@ public class JSpellDialog extends JDialog implements ActionListener {
 
   public JSpellDialog(Frame owner, String title, boolean modal) {
     super(owner, title, modal);
+    initialiseDialog();
+  }
+
+  public JSpellDialog(Dialog owner, String title, boolean modal) {
+    super(owner, title, modal);
+    initialiseDialog();
+  }
+
+  private void initialiseDialog() {
     getContentPane().add(form);
     form.addActionListener(this);
     //setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
     pack();
   }
+
 
   public void show(SpellCheckEvent e) {
     System.out.println("Show");

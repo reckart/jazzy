@@ -21,7 +21,6 @@ import java.util.*;
  * This dictionary class reads words one per line. Make sure that your word list
  * is formatted in this way (most are).
  * </p>
- * JMH Consider a TreeSet which is always sorted for the suggestions.
  */
 public class SpellDictionary {
 
@@ -258,7 +257,7 @@ public class SpellDictionary {
 	}
 
 	private LinkedList getWordsFromCode(String word, Collection codes) {
-
+		Configuration config = Configuration.getConfiguration();
 		LinkedList result = new LinkedList();
 		for (Iterator i = codes.iterator(); i.hasNext();) {
 			String code = (String) i.next();
@@ -266,8 +265,10 @@ public class SpellDictionary {
 			for (Iterator j = simwordlist.iterator(); j.hasNext();) {
 				String similar = (String) j.next();
 				int distance = EditDistance.getDistance(word, similar);
-				Word w = new Word(similar, distance);
-				result.add(w);
+				if (distance < config.getInteger(Configuration.SPELL_THRESHOLD)) {
+					Word w = new Word(similar, distance);
+					result.add(w);
+				}
 			}
 		}
 		return result;

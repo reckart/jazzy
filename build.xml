@@ -11,6 +11,7 @@
   <property name="target" value="1.1"/>
   <property name="package" value="com.swabunga.spell.event"/>
   <property name="verbose" value="false"/>
+	<property name="jsdk-lib"  value=""/>
  
   <!-- Build classpath -->
   <path id="classpath">
@@ -21,7 +22,13 @@
     </fileset>
     -->
   </path>
- 
+  
+  <path id="bootclass.path">
+    <fileset dir="${jsdk-lib}">
+      <include name="*.jar"/>
+    </fileset>
+  </path>
+
   <target name="init">
     <!-- Create the time stamp -->
     <tstamp/>
@@ -36,6 +43,19 @@
   <target name="compile" depends="init">
     <!-- Compile the java code from ${src} into ${build} -->
     <javac deprecation="true" verbose="${verbose}" srcdir="${src}" destdir="${build}" target="${target}">
+      <classpath refid="classpath"/>
+    </javac>
+    <copy todir="${build}" >
+      <fileset dir="${src}" >
+        <include name="**/*.properties"/>
+      </fileset>
+    </copy> 
+  </target>
+  
+  <target name="cross-compile" depends="init">
+    <!-- Compile the java code from ${src} into ${build} -->
+    <javac deprecation="true" verbose="${verbose}" srcdir="${src}" destdir="${build}" target="${target}"
+           bootclasspathref="bootclass.path">
       <classpath refid="classpath"/>
     </javac>
     <copy todir="${build}" >

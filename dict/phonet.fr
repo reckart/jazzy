@@ -21,11 +21,13 @@
 #    Si vous voulez modifier ce fichier, essayer d'utiliser grep sur la
 #    liste des mots pour voir si cette modification est valide
 
-version francais 0.000000001
+version francais 0.000000002
+# Damien: qques amÈliorations - juin 2003
 
 #EMME ~ AME 
 AIX$               E
 AI                 E
+AŒ                 E
 AN(AEUIO)-         AM
 AN                 A
 AMM                AM
@@ -40,9 +42,9 @@ A                  A
 BB                 P
 B                  P
 «                  S
-C(EI)-             S
+C(E…» IŒ)-             S
 CU(EI)-            K
-CC(EI)-            X
+CC(E…» IŒ)-            X
 CC                 K
 CH                 CH
 C                  K
@@ -65,13 +67,16 @@ E                  E
 »                  E
 …                  E
                    E
+À                  E
 F                  F
-G(EIY)-            J
-GU(EIY)-           G
+GE(A¬O)-            J
+G(E…» IŒY)-            J
+GU(E…» IŒY)-           G
 G                  G
 H                  _
 I                  I
 Œ                  I
+œ                  I
 J                  J
 KS                 X
 K                  K
@@ -87,6 +92,7 @@ OU                 U
 OŸ                 U
 O                  O
 ‘                  O
+÷                  E
 PP                 P
 PH                 F
 P                  P
@@ -103,6 +109,7 @@ T                  T
 U                  U
 Ÿ                  U
 €                  U
+‹                  U
 V                  V
 W                  W
 X                  X
@@ -110,4 +117,3 @@ Y(AEOU)-           IL
 Y                  I
 ZZ                 S
 Z                  S
-

@@ -7,13 +7,7 @@ import com.swabunga.spell.engine.Word;
 import com.swabunga.util.VectorUtility;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
+import java.util.*;
 
 
 /**
@@ -367,7 +361,7 @@ public class SpellChecker {
       String word = tokenizer.nextWord();
       //Check the spelling of the word
       if (!isCorrect(word)) {
- 		if ((config.getBoolean(Configuration.SPELL_IGNOREMIXEDCASE) && isMixedCaseWord(word, tokenizer.isNewSentence())) ||
+          if ((config.getBoolean(Configuration.SPELL_IGNOREMIXEDCASE) && isMixedCaseWord(word, tokenizer.isNewSentence())) ||
             (config.getBoolean(Configuration.SPELL_IGNOREUPPERCASE) && isUpperCaseWord(word)) ||
             (config.getBoolean(Configuration.SPELL_IGNOREDIGITWORDS) && isDigitWord(word)) ||
             (config.getBoolean(Configuration.SPELL_IGNOREINTERNETADDRESSES) && isINETWord(word))) {
@@ -385,7 +379,10 @@ public class SpellChecker {
               //JMH Need to somehow capitalise the suggestions if
               //ignoreSentenceCapitalisation is not set to true
               //Fire the event.
-              SpellCheckEvent event = new BasicSpellCheckEvent(word, getSuggestions(word, config.getInteger(Configuration.SPELL_THRESHOLD)), tokenizer);
+              List suggestions = getSuggestions(word, config.getInteger(Configuration.SPELL_THRESHOLD));
+              if (capitalizeSuggestions(word, tokenizer))
+                suggestions = makeSuggestionsCapitalized(suggestions);
+              SpellCheckEvent event = new BasicSpellCheckEvent(word, suggestions, tokenizer);
               terminated = fireAndHandleEvent(tokenizer, event);
             }
           }
@@ -398,7 +395,7 @@ public class SpellChecker {
          *  }
          */
         //Check for capitalisation
-        if ((!config.getBoolean(Configuration.SPELL_IGNORESENTENCECAPITALIZATION)) && (tokenizer.isNewSentence()) && (Character.isLowerCase(word.charAt(0)))) {
+        if (isSupposedToBeCapitalized(word, tokenizer)) {
           errors++;
           StringBuffer buf = new StringBuffer(word);
           buf.setCharAt(0, Character.toUpperCase(word.charAt(0)));
@@ -416,6 +413,31 @@ public class SpellChecker {
     else
       return errors;
   }
+  
+  
+  private List makeSuggestionsCapitalized(List suggestions) {
+    Iterator iterator = suggestions.iterator();
+    while(iterator.hasNext()) {
+      Word word = (Word)iterator.next();
+      String suggestion = word.getWord();
+      StringBuffer stringBuffer = new StringBuffer(suggestion);
+      stringBuffer.setCharAt(0, Character.toUpperCase(suggestion.charAt(0)));
+      word.setWord(stringBuffer.toString());
+    }
+    return suggestions;
+  }
+
+    
+   private boolean isSupposedToBeCapitalized(String word, WordTokenizer wordTokenizer) {
+     boolean configCapitalize = !config.getBoolean(Configuration.SPELL_IGNORESENTENCECAPITALIZATION);
+     return configCapitalize && wordTokenizer.isNewSentence() && Character.isLowerCase(word.charAt(0));
+  } 
+
+   private boolean capitalizeSuggestions(String word, WordTokenizer wordTokenizer) {
+   // if SPELL_IGNORESENTENCECAPITALIZATION and the initial word is capitalized, suggestions should also be capitalized
+   // if !SPELL_IGNORESENTENCECAPITALIZATION, capitalize suggestions only for the first word in a sentence
+     boolean configCapitalize = !config.getBoolean(Configuration.SPELL_IGNORESENTENCECAPITALIZATION);
+     boolean uppercase = Character.isUpperCase(word.charAt(0));
+     return (configCapitalize && wordTokenizer.isNewSentence()) || (!configCapitalize && uppercase);
+   }
 }
-
-

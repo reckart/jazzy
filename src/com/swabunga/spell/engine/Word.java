@@ -53,6 +53,13 @@ public class Word implements Comparator {
   }
 
   /**
+   * sets suggested spelling
+   */
+  public void setWord(String word) {
+    this.word = word;
+  }
+
+  /**
    * A cost measures how close a match this word was to the original word
    * @return 0 if an exact match. Higher numbers are worse matches.
    * @see EditDistance

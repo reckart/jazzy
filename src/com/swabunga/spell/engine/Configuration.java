@@ -26,6 +26,12 @@ public abstract class Configuration {
 	 * <br/>(integer greater than 0)
 	 */
     public static final String COST_SWAP_CHARS = "EDIT_SWAP";
+
+	/**
+	 * used by EditDistance: the cost of having to change case, for example, from i to I. 
+	 * <br/>(integer greater than 0)
+	 */
+	public static final String COST_CHANGE_CASE = "EDIT_CASE";	
 	
 	/**
 	 * used by EditDistance: the cost of having to substitute one character for another  

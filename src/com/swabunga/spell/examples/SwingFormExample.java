@@ -22,6 +22,12 @@ public class SwingFormExample extends JFrame implements SpellCheckListener, Acti
   private JSpellDialog dlg = new JSpellDialog(this, "Check spelling", true);
 
   public SwingFormExample() {
+    setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    addWindowListener(new WindowAdapter() {
+      public void windowClosed(WindowEvent e) {
+        System.exit(0);
+      }
+    });
     try {
       SpellDictionary dictionary = new SpellDictionary(new File(dictFile));
 

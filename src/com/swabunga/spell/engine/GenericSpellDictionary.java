@@ -300,7 +300,7 @@ public class GenericSpellDictionary extends SpellDictionaryASpell {
             List simwordlist = getWords(code);
             for (Iterator j = simwordlist.iterator(); j.hasNext();) {
                 String similar = (String) j.next();
-                System.out.println(similar);
+                //System.out.println(similar);
                 int distance = EditDistance.getDistance(word, similar);
                 if (distance < config.getInteger(Configuration.SPELL_THRESHOLD)) {
                     Word w = new Word(similar, distance);

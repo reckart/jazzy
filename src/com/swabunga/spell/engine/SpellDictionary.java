@@ -176,49 +176,43 @@ public class SpellDictionary {
   public LinkedList getSuggestions (String word, int threshold) {
     //JMH Probably a TreeSet would be cool here since it would always be sorted.
     LinkedList nearmiss = new LinkedList();
+    
     String code = getCode(word);
-    LinkedList firstSuggests=getWords(code);
-    for (Iterator i = firstSuggests.iterator();i.hasNext();) {
-      String s = (String)i.next();
-      int d = EditDistance.getDistance(word, s, distanceWeights);
-      Word w = new Word(s, d);
-      nearmiss.add(w);
-    }   
     
     //JMH No need to use a hashset here, since the contains method is not
     //called. Would prefer the more lightweight LinkedList.
     HashSet similars = new HashSet();
-    
+    similars.addAll(getWords(code));
     try {
       // do some tranformations to pick up more results
       //interchange
-      char[] charArray = code.toCharArray();
-      for (int i = 0; i < code.length() - 1; i++) {
+      char[] charArray = word.toCharArray();
+      for (int i = 0; i < word.length() - 1; i++) {
         char a = charArray[i];
         char b = charArray[i + 1];
         charArray[i] = b;
         charArray[i + 1] = a;
-        similars.addAll(getWords(new String(charArray)));
+        similars.addAll(getWords(getCode(new String(charArray))));
         charArray[i] = a;
         charArray[i + 1] = b;
       }
       //change
-      charArray = code.toCharArray();
-      for (int i = 0; i < code.length(); i++) {
+      charArray = word.toCharArray();
+      for (int i = 0; i < word.length(); i++) {
         char original = charArray[i];
         for (int j = 0; j < replacelist.length; j++) {
           charArray[i] = replacelist[j];
-          similars.addAll(getWords(new String(charArray)));
+          similars.addAll(getWords(getCode(new String(charArray))));
         }
         charArray[i] = original;
       }
       //add
-      charArray = (code += " ").toCharArray();
+      charArray = (word += " ").toCharArray();
       int iy = charArray.length - 1;
       while (true) {
         for (int j = 0; j < replacelist.length; j++) {
           charArray[iy] = replacelist[j];
-          similars.addAll(getWords(new String(charArray)));
+          similars.addAll(getWords(getCode(new String(charArray))));
         }
         if (iy == 0)
           break;
@@ -226,8 +220,8 @@ public class SpellDictionary {
         --iy;
       }
       //delete
-      code = code.trim();
-      charArray = code.toCharArray();
+      word = word.trim();
+      charArray = word.toCharArray();
       char[] charArray2 = new char[charArray.length - 1];
       for (int ix = 0; ix < charArray2.length; ix++) {
         charArray2[ix] = charArray[ix];
@@ -236,7 +230,7 @@ public class SpellDictionary {
       a = charArray[charArray.length - 1];
       int ii = charArray2.length;
       while (true) {
-        similars.addAll(getWords(new String(charArray2)));
+        similars.addAll(getWords(getCode(new String(charArray2))));
         if (ii == 0)
           break;
         b = a;

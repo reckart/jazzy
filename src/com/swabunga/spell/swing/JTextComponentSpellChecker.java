@@ -33,7 +33,7 @@ public class JTextComponentSpellChecker implements SpellCheckListener {
 
   // Constructor
   public JTextComponentSpellChecker(SpellDictionary dict) {
-    this(dict, null);
+    this(dict, null, null);
   }
 
   // Convinient Constructors, for those lazy guys.
@@ -42,16 +42,18 @@ public class JTextComponentSpellChecker implements SpellCheckListener {
   }
 
   public JTextComponentSpellChecker(String dictFile, String title) throws IOException {
-    this(new SpellDictionaryHashMap(new File(dictFile)), title);
+    this(new SpellDictionaryHashMap(new File(dictFile)), null, title);
   }
 
   public JTextComponentSpellChecker(String dictFile, String phoneticFile, String title) throws IOException {
-    this(new SpellDictionaryHashMap(new File(dictFile), new File(phoneticFile)), title);
+    this(new SpellDictionaryHashMap(new File(dictFile), new File(phoneticFile)), null, title);
   }
 
-  public JTextComponentSpellChecker(SpellDictionary dict, String title) {
+  public JTextComponentSpellChecker(SpellDictionary dict, SpellDictionary userDict, String title) {
     spellCheck = new SpellChecker(dict);
     spellCheck.setCache();
+    if(userDict!=null)
+        spellCheck.setUserDictionary(userDict);
     spellCheck.addSpellCheckListener(this);
     dialogTitle = title;
     messages = ResourceBundle.getBundle("com.swabunga.spell.swing.messages", Locale.getDefault());

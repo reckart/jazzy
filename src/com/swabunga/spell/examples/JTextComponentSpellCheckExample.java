@@ -6,8 +6,7 @@
 
 package com.swabunga.spell.examples;
 
-import com.swabunga.spell.engine.GenericSpellDictionary;
-import com.swabunga.spell.engine.SpellDictionary;
+import com.swabunga.spell.engine.*;
 import com.swabunga.spell.swing.JTextComponentSpellChecker;
 
 import javax.swing.*;
@@ -26,13 +25,32 @@ import java.io.File;
  * @author Robert Gustavsson (robert@lindesign.se)
  */
 public class JTextComponentSpellCheckExample extends JFrame {
-  private static final String dictionaryFile = "english.0";
-  private static final String phoneticFile = "phonet.en";
+  private static final String englishDictionary = "dict/english.0";
+  private static final String englishPhonetic = "dict/phonet.en";
   protected SpellDictionary dictionary;
   JTextComponent text = null;
   JButton spell = null;
 
-  public JTextComponentSpellCheckExample() {
+  public JTextComponentSpellCheckExample(String dictPath, String phonetPath) {
+    File dictFile=null,
+         phonetFile=null;  
+
+    // INIT DICTIONARY
+    if(dictPath==null)
+        dictFile=new File(englishDictionary);
+    else
+        dictFile=new File(dictPath);
+    if(phonetPath!=null)
+        phonetFile=new File(phonetPath);    
+    try {
+      dictionary = new SpellDictionaryHashMap(dictFile, phonetFile);
+      //dictionary = new SpellDictionaryDisk(dictFile, phonetFile, true);
+      //dictionary = new GenericSpellDictionary(dictFile, phonetFile);
+    } catch (Exception ex) {
+      ex.printStackTrace();
+    }
+
+    // INIT GUI
     setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     addWindowListener(new WindowAdapter() {
 
@@ -40,12 +58,6 @@ public class JTextComponentSpellCheckExample extends JFrame {
         System.exit(0);
       }
     });
-    try {
-      dictionary = new GenericSpellDictionary(new File("dict/" + dictionaryFile), new File("dict/" + phoneticFile));
-      //dictionary = new GenericSpellDictionary(new File("dict/"+dictionaryFile));
-    } catch (Exception ex) {
-      ex.printStackTrace();
-    }
     initGUI();
     pack();
   }
@@ -78,7 +90,13 @@ public class JTextComponentSpellCheckExample extends JFrame {
   }
 
   public static void main(String[] args) {
-    JTextComponentSpellCheckExample d = new JTextComponentSpellCheckExample();
+    String  dictPath=null,
+            phonetPath=null;
+    if(args.length>0)
+        dictPath=args[0];
+    if(args.length>1)
+        phonetPath=args[1];
+    JTextComponentSpellCheckExample d = new JTextComponentSpellCheckExample(dictPath,phonetPath);
     d.show();
   }
 

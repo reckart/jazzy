@@ -79,7 +79,6 @@ public class JTextComponentSpellChecker implements SpellCheckListener {
 
         textComp.requestFocus();
         textComp.setCaretPosition(0);
-        JOptionPane.showMessageDialog(textComp,messages.getString (COMPLETED));
         this.textComp=null;
     }
 

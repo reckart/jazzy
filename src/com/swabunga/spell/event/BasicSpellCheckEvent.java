@@ -24,14 +24,14 @@ class BasicSpellCheckEvent implements SpellCheckEvent {
   /**Consructs the SpellCheckEvent
    * @param String invalidWord The word that is misspelt
    * @param List suggestions A list of Word objects that are suggested to replace the currently mispelt word
+   * @param WordTokenizer tokenizer The reference to the tokenizer that caused this
+   * event to fire.
    */
-  public BasicSpellCheckEvent(String invalidWord, List suggestions, String context, int startPosition) {
+  public BasicSpellCheckEvent(String invalidWord, List suggestions, WordTokenizer tokenizer) {
     this.invalidWord = invalidWord;
     this.suggestions = suggestions;
-    this.context = context;
-    this.startPosition = startPosition;
-    if ((startPosition <0) || (startPosition >= context.length()))
-      throw new IllegalArgumentException("The work context position is invalid :"+startPosition);
+    this.context = tokenizer.getContext();
+    this.startPosition = tokenizer.getCurrentWordPosition();
   }
 
   /** Returns the list of suggested Word objects*/
@@ -96,5 +96,11 @@ class BasicSpellCheckEvent implements SpellCheckEvent {
       throw new IllegalStateException("The action can can only be set once");
     action = ADDTODICT;
     replaceWord = newWord;
+  }
+
+  public void cancel() {
+    if (action != INITIAL)
+      throw new IllegalStateException("The action can can only be set once");
+    action = CANCEL;
   }
 }

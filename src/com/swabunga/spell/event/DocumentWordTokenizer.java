@@ -55,12 +55,12 @@ public class DocumentWordTokenizer implements WordTokenizer {
    * word in the buffer from the start position
    */
   private static int getNextWordStart(Segment text, int startPos) {
-    int size = text.getEndIndex();
-    for (int i=startPos;i<size;i++) {
-      if (Character.isLetterOrDigit(text.next())) {
-        return i;
+    if (startPos <= text.getEndIndex())
+      for (char ch = text.setIndex(startPos);ch != Segment.DONE;ch = text.next()) {
+        if (Character.isLetterOrDigit(ch)) {
+          return text.getIndex();
+        }
       }
-    }
     return -1;
   }
 
@@ -68,13 +68,12 @@ public class DocumentWordTokenizer implements WordTokenizer {
    *
    */
   private static int getNextWordEnd(Segment text, int startPos) {
-    int size = text.getEndIndex();
-    for (int i=startPos;i<size;i++) {
-      if (!Character.isLetterOrDigit(text.next())) {
-        return i;
+    for (char ch = text.setIndex(startPos); ch != Segment.DONE;ch = text.next()) {
+      if (!Character.isLetterOrDigit(ch)) {
+        return text.getIndex();
       }
     }
-    return size;
+    return text.getEndIndex();;
   }
 
 
@@ -92,6 +91,14 @@ public class DocumentWordTokenizer implements WordTokenizer {
     return currentWordPos;
   }
 
+  /** Returns the current end word position in the text
+   *
+   */
+  public int getCurrentWordEnd() {
+    return currentWordEnd;
+  }
+
+
   /** Returns the next word in the text
    *
    */
@@ -104,7 +111,7 @@ public class DocumentWordTokenizer implements WordTokenizer {
     //The nextWordPos has already been populated
     String word = null;
     try {
-      word = document.getText(currentWordPos, currentWordEnd);
+      word = document.getText(currentWordPos, currentWordEnd-currentWordPos);
     } catch (BadLocationException ex) {
       moreTokens = false;
     }
@@ -128,16 +135,19 @@ public class DocumentWordTokenizer implements WordTokenizer {
       try {
         document.remove(currentWordPos, currentWordEnd - currentWordPos);
         document.insertString(currentWordPos, newWord, null);
+        //Need to reset the segment
+        document.getText(0, document.getLength(), text);
       } catch (BadLocationException ex) {
         throw new RuntimeException(ex.getMessage());
       }
       //Position after the newly replaced word(s)
+      //Position after the newly replaced word(s)
       first = true;
-      currentWordPos = currentWordPos+newWord.length();
-      currentWordEnd = getNextWordEnd(text, currentWordPos);
-      nextWordPos = getNextWordStart(text, currentWordEnd);
-      if (nextWordPos == -1)
-        moreTokens = false;
+      currentWordPos = getNextWordStart(text, currentWordPos+newWord.length());
+      if (currentWordPos != -1) {
+        currentWordEnd = getNextWordEnd(text, currentWordPos);
+        nextWordPos = getNextWordStart(text, currentWordEnd);
+      } else moreTokens = false;
     }
   }
 

@@ -1,6 +1,5 @@
 package com.swabunga.spell.engine;
 
-import java.util.ResourceBundle;
 
 /**
  * @author aim4min
@@ -8,13 +7,31 @@ import java.util.ResourceBundle;
  */
 public abstract class Configuration {
 
-    public static final String EDIT_DEL1 = "EDIT_DEL1";
-    public static final String EDIT_DEL2 = "EDIT_DEL2";
-    public static final String EDIT_SWAP = "EDIT_SWAP";
-    public static final String EDIT_SUB = "EDIT_SUB";
-    public static final String EDIT_SIMILAR = "EDIT_SIMILAR";
-    public static final String EDIT_MIN = "EDIT_MIN";
-    public static final String EDIT_MAX = "EDIT_MAX";
+	/**
+	 * used by EditDistance: the cost of having to remove a character 
+	 */
+    public static final String COST_REMOVE_CHAR = "EDIT_DEL1";
+	
+	/**
+	 * used by EditDistance: the cost of having to insert a character
+	 */
+    public static final String COST_INSERT_CHAR = "EDIT_DEL2";
+	
+	/**
+	 * used by EditDistance: the cost of having to swap two adjoinging characters 
+	 * for the swap value to ever be used, it should be smaller than the insert or delete values
+	 */
+    public static final String COST_SWAP_CHARS = "EDIT_SWAP";
+	
+	/**
+	 * used by EditDistance: the cost of having to substitute one character for another  
+	 * for the sub value to ever be used, it should be smaller than the insert or delete values
+	 */
+    public static final String COST_SUBST_CHARS = "EDIT_SUB";
+    
+//    public static final String EDIT_SIMILAR = "EDIT_SIMILAR"; //DMV: these does not seem to be used at all
+//    public static final String EDIT_MIN = "EDIT_MIN";
+//    public static final String EDIT_MAX = "EDIT_MAX";
 	
 	public static final String SPELL_THRESHOLD = "SPELL_THRESHOLD";
 	public static final String SPELL_IGNOREUPPERCASE = "SPELL_IGNOREUPPERCASE";
@@ -22,7 +39,7 @@ public abstract class Configuration {
 	public static final String SPELL_IGNOREINTERNETADDRESSES = "SPELL_IGNOREINTERNETADDRESS";
 	public static final String SPELL_IGNOREDIGITWORDS = "SPELL_IGNOREDIGITWORDS";
 	public static final String SPELL_IGNOREMULTIPLEWORDS = "SPELL_IGNOREMULTIPLEWORDS";
-	public static final String SPELL_IGNORESENTANCECAPITALIZATION = "SPELL_IGNORESENTANCECAPTILIZATION";
+	public static final String SPELL_IGNORESENTENCECAPITALIZATION = "SPELL_IGNORESENTENCECAPTILIZATION";
 	
 	public abstract int getInteger(String key);
 	public abstract boolean getBoolean(String key);

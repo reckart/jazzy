@@ -9,6 +9,7 @@
   <property name="javadoc"  value="javadoc"/>
   <property name="jedit-config" value="${src}/com/swabunga/spell/jedit/config"/>
   <property name="target" value="1.1"/>
+  <property name="package" value="com.swabunga.spell.event"/>
  
   <!-- Build classpath -->
   <path id="classpath">
@@ -41,6 +42,21 @@
         <include name="**/*.properties"/>
       </fileset>
     </copy> 
+  </target>
+
+  <target name="debug-compile" depends="clean,init">
+    <!-- Compile the java code from ${src} into ${build} -->
+    <javac debug="true" srcdir="${src}" destdir="${build}" target="${target}">
+      <classpath refid="classpath"/>
+    </javac>
+    <copy todir="${build}" >
+      <fileset dir="${src}" >
+        <include name="**/*.properties"/>
+      </fileset>
+    </copy> 
+  </target>
+
+  <target name="clean-compile" depends="clean,compile">
   </target>
 
   <target name="javadoc" depends="init">
@@ -133,6 +149,11 @@
 
   <target name="jedit-install" depends="jedit-plugin">
       <copy file="${dist}/lib/jazzy${DSTAMP}.jar" tofile="${local.jedit.jars}/jazzy.jar"/>
+  </target>
+  
+  <target name="test" depends="compile">
+     <java classpath="%CLASSPATH%;${build}" 
+           classname="${package}.DefaultWordFinder"/>
   </target>
   
 </project>

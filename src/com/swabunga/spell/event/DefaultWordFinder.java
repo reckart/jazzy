@@ -6,7 +6,7 @@ import java.text.BreakIterator;
 /**
  * A basic word finder, which searches text for sequences of letters.
  * 
- * @author Anthony Roy  (ajr@antroy.co.uk)
+ * @author Anthony Roy  (ajr¤antroy.co.uk)
  */
 public class DefaultWordFinder
   extends AbstractWordFinder {
@@ -35,26 +35,43 @@ public class DefaultWordFinder
    */
   public static void main(String[] args) {
 
-    String test = "Testing \\item testing $one$  \\emph{two} $$three$$ \\begin{four} \\end{dffff} five.";
-//    DefaultWordFinder dwf = new DefaultWordFinder(test);
-//    XMLWordFinder dwf = new XMLWordFinder(test);
-    TeXWordFinder dwf = new TeXWordFinder(test);
+    String test = "A $gg ";//<B> Testing \\item<testing>and one  \\emph{two} three \\begin{four}\n \\end{dffff} five. the \\end{test}";
+ //     String test = "test test\n * comm @tag comm \n test test\n*comm comm\ntest test";
+
+    System.out.println(test);
+//         DefaultWordFinder dwf = new DefaultWordFinder(test);
+ //      XMLWordFinder dwf = new XMLWordFinder(test);
+       TeXWordFinder dwf = new TeXWordFinder(test);
+ //        JavaWordFinder dwf = new JavaWordFinder(test);
 
         int i = 1;
-        while(dwf.hasNext()){
-           Word w = dwf.next();
-           System.out.println("Word " + i++ + ": " +w.toString());
+            while(dwf.hasNext()){
+    //    for (; i < 5; i++) {
+    
+          Word w = dwf.next();
+          System.out.println("Word " + i++ + ": " + w.toString());
         }
-//    System.out.println(dwf.current().toString());
-//    System.out.println("Start?" + dwf.startsSentence);
-//    dwf.next();
-//    dwf.next();
-//    System.out.println(dwf.current().toString());
-//    dwf.replace("BALONEY");
-//    System.out.println(dwf.current().toString());
-//    System.out.println(dwf.toString());
-//    System.out.println(dwf.next());
-//    System.out.println(dwf.next());
+//            System.out.println(dwf.toString());
+//            System.out.println("C: " + dwf.current());
+//            System.out.println("N: " + dwf.next());
+//            System.out.println("C: " + dwf.current());
+//            dwf.replace("R");
+//            System.out.println(dwf.toString());
+//            System.out.println("C: " + dwf.current());
+//            System.out.println("N: " + dwf.next());
+//            System.out.println("C: " + dwf.current());
+//            System.out.println("N: " + dwf.next());
+//            System.out.println("C: " + dwf.current());
+//            System.out.println("N: " + dwf.next());
+    
+    //        System.out.println("Start?" + dwf.startsSentence);
+    //        dwf.next();
+    //        dwf.next();
+    //        System.out.println(dwf.current().toString());
+    //        dwf.replace("BALONEY");
+    //        System.out.println(dwf.current().toString());
+    //        System.out.println(dwf.toString());
+    //        System.out.println(dwf.next());
   }
 
   /**
@@ -62,12 +79,17 @@ public class DefaultWordFinder
    * new Word object corresponding to the next word.
    * 
    * @return the next word.
+   * @throws WordNotFoundException search string contains no more words.
    */
   public Word next() {
 
-    Word tempWord = new Word(currentWord);
+    if (nextWord == null) {
+      throw new WordNotFoundException("No more words found.");
+    }
 
-    if (nextWord != null) {
+//    Word tempWord = new Word(currentWord);
+
+//    if (nextWord != null) {
       currentWord.copy(nextWord);
 
       int current = sentanceIterator.current();
@@ -81,16 +103,17 @@ public class DefaultWordFinder
           sentanceIterator.next();
         }
       }
-    } else {
-      currentWord = null;
-
-      return tempWord;
-    }
+//    } else {
+//      currentWord = null;
+//
+//      return tempWord;
+//    }
 
     int i = currentWord.getEnd();
     boolean finished = false;
     boolean started = false;
 
+	search:
     while (i < text.length() && !finished) {
 
       char currentLetter = text.charAt(i);
@@ -99,25 +122,29 @@ public class DefaultWordFinder
       if (!started && Character.isLetter(currentLetter)) {
         nextWord.setStart(i);
         started = true;
-      } else if (started && !Character.isLetter(currentLetter)) {
+      }
+			else if (started && !Character.isLetter(currentLetter)) {
         nextWord.setText(text.substring(nextWord.getStart(), i));
         finished = true;
+				break search;
       }
-
-      i++;
+			i++;
     }
 
     if (!started) {
       nextWord = null;
     }
+		else if (!finished){
+        nextWord.setText(text.substring(nextWord.getStart(), i));			
+		}
 
-    return tempWord;
+    return currentWord;
   }
 
   /**
-   * ¤
+   * Replace the current word in the search with a replacement string.
    * 
-   * @param newWord ¤
+   * @param newWord the replacement string.
    */
   public void replace(String newWord) {
     super.replace(newWord);

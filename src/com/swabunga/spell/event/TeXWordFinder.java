@@ -1,3 +1,5 @@
+//{{{ package and imports
+//:folding=explicit:
 package com.swabunga.spell.event;
 
 import java.text.BreakIterator;
@@ -10,14 +12,16 @@ import java.text.BreakIterator;
  * 
  * @author Anthony Roy  (ajr@antroy.co.uk)
  */
+  //}}}
 public class TeXWordFinder
   extends AbstractWordFinder {
 
-  //~ Instance/static variables ...............................................
+//{{{ ~ Instance/static variables ...............................................
 
   private BreakIterator sentanceIterator;
-
-  //~ Constructors ............................................................
+  private boolean IGNORE_COMMENTS = true;
+ //}}}
+//{{{ ~ Constructors ............................................................
 
   /**
    * Creates a new DefaultWordFinder object.
@@ -27,20 +31,22 @@ public class TeXWordFinder
   public TeXWordFinder(String inText) {
     super(inText);
   }
-
-  //~ Methods .................................................................
+//}}}
+//{{{ ~ Methods .................................................................
 
   /**
    * This method scans the text from the end of the last word,  and returns a
    * new Word object corresponding to the next word.
    * 
    * @return the next word.
+   * @throws WordNotFoundException search string contains no more words.
    */
   public Word next() {
+//{{{ 
 
-    Word tempWord = new Word(currentWord);
+    if (currentWord == null)
+      throw new WordNotFoundException("No more words found.");
 
-    if (nextWord != null) {
       currentWord.copy(nextWord);
 
       int current = sentanceIterator.current();
@@ -54,98 +60,84 @@ public class TeXWordFinder
           sentanceIterator.next();
         }
       }
-    } else {
-      currentWord = null;
-
-      return tempWord;
-    }
 
     int i = currentWord.getEnd();
-    boolean finished = false,
-            started  = false,
-            ignore   = false;
-
+    boolean finished = false;
+    boolean started = false;
+    boolean ignore = false;
     String endIgnore = "";
-
-    search: 
-     while (i < text.length() && !finished) {
+search: 
+    while (i < text.length() && !finished) {
 
       char currentLetter = text.charAt(i);
-         //Ignore Math environments.
-//        if (text.substring(i,i+2).equals("$$")) {
-//          i++;
-//          while (true){
-//            i++;
-//            if (text.substring(i,i+2).equals("$$")){
-//              i = i+2;
-//              continue search;
-//            }
-//          }
-//        }else 
 
-//NOTE: Following code will not exit if a $ is missing!
-        if (currentLetter=='$') {
-          while (true){
-            if (text.charAt(++i)=='$') {
-              i++;
-              continue search;
-            }
-          }
-        }
-     
-      if (currentLetter == '\\'){
-        //Ignore environment names.
-        if (text.substring(i+1,i+6).equals("begin")||
-            text.substring(i+1,i+4).equals("end")) {
-          i = i+5;
-          while (true){
-            currentLetter = text.charAt(++i);
-            if (currentLetter == '}') continue search;
-          }
-        }
-        //Ignore commands.
-        else{
-          do {currentLetter = text.charAt(++i);}
-          while (Character.isLetterOrDigit(currentLetter));
-
-        }
-      }
-    
-      //Find words.
+//{{{ Find words.
       if (!started && Character.isLetter(currentLetter)) {
-        nextWord.setStart(i);
+        nextWord.setStart(i++);
         started = true;
-      } else if (started && !Character.isLetter(currentLetter)) {
-        nextWord.setText(text.substring(nextWord.getStart(), i));
-        finished = true;
-      }
+        continue search;
+      } else if (started) {
+          if (Character.isLetter(currentLetter)){
+						i++;
+						continue search;
+          }else {
+						nextWord.setText(text.substring(nextWord.getStart(), i));
+						finished = true;
+						break search;
+					}
+      }  //}}}
 
+// Ignore Comments: 
+	i = ignore(i,'%','\n');
+// Ignore Maths:
+	i = ignore(i,"$$","$$");
+	i = ignore(i,'$','$');
+// Ignore environment names.
+	i = ignore(i,"\\begin{","}");
+	i = ignore(i,"\\end{","}");
+	// Ignore commands.
+	i = ignore(i,'\\');
+	
       i++;
-   }
+    }
 
     if (!started) {
       nextWord = null;
     }
+		else if (!finished){
+        nextWord.setText(text.substring(nextWord.getStart(), i));			
+		}
 
-    return tempWord;
+    return currentWord;
   }
-
+ //}}}
+ 
+ 
   /**
-   * ¤
+   * Replace the current word in the search with a replacement string.
    * 
-   * @param newWord ¤
+   * @param newWord the replacement string.
    */
+
+	 
   public void replace(String newWord) {
+//{{{ 
     super.replace(newWord);
     sentanceIterator.setText(text);
 
     int start = currentWord.getStart();
     sentanceIterator.following(start);
     startsSentence = sentanceIterator.current() == start;
+  } 
+//}}}
+  public void setIgnoreComments(boolean ignore){
+//{{{ 
+        IGNORE_COMMENTS = ignore;
   }
-
+ //}}}  
   protected void init() {
-    sentanceIterator = BreakIterator.getSentenceInstance();
+//{{{ 
+        sentanceIterator = BreakIterator.getSentenceInstance();
     sentanceIterator.setText(text);
-  }
+  }  //}}}//}}}
 }

@@ -1,11 +1,12 @@
 package com.swabunga.spell.event;
 
-/**
- * Defines common methods and behaviour for the various word finding subclasses.
- * 
- * @author Anthony Roy  (ajr@antroy.co.uk)
- */
 
+/**
+ * Defines common methods and behaviour for the various word finding
+ * subclasses.
+ * 
+ * @author Anthony Roy  (ajr¤antroy.co.uk)
+ */
 public abstract class AbstractWordFinder
   implements WordFinder {
 
@@ -26,8 +27,13 @@ public abstract class AbstractWordFinder
   public AbstractWordFinder(String inText) {
     text = inText;
     init();
-    next();
-    next();
+
+    try {
+      next();
+    } catch (WordNotFoundException e) {
+      currentWord = null;
+      nextWord = null;
+    }
   }
 
   //~ Methods .................................................................
@@ -52,12 +58,16 @@ public abstract class AbstractWordFinder
   }
 
   /**
-   * Returns the current word in the iteration - the first word  if next() has
-   * not been called.
+   * Returns the current word in the iteration .
    * 
    * @return the current word.
+   * @throws WordNotFoundException current word has not yet been set.
    */
   public Word current() {
+
+    if (currentWord == null) {
+      throw new WordNotFoundException("No Words in current String");
+    }
 
     return currentWord;
   }
@@ -67,33 +77,115 @@ public abstract class AbstractWordFinder
    */
   public boolean hasNext() {
 
-    return currentWord != null;
+    return nextWord != null;
   }
 
   /**
    * Replace the current word in the search with a replacement string.
    * 
    * @param newWord the replacement string.
+   * @throws WordNotFoundException current word has not yet been set.
    */
   public void replace(String newWord) {
 
-    int newEnd = currentWord.getEnd() + 
-                 (newWord.length() - currentWord.length());
+    if (currentWord == null) {
+      throw new WordNotFoundException("No Words in current String");
+    }
+
     StringBuffer sb = new StringBuffer(text.substring(0, 
                                                       currentWord.getStart()));
     sb.append(newWord);
     sb.append(text.substring(currentWord.getEnd()));
+
+    int diff = newWord.length() - currentWord.getText().length();
     currentWord.setText(newWord);
+    
+    nextWord.setStart(nextWord.getStart() + diff);
     text = sb.toString();
   }
 
   /**
    * @return true if the current word starts a new sentence.
+   * @throws WordNotFoundException current word has not yet been set.
    */
   public boolean startsSentence() {
 
+    if (currentWord == null) {
+      throw new WordNotFoundException("No Words in current String");
+    }
+
     return startsSentence;
   }
+	
+	 protected int ignore(int index, char startIgnore){
+
+		 int newIndex = index;
+
+		 if (newIndex < text.length()){
+			char curChar = text.charAt(newIndex);
+			
+			if (curChar == startIgnore){
+				while (++newIndex < text.length()){
+					curChar = text.charAt(newIndex);
+					if (!Character.isLetterOrDigit(curChar)){
+						break;
+					}
+				}
+			}
+		}
+		
+		return newIndex;
+	 }
+	
+	
+	 protected int ignore(int index, char startIgnore, char endIgnore){
+		  int newIndex = index;
+			if (newIndex < text.length()){
+				char curChar = text.charAt(newIndex);
+				if (curChar == startIgnore){
+					while (++newIndex < text.length()){
+						curChar = text.charAt(newIndex);
+						if (curChar == endIgnore){
+							break;
+						}
+					}
+				}
+			}
+
+		 return newIndex;
+	 }
+	
+ 	 protected int ignore(int index, String startIgnore, String endIgnore){
+//{{{ 		 		 
+		  int newIndex = index,
+			    len      = text.length(),
+			    slen     = startIgnore.length(),
+					elen     = endIgnore.length();
+		
+			if (!((newIndex + slen) >= len)) {
+				String seg = text.substring(newIndex, newIndex + slen);
+//				System.out.println(seg + ":" + seg.length()+ ":" + startIgnore + ":" + slen);
+				
+				if (seg.equals(startIgnore)) {
+					newIndex += slen;
+        cycle:
+					while (true) {
+						if (newIndex == text.length()-elen) {
+							break cycle;
+						}
+						String ss = text.substring(newIndex, newIndex + elen);
+						if (ss.equals(endIgnore)) {
+							newIndex += elen;
+							break cycle;
+						}
+						else{
+							newIndex++;
+						}
+					}
+				}
+		}
+		return newIndex;
+	} //}}}
 
   /**
    * Return the text being searched. May have changed since first set through

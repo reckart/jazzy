@@ -50,9 +50,10 @@ public class StringWordTokenizer
   }
 
   /**
-   * Replace the current word in the iteration with the Sttring s.
+   * Replace the current word in the iteration with the String s.
    * 
    * @param s the String to replace the current word.
+   * @throws WordNotFoundException current word not yet set.
    */
   public void replaceWord(String s) {
     finder.replace(s);

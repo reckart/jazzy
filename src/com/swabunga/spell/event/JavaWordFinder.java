@@ -4,30 +4,31 @@ import java.text.BreakIterator;
 
 
 /**
- * A word finder for XML or HTML documents, which searches text for sequences
- * of letters, but ignores the text inside any tags.
+ * A basic word finder, which searches text for sequences of letters.
  * 
- * @author Anthony Roy  (ajr@antroy.co.uk)
+ * @author Anthony Roy  (ajr¤antroy.co.uk)
  */
-public class XMLWordFinder
+public class JavaWordFinder
   extends AbstractWordFinder {
 
   //~ Instance/static variables ...............................................
 
-  private BreakIterator sentanceIterator;
+	private BreakIterator sentanceIterator;
+	private boolean inComment;
 
   //~ Constructors ............................................................
 
   /**
    * Creates a new DefaultWordFinder object.
    * 
-   * @param inText the text to search.
+   * @param inText the String to search
    */
-  public XMLWordFinder(String inText) {
+  public JavaWordFinder(String inText) {
     super(inText);
   }
 
   //~ Methods .................................................................
+
 
   /**
    * This method scans the text from the end of the last word,  and returns a
@@ -38,9 +39,13 @@ public class XMLWordFinder
    */
   public Word next() {
 
-    if (currentWord == null)
+    if (nextWord == null) {
       throw new WordNotFoundException("No more words found.");
+    }
 
+//    Word tempWord = new Word(currentWord);
+
+//    if (nextWord != null) {
       currentWord.copy(nextWord);
 
       int current = sentanceIterator.current();
@@ -54,41 +59,64 @@ public class XMLWordFinder
           sentanceIterator.next();
         }
       }
+//    } else {
+//      currentWord = null;
+//
+//      return tempWord;
+//    }
 
     int i = currentWord.getEnd();
     boolean finished = false;
     boolean started = false;
-    boolean ignore = false;
-  
-	search:
-    while (i < text.length() && !finished) {
 
+   search:
+		while (i < text.length() && !finished) {
+
+			i = ignore(i,'@');
+			i = ignore(i,"<code>","</code>");
+			i = ignore(i,"<CODE>","</CODE>");
+			i = ignore(i,'<','>');
+			
+			
       char currentLetter = text.charAt(i);
-//{{{ Find words.
-      if (!started && Character.isLetter(currentLetter)) {
-        nextWord.setStart(i++);
-        started = true;
-        continue search;
-      } else if (started) {
-          if (Character.isLetter(currentLetter)){
-						i++;
-						continue search;
-          }else {
+			
+			if (inComment){
+				//Reset on new line.
+				if (currentLetter == '\n'){
+					inComment = false;
+					i++;
+				continue search;
+			  }
+				else if (!Character.isLetter(currentLetter)){
+					i++;
+					continue search;
+				}
+				//Find words.
+				while (i < text.length()-1) {
+					if (!started && Character.isLetter(currentLetter)) {
+						nextWord.setStart(i);
+						started = true;
+					} else if (started && !Character.isLetter(currentLetter)) {
 						nextWord.setText(text.substring(nextWord.getStart(), i));
 						finished = true;
 						break search;
 					}
-      }  //}}}
-
-      //Ignore things inside tags.
-			i = ignore(i,'<','>');
-			
-      i++;
+					
+					currentLetter =  text.charAt(++i);
+				}
+			}
+			else if (currentLetter == '*'){
+				inComment = true;
+				i++;
+			}
+			else {
+				i++;
+			}
     }
 
     if (!started) {
       nextWord = null;
-    }
+    }		
 		else if (!finished){
         nextWord.setText(text.substring(nextWord.getStart(), i));			
 		}
@@ -113,5 +141,6 @@ public class XMLWordFinder
   protected void init() {
     sentanceIterator = BreakIterator.getSentenceInstance();
     sentanceIterator.setText(text);
+		inComment = false;
   }
 }

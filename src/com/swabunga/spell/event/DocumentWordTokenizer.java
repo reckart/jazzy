@@ -347,7 +347,7 @@ public class DocumentWordTokenizer implements WordTokenizer {
 
 
 
-  /** Returns true iif the current word is at the start of a sentance*/
+  /** Returns true if the current word is at the start of a sentance*/
 
   public boolean isNewSentance() {
 

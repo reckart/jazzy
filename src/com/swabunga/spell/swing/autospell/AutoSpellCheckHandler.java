@@ -76,7 +76,7 @@ public class AutoSpellCheckHandler extends MouseAdapter implements DocumentListe
 				markAsMisspelled(doc, wordStart, wordEnd);
 			}
 		}
-		if(wordEnd!=-1){
+		if(wordStart>=wordEnd && wordEnd!=-1){
 			markAsCorrect(doc, wordEnd, end);
 		}
 	}
@@ -92,15 +92,19 @@ public class AutoSpellCheckHandler extends MouseAdapter implements DocumentListe
 		SimpleAttributeSet attr;
 		attr=new SimpleAttributeSet(doc.getCharacterElement((start+end)/2).getAttributes());
 		attr.removeAttribute(wordMisspelled);
-		doc.setCharacterAttributes(start, end-start, attr, true);
+		if(end>=start)
+			doc.setCharacterAttributes(start, end-start, attr, true);
 	}
 	
 	private void handleDocumentChange(DocumentEvent evt){
 		StyledDocument			doc;
 		
 		if(evt.getDocument() instanceof StyledDocument){
+			int start=evt.getOffset()-1,
+				end=evt.getOffset()+evt.getLength();
 			doc=(StyledDocument)evt.getDocument();
-			markupSpelling(doc,evt.getOffset()-1, evt.getOffset()+evt.getLength());
+			Element e=doc.getCharacterElement((start+end)/2);
+			markupSpelling(doc,start, end);
 		}		
 	}
 	

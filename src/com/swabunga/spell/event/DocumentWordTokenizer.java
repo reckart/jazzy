@@ -4,6 +4,8 @@ package com.swabunga.spell.event;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.Segment;
+import javax.swing.text.StyledDocument;
+import javax.swing.text.AttributeSet;
 import java.text.BreakIterator;
 
 
@@ -147,10 +149,13 @@ public class DocumentWordTokenizer implements WordTokenizer {
 
   /** Replaces the current word token*/
   public void replaceWord(String newWord) {
+    AttributeSet attr=null;
     if (currentWordPos != -1) {
       try {
+        if(document instanceof StyledDocument)
+            attr=((StyledDocument)document).getCharacterElement(currentWordPos).getAttributes();
         document.remove(currentWordPos, currentWordEnd - currentWordPos);
-        document.insertString(currentWordPos, newWord, null);
+        document.insertString(currentWordPos, newWord, attr);
         //Need to reset the segment
         document.getText(0, document.getLength(), text);
       } catch (BadLocationException ex) {

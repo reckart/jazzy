@@ -35,7 +35,7 @@ public class JSpellDialog extends JDialog implements ActionListener, WindowListe
 
 
   public void show(SpellCheckEvent e) {
-    System.out.println("Show");
+   // System.out.println("Show");
     this.event = e;
     form.setSpellEvent(e);
     show();

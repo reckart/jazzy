@@ -8,11 +8,15 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.swing.JApplet;
@@ -32,9 +36,9 @@ import com.swabunga.spell.engine.SpellDictionary;
  */
 public class JSpellApplet extends JApplet {
 
-	private static final String dictionaryFile = "dictionaries/english.0";
+	private static final String dictionaryFile = "dict/english.0";
 	private SpellDictionary dictionary;
-	JTextComponent text = null;
+	JTextArea text = null;
 	JButton spell = null;
 
 	/**
@@ -50,21 +54,23 @@ public class JSpellApplet extends JApplet {
 	 */
 	public void init() {
 		super.init();
-		InputStream fInput = getClass().getResourceAsStream("../dictionaries/english.0");
-		if (fInput !=null) {
-			try {
-				dictionary = new SpellDictionary(new InputStreamReader(fInput));
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			initGUI();
+	
+		URL resource = null;
+		try {
+			resource = new URL(getCodeBase().toExternalForm() + dictionaryFile);
+			dictionary =
+				new SpellDictionary(
+					new BufferedReader(
+						new InputStreamReader(resource.openStream())));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		
+		initGUI();
 
 	}
-	
+
 	private void initGUI() {
 		Container frame = getContentPane();
 		GridBagLayout gridbag = new GridBagLayout();
@@ -75,27 +81,34 @@ public class JSpellApplet extends JApplet {
 		c.insets = new Insets(5, 5, 5, 5);
 		c.weightx = 1.0;
 		c.weighty = 1.0;
-		text = new JTextArea(10, 40);
+		text = new JTextArea("The quck brwn dog jmped over the fnce.");
+		text.setLineWrap(true);
+		text.setWrapStyleWord(true);
 		addToFrame(frame, text, gridbag, c, 0, 0, 1, 1);
-		spell = new JButton("spell");
+
+		GridBagConstraints spellcon = new GridBagConstraints();
+		spellcon.anchor = GridBagConstraints.NORTH;
+		spellcon.insets = new Insets(5, 5, 5, 5);
+
+		spell = new JButton("spell check");
+		final JTextComponentSpellChecker sc =
+			new JTextComponentSpellChecker(dictionary);
 		spell.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				Thread t = new Thread() {
 					public void run() {
 						try {
-							JTextComponentSpellChecker sc =
-								new JTextComponentSpellChecker(dictionary);
 							sc.spellCheck(text);
 						} catch (Exception ex) {
 							ex.printStackTrace();
-							
+
 						}
 					}
 				};
 				t.start();
 			}
 		});
-		addToFrame(frame, spell, gridbag, c, 0, 1, 1, 1);
+		addToFrame(frame, spell, gridbag, spellcon, 1, 0, 1, 1);
 	}
 
 	// Helps build gridbaglayout.

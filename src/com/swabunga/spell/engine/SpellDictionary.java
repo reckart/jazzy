@@ -109,12 +109,18 @@ public class SpellDictionary {
    */
   protected void createDictionary (BufferedReader in) throws IOException {
     String line = "";
+	//System.gc();
+	//System.out.println("System mem: " + Runtime.getRuntime().totalMemory());
     while (line != null) {
       line = in.readLine();
       if (line != null) {
+      	line = new String (line.toCharArray());
         putWord(line);
       }
     }
+    //System.gc();
+   // System.out.println("System mem: " + Runtime.getRuntime().totalMemory());
+    //System.out.println( mainDictionary.keySet().size() );
   }
 
   /**
@@ -131,11 +137,11 @@ public class SpellDictionary {
     String code = getCode(word);
     LinkedList list = (LinkedList)mainDictionary.get(code);
     if (list != null) {
-      list.add(word);
+      list.add( word );
     }
     else {
       list = new LinkedList();
-      list.add(word);
+      list.add( word );
       mainDictionary.put(code, list);
     }
   }

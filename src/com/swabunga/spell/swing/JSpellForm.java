@@ -65,19 +65,33 @@ public class JSpellForm extends JPanel
   /** Creates the buttons on the left hand side of the panel*/
   protected JPanel makeEastPanel () {
     JPanel jPanel1 = new JPanel();
-    jPanel1.setLayout(new BoxLayout(jPanel1, BoxLayout.Y_AXIS));
+    BoxLayout layout = new BoxLayout(jPanel1, BoxLayout.Y_AXIS);
+    jPanel1.setLayout(layout);
+    
     JButton ignoreBtn = createButton(IGNORE_CMD, messages.getString(IGNORE_CMD), this);
+    ignoreBtn.setMaximumSize( new Dimension(Short.MAX_VALUE, Short.MAX_VALUE )); 
     jPanel1.add(ignoreBtn);
+    
     JButton ignoreAllBtn = createButton(IGNOREALL_CMD, messages.getString(IGNOREALL_CMD), this);
+    ignoreAllBtn.setMaximumSize(  new Dimension(Short.MAX_VALUE, Short.MAX_VALUE ));
     jPanel1.add(ignoreAllBtn);
+    
     JButton addBtn = createButton(ADD_CMD, messages.getString(ADD_CMD), this);
+    addBtn.setMaximumSize(  new Dimension(Short.MAX_VALUE, Short.MAX_VALUE ));
     jPanel1.add(addBtn);
+    
     JButton changeBtn = createButton(REPLACE_CMD, messages.getString(REPLACE_CMD), this);
+    changeBtn.setMaximumSize(  new Dimension(Short.MAX_VALUE, Short.MAX_VALUE ));
     jPanel1.add(changeBtn);
+    
     JButton changeAllBtn = createButton(REPLACEALL_CMD, messages.getString(REPLACEALL_CMD), this);
+    changeAllBtn.setMaximumSize(  new Dimension(Short.MAX_VALUE, Short.MAX_VALUE ));
     jPanel1.add(changeAllBtn);
+    
     JButton cancelBtn = createButton(CANCEL_CMD, messages.getString(CANCEL_CMD), this);
+    cancelBtn.setMaximumSize(  new Dimension(Short.MAX_VALUE, Short.MAX_VALUE ));
     jPanel1.add(cancelBtn);
+   
     return  jPanel1;
   }
 

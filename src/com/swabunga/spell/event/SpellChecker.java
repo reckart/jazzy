@@ -255,9 +255,7 @@ public class SpellChecker {
       case SpellCheckEvent.IGNORE:
         break;
       case SpellCheckEvent.IGNOREALL:
-        if (!ignoredWords.contains(word)) {
-          ignoredWords.addElement(word);
-        }
+        ignoreAll(word);
         break;
       case SpellCheckEvent.REPLACE:
         tokenizer.replaceWord(event.getReplaceWord());
@@ -283,6 +281,17 @@ public class SpellChecker {
     return false;
   }
 
+  public void ignoreAll(String word) {
+    if (!ignoredWords.contains(word)) {
+      ignoredWords.addElement(word);
+    }
+  }
+  
+  public void addToDictionary(String word) {
+    if (!userdictionary.isCorrect(word))
+      userdictionary.addWord(word);
+  }
+  
   private boolean isCorrect(String word) {
     if (userdictionary.isCorrect(word)) return true;
     for (Enumeration e = dictionaries.elements(); e.hasMoreElements();) {

@@ -39,7 +39,9 @@ public class Word implements Comparator {
   }
 
   public boolean equals(Object o) {
-    return(((Word)o).getWord().equals(getWord()));
+    if (o instanceof Word)  // added by bd
+      return(((Word)o).getWord().equals(getWord()));
+    return false;
   }
   
   /**

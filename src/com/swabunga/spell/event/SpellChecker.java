@@ -138,7 +138,7 @@ public class SpellChecker {
   public String checkString(String text) {
     StringWordTokenizer tokens = new StringWordTokenizer(text);
     checkSpelling(tokens);
-    return tokens.getFinalText();
+    return tokens.getContext();
   }
 
 
@@ -159,14 +159,23 @@ public class SpellChecker {
 
 
   /**
-   * Returns true iif this word looks like an internet address
+   * Returns true iff this word looks like an internet address.
+   *
+   * One limitation is that this method cannot currently recognise email
+   * addresses. Since the 'word' that is passed in may in fact contain
+   * the rest of the document to be checked, it is not (yet!) a good
+   * idea to scan for the @ character.
    *
    * @param  word  Description of the Parameter
    * @return       The iNETWord value
    */
-  private final static boolean isINETWord(String word) {
-    //JMH TBD
-    return false;
+    public final static boolean isINETWord(String word) {
+        String lowerCaseWord = word.toLowerCase();
+        return lowerCaseWord.startsWith("http://") ||
+              lowerCaseWord.startsWith("www.") ||
+              lowerCaseWord.startsWith("ftp://") ||
+              lowerCaseWord.startsWith("https://") ||
+              lowerCaseWord.startsWith("ftps://");
   }
 
 
@@ -298,7 +307,10 @@ public class SpellChecker {
       String word = tokenizer.nextWord();
       //Check the spelling of the word
       if (!isCorrect(word)) {
-        if ((config.getBoolean(Configuration.SPELL_IGNOREMIXEDCASE) && isMixedCaseWord(word, tokenizer.isNewSentence())) || (config.getBoolean(Configuration.SPELL_IGNOREUPPERCASE) && isUpperCaseWord(word)) || (config.getBoolean(Configuration.SPELL_IGNOREDIGITWORDS) && isDigitWord(word)) || (config.getBoolean(Configuration.SPELL_IGNOREINTERNETADDRESSES) && isINETWord(word))) {
+ 		if ((config.getBoolean(Configuration.SPELL_IGNOREMIXEDCASE) && isMixedCaseWord(word, tokenizer.isNewSentence())) ||
+            (config.getBoolean(Configuration.SPELL_IGNOREUPPERCASE) && isUpperCaseWord(word)) ||
+            (config.getBoolean(Configuration.SPELL_IGNOREDIGITWORDS) && isDigitWord(word)) ||
+            (config.getBoolean(Configuration.SPELL_IGNOREINTERNETADDRESSES) && isINETWord(word))) {
           //Null event. Since we are ignoring this word due
           //to one of the above cases.
         } else {

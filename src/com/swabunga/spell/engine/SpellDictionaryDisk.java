@@ -252,6 +252,10 @@ public class SpellDictionaryDisk extends SpellDictionaryASpell {
     }
     out.close();
 
+    // Output the last iteration
+    if (currentCode != null && currentPosition != 0 && currentLength != 0)
+      index.add(new Object[]{currentCode, new int[]{currentPosition, currentLength}});
+
     BufferedWriter writer = new BufferedWriter(new FileWriter(new File(db, FILE_INDEX)));
     for (int i = 0; i < index.size(); i++) {
       Object[] o = (Object[]) index.get(i);

@@ -1,6 +1,9 @@
 package com.swabunga.spell.event;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 
 
 /**
@@ -28,6 +31,10 @@ public class FileWordTokenizer extends AbstractWordTokenizer {
     super(stringValue(inputFile));
   }
 
+  public FileWordTokenizer(File inputFile, WordFinder finder) {
+    super(finder);
+    finder.setText(stringValue(inputFile));
+  }
   //~ Methods .................................................................
 
   /**
@@ -40,10 +47,20 @@ public class FileWordTokenizer extends AbstractWordTokenizer {
   }
 
   private static String stringValue(File inFile) {
-//    File stringFile = inFile;
+    File stringFile = inFile;
+    StringBuffer out = new StringBuffer("");
 
-    String out = "";
-
-    return out;
+    try{
+      BufferedReader in = new BufferedReader(new FileReader(inFile));
+      char[] c = new char[100];
+      int count;
+      while ((count = in.read(c, 0, c.length)) != -1){
+         out.append(c,0,count);
+      }
+      in.close();
+    } catch(IOException e){
+      System.err.println("File input error trying to open " + inFile.toString() + " : " + e);
+    }
+    return out.toString();
   }
 }

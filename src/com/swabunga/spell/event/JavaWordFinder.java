@@ -23,6 +23,10 @@ public class JavaWordFinder extends AbstractWordFinder {
     super(inText);
   }
 
+  public JavaWordFinder() {
+    super();
+  }
+
   //~ Methods .................................................................
 
 

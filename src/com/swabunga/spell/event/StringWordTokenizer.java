@@ -35,6 +35,12 @@ public class StringWordTokenizer extends AbstractWordTokenizer {
     super(wf);
   }
 
+  public StringWordTokenizer(String s, WordFinder finder) {
+    super(finder);
+    finder.setText(s);
+  }
+
+  
   //~ Methods .................................................................
 
   /**

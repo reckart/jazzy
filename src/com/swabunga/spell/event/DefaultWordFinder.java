@@ -20,6 +20,10 @@ public class DefaultWordFinder extends AbstractWordFinder {
     super(inText);
   }
 
+  public DefaultWordFinder() {
+    super();
+  }
+
   //~ Methods .................................................................
 
   /**

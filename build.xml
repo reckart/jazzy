@@ -165,7 +165,14 @@
   </target>
 
   <target name="compile-test" depends="debug-compile">
-    <java classname="com.swabunga.test.spell.event.TeXWordFinderTester" fork="true" classpath="bin;${junit}"/>
+    <java classname="com.swabunga.test.spell.event.TeXWordFinderTester" 
+          fork="true" classpath="bin;${junit}"/>
+    <java classname="com.swabunga.test.spell.event.FileWordTokenizerTester"
+          fork="true" classpath="bin;${junit}" dir="."/>
+    <java classname="com.swabunga.test.spell.event.StringWordTokenizerTester"
+          fork="true" classpath="bin;${junit}" dir="."/>
+    <java classname="com.swabunga.test.spell.event.SpellCheckerTester"
+          fork="true" classpath="bin;${junit}" dir="."/>
   </target>
   
  <!-- Build jEdit Plugin from jedit_build.xml Ant file. -->

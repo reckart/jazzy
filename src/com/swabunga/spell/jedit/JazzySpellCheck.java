@@ -1,6 +1,6 @@
 /*
- * $Date: 2003/06/02 20:07:03 $
- * $Author: happyclown $
+ * $Date: 2003/09/05 15:02:48 $
+ * $Author: ant-roy $
  *
  * Copyright (C) 2002 Anthony Roy
  *
@@ -135,6 +135,8 @@ public class JazzySpellCheck implements SpellCheckListener {
       wf = new DefaultWordFinder(input);
     }
 
+    Log.log(Log.MESSAGE, this, "WordFinder Type: " + wf.getClass().toString());
+    
     StringWordTokenizer toks = new StringWordTokenizer(wf);
     spellChecker.checkSpelling(toks);
 

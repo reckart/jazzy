@@ -36,6 +36,10 @@ public class TeXWordFinder extends AbstractWordFinder {
   public TeXWordFinder(String inText) {
     super(inText);
   }
+  
+  public TeXWordFinder() {
+    super();
+  }
 //}}}
 //{{{ ~ Methods .................................................................
 
@@ -82,11 +86,11 @@ public class TeXWordFinder extends AbstractWordFinder {
         int j = i;
 // Ignore Comments:
         j = ignore(j, '%', '\n');
+        
 // Ignore Maths:
         j = ignore(j, "$$", "$$");
-//        j = ignore(j, "$", "$");
         j = ignore(j, '$', '$');
-
+        
 // Ignore user defined.
         j = ignoreUserDefined(j);
         
@@ -95,8 +99,14 @@ public class TeXWordFinder extends AbstractWordFinder {
         j = ignore(j, "\\documentclass", "}");
         j = ignore(j, "\\usepackage", "}");
         j = ignore(j, "\\newcounter{", "}");
+        j = ignore(j, "\\setcounter{", "}");
+        j = ignore(j, "\\addtocounter{", "}");
+        j = ignore(j, "\\value{", "}");
+        j = ignore(j, "\\arabic{", "}");
+        j = ignore(j, "\\usecounter{", "}");
         j = ignore(j, "\\newenvironment", "}");
         j = ignore(j, "\\setlength", "}");
+        j = ignore(j, "\\setkeys", "}");
         
 // Ignore environment names.
         j = ignore(j, "\\begin{", "}");

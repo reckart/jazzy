@@ -12,9 +12,9 @@ public abstract class AbstractWordFinder implements WordFinder {
 
   //~ Instance/static variables .............................................
 
-  protected Word currentWord = new Word("", 0);
-  protected Word nextWord = new Word("", 0);
-  protected boolean startsSentence = true;
+  protected Word currentWord;
+  protected Word nextWord;
+  protected boolean startsSentence;
   protected String text;
   protected BreakIterator sentenceIterator;
 
@@ -27,16 +27,13 @@ public abstract class AbstractWordFinder implements WordFinder {
    */
   public AbstractWordFinder(String inText) {
     text = inText;
-    init();
-
-    try {
-      next();
-    } catch (WordNotFoundException e) {
-      currentWord = null;
-      nextWord = null;
-    }
+    setup();
   }
 
+  public AbstractWordFinder() {
+    text = "";
+    setup();
+  }
   //~ Methods ...............................................................
 
   /**
@@ -56,6 +53,11 @@ public abstract class AbstractWordFinder implements WordFinder {
   public String getText() {
 
     return text;
+  }
+  
+  public void setText(String newText) {
+    text = newText;
+    setup();
   }
 
   /**
@@ -261,4 +263,21 @@ public abstract class AbstractWordFinder implements WordFinder {
     sentenceIterator = BreakIterator.getSentenceInstance();
     sentenceIterator.setText(text);
   }
+  
+  private void setup() {
+    currentWord = new Word("", 0);
+    nextWord = new Word("", 0);
+    startsSentence = true;
+
+    init();
+
+    try {
+      next();
+    } catch (WordNotFoundException e) {
+      currentWord = null;
+      nextWord = null;
+    }
+  }
+
+  
 }

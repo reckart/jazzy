@@ -71,7 +71,7 @@ public class SpellChecker {
 
   public void addDictionary(SpellDictionary dictionary) {
     if (dictionary == null) {
-      throw new IllegalArgumentException("dictionary must non-null");
+      throw new IllegalArgumentException("dictionary must be non-null");
     }
     this.dictionaries.addElement(dictionary);
   }

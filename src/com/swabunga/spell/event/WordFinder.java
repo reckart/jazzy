@@ -30,6 +30,14 @@ public interface WordFinder {
   public String getText();
 
   /**
+   * This method resets the text through which the WordFinder iterates.
+   * It must also re-initialize the WordFinder.
+   *
+   * @param newText the new text to search.
+   */
+  public void setText(String newText);
+
+  /**
    * This method should return the  Word object representing the current word
    * in the iteration.
    * This method should not affect the state of the  WordFinder object.

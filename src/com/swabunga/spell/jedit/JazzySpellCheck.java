@@ -1,5 +1,5 @@
 /*
- * $Date: 2003/02/03 13:52:16 $
+ * $Date: 2003/02/05 13:11:35 $
  * $Author: ant-roy $
  *
  * Copyright (C) 2002 Anthony Roy
@@ -50,7 +50,6 @@ public class JazzySpellCheck
     private JEditTextArea area;
     private int caretPosn;
     private SpellDictionary dictionary;
-    private File dictionaryFile;
     private JSpellDialog dlg;
     private int flags;
     private boolean noerrors                   = true;
@@ -62,11 +61,9 @@ public class JazzySpellCheck
     /**
      * Creates a new JazzySpellCheck object.
      * 
-     * @param dict ¤
      * @param flags ¤
      */
-    public JazzySpellCheck(String dict, int flags) {
-        this.dictionaryFile                    = new File(dict);
+    public JazzySpellCheck(int flags) {
         this.flags                             = flags;
 
         if ((flags & LOAD_DICTIONARY) == LOAD_DICTIONARY) {
@@ -138,10 +135,10 @@ public class JazzySpellCheck
         }
 
         area.setCaretPosition(caretPosn);
-        String output = toks.getFinalText();
+        String output = toks.getContext();
 
         if ((flags & RESET_SPELLCHECKER) == RESET_SPELLCHECKER) {
-            spellChecker.reset();
+            resetSpellChecker();
         }
 
         return output;
@@ -153,6 +150,8 @@ public class JazzySpellCheck
      * @return ¤
      */
     public boolean loadDictionary() {
+        File dictionaryFile = new File(jEdit.getProperty(
+                                               "options.jazzy.dictionary", ""));
 
         if (!LOADED && dictionaryFile.exists()) {
 
@@ -161,8 +160,12 @@ public class JazzySpellCheck
                 if (jEdit.getBooleanProperty("options.jazzy.disk-based", false)) {
                     dictionary = new SpellDictionaryDisk(dictionaryFile.getParentFile(), 
                                                          true);
+                    Log.log(Log.MESSAGE, this, 
+                            "Disk-based SpellChecker Loaded.");
                 } else {
                     dictionary = new SpellDictionaryHashMap(dictionaryFile);
+                    Log.log(Log.MESSAGE, this, 
+                            "Memory-based SpellChecker Loaded with custom dictionary.");
                 }
             } catch (Exception e) {
                 Log.log(Log.MESSAGE, this, 
@@ -180,6 +183,8 @@ public class JazzySpellCheck
                                                    "/english.0");
                 InputStreamReader reader = new InputStreamReader(in);
                 dictionary               = new SpellDictionaryHashMap(reader);
+                Log.log(Log.MESSAGE, this, 
+                        "Memory-based SpellChecker Loaded with default dictionary.");
             } catch (Exception e) {
                 Log.log(Log.MESSAGE, this, 
                         "TextSpellCheck: error loading default dictionary: " + e);
@@ -199,6 +204,13 @@ public class JazzySpellCheck
         }
 
         return LOADED;
+    }
+
+    /**
+     * Resets list of ignored words.
+     */
+    public void resetSpellChecker() {
+        spellChecker.reset();
     }
 
     /**

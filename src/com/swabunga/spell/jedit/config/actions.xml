@@ -11,7 +11,7 @@
 
 <ACTIONS>
   <!-- Menu action for spell checking the current selection -->
-  <ACTION NAME="spell-check-selection">
+  <ACTION NAME="spell-check">
     <CODE>
       com.swabunga.spell.jedit.JazzyPlugin.showJazzyDialog(view);
     </CODE>
@@ -21,6 +21,13 @@
   <ACTION NAME="unload-dictionary">
     <CODE>
       com.swabunga.spell.jedit.JazzyPlugin.unloadDictionary();
+    </CODE>
+  </ACTION>
+  <!-- Menu action for spell checking the current selection with a specified lang -->
+
+  <ACTION NAME="reset-ignore-list">
+    <CODE>
+      com.swabunga.spell.jedit.JazzyPlugin.resetSpellChecker();
     </CODE>
   </ACTION>
 </ACTIONS>

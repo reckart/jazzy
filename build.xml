@@ -10,6 +10,7 @@
   <property name="jedit-config" value="${src}/com/swabunga/spell/jedit/config"/>
   <property name="target" value="1.1"/>
   <property name="package" value="com.swabunga.spell.event"/>
+  <property name="verbose" value="false"/>
  
   <!-- Build classpath -->
   <path id="classpath">
@@ -34,7 +35,7 @@
 
   <target name="compile" depends="init">
     <!-- Compile the java code from ${src} into ${build} -->
-    <javac srcdir="${src}" destdir="${build}" target="${target}">
+    <javac deprecation="true" verbose="${verbose}" srcdir="${src}" destdir="${build}" target="${target}">
       <classpath refid="classpath"/>
     </javac>
     <copy todir="${build}" >

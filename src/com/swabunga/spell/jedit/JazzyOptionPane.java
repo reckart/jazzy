@@ -28,10 +28,14 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.JButton;
+import javax.swing.AbstractAction;
+import java.awt.event.ActionEvent;
 
 import org.gjt.sp.jedit.AbstractOptionPane;
 import org.gjt.sp.jedit.jEdit;
-
+import org.gjt.sp.jedit.GUIUtilities;
+import org.gjt.sp.jedit.browser.VFSBrowser;
 
 //}}}
 public class JazzyOptionPane
@@ -69,6 +73,16 @@ public class JazzyOptionPane
         JPanel p          = new JPanel();
         p.add(userDirLab);
         p.add(dictDir);
+	/* 4 Feb '03: Added filechooser to options. */
+	p.add(new JButton(new AbstractAction("Browse..."){
+		public void actionPerformed(ActionEvent e){
+			int mode = (disk_based.getModel().isSelected() 
+				? VFSBrowser.CHOOSE_DIRECTORY_DIALOG
+				: VFSBrowser.OPEN_DIALOG);
+			String[] files = GUIUtilities.showVFSFileDialog(jEdit.getActiveView(),dictDir.getText(),mode,false);
+			dictDir.setText((files[0]!=null) ? files[0] : "");
+		}
+	}));
         addComponent(p);
         addComponent(loadOnStart = new JCheckBox("Load Dictionary on Start?"));
         loadOnStart.getModel().setSelected(jEdit.getBooleanProperty(

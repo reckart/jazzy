@@ -16,12 +16,14 @@ options.jazzy.label=Jazzy
 
 ### Menu item labels
 jazzy.menu=\
-    spell-check-selection \
+    spell-check \
+    reset-ignore-list \
     unload-dictionary
 
 jazzy.menu.label=Jazzy
 
-spell-check-selection.label=Spell check selection
+spell-check.label=Check Spelling
+reset-ignore-list.label=Reset Ignored Words
 unload-dictionary.label=Unload dictionary
 
 options.jazzy.load-dictionary=false

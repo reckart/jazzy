@@ -1,5 +1,5 @@
 /*
- * $Date: 2003/02/03 13:52:16 $
+ * $Date: 2003/02/05 13:11:35 $
  * $Author: ant-roy $
  *
  * Copyright (C) 2002 Anthony Roy
@@ -37,7 +37,6 @@ public class JazzyPlugin
 
     public static final String PLUGIN_NAME         = "Jazzy";
     public static final String SPELL_CHECK_ACTIONS = "jazzy.menu";
-    private static String JAZZY_DICTIONARY;
     private static boolean LOAD_DICTIONARY;
     private static boolean RESET_SPELLCHECKER;
     private static JazzySpellCheck jazzyChecker;
@@ -68,11 +67,11 @@ public class JazzyPlugin
     }
 
     /**
-     * Displays the spell checker dialog box with specified lang dictionary.
-     * This method is called by the spell-check-selection-with-lang action,
+     * Displays the spell checker dialog box.
+     * This method is called by the spell-check action,
      * defined in actions.xml.
      * 
-     * @param view ¤
+     * @param view the current view.
      */
     public static void showJazzyDialog(View view) {
         JEditTextArea jta                          = view.getTextArea();
@@ -114,7 +113,6 @@ public class JazzyPlugin
                                      "options.jazzy.load-dictionary", false);
         RESET_SPELLCHECKER = jEdit.getBooleanProperty(
                                      "options.jazzy.reset-spellchecker", false);
-        JAZZY_DICTIONARY   = jEdit.getProperty("options.jazzy.dictionary", "");
         int flags          = 0;
 
         if (LOAD_DICTIONARY) {
@@ -125,15 +123,14 @@ public class JazzyPlugin
             flags += JazzySpellCheck.RESET_SPELLCHECKER;
         }
 
-        jazzyChecker = new JazzySpellCheck(JAZZY_DICTIONARY, flags);
+        jazzyChecker = new JazzySpellCheck(flags);
     }
 
-    /**
-     * Displays the spell checker dialog box with default lang dictionary.
-     * This method is called by the spell-check-selection action, defined in
-     * actions.xml.
-     */
     public static void unloadDictionary() {
         jazzyChecker.unloadDictionary();
+    }
+    
+    public static void resetSpellChecker() {
+        jazzyChecker.resetSpellChecker();
     }
 }

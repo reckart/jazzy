@@ -143,19 +143,6 @@ public class EditDistance {
 
   }
 
-  /*
-  static private int minimum(int a, int b, int c, int d)
-  {
-    int mi = a;
-    if (b < mi)
-      mi = b;
-    if (c < mi)
-      mi = c;
-    if (d < mi)
-      mi = d;
-    return mi;
-  }
-  */
 
   static private int minimum(int a, int b, int c, int d, int e) {
     int mi = a;

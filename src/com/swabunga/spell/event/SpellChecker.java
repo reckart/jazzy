@@ -7,9 +7,12 @@ import com.swabunga.spell.engine.Word;
 import com.swabunga.util.VectorUtility;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 
@@ -35,6 +38,13 @@ public class SpellChecker {
   /**This variable holds all of the words that are to be always ignored */
   private Vector ignoredWords = new Vector();
   private Hashtable autoReplaceWords = new Hashtable();
+  
+  // added caching - bd
+  // For cached operation a separate user dictionary is required
+  private Map cache;
+  private int threshold = 0;
+  private int cacheSize = 0;
+  
 
   /**
    * Constructs the SpellChecker.
@@ -287,14 +297,56 @@ public class SpellChecker {
     }
     return false;
   }
-
+  
+  
   public List getSuggestions(String word, int threshold) {
-    List suggestions = userdictionary.getSuggestions(word, threshold);
-    for (Enumeration e = dictionaries.elements(); e.hasMoreElements();) {
-      SpellDictionary dictionary = (SpellDictionary) e.nextElement();
-      VectorUtility.addAll(suggestions, dictionary.getSuggestions(word, threshold), false);
+    if (this.threshold != threshold && cache != null) {
+       this.threshold = threshold;
+       cache.clear();
     }
+    
+    ArrayList suggestions = null;
+    
+    if (cache != null)
+       suggestions = (ArrayList) cache.get(word);
+
+    if (suggestions == null) {
+       suggestions = new ArrayList(50);
+    
+       for (Enumeration e = dictionaries.elements(); e.hasMoreElements();) {
+           SpellDictionary dictionary = (SpellDictionary) e.nextElement();
+           
+           if (dictionary != userdictionary)
+              VectorUtility.addAll(suggestions, dictionary.getSuggestions(word, threshold), false);
+       }
+
+       if (cache != null && cache.size() < cacheSize)
+         cache.put(word, suggestions);
+    }
+    
+    VectorUtility.addAll(suggestions, userdictionary.getSuggestions(word, threshold), false);
+    suggestions.trimToSize();
+    
     return suggestions;
+  }
+
+  /**
+  * Activates a cache with the maximum number of entries set to 300
+  */
+  public void setCache() {
+    setCache(300);
+  }
+
+  /**
+  * Activates a cache with specified size
+  * @param size - max. number of cache entries (0 to disable chache)
+  */
+  public void setCache(int size) {
+    cacheSize = size;
+    if (size == 0)
+      cache = null;
+   else
+     cache = new HashMap((size + 2) / 3 * 4);
   }
 
   /**

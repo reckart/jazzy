@@ -1,6 +1,6 @@
 /*
- * $Date: 2003/06/02 16:40:54 $
- * $Author: happyclown $
+ * $Date: 2004/02/09 15:04:11 $
+ * $Author: ant-roy $
  *
  * Copyright (C) 2002 Anthony Roy
  *
@@ -42,28 +42,6 @@ public class JazzyPlugin extends EditPlugin {
 
   //~ Methods ...............................................................
 
-  /**
-   * Method called every time a view is created to set up the Plugins menu.
-   * Menus and menu items should be loaded using the methods in the
-   * GUIUtilities class, and added to the list.
-   *
-   * @param menuItems Add menuitems here
-   */
-  public void createMenuItems(Vector menuItems) {
-    menuItems.addElement(GUIUtilities.loadMenu(SPELL_CHECK_ACTIONS));
-  }
-
-  /**
-   * Method called every time the plugin options dialog box is displayed.
-   * Any option panes created by the plugin should be added here.
-   *
-   * @param optionsDialog The plugin options dialog box
-   * @see JazzyOptionPane
-   * @see OptionsDialog#addOptionPane(OptionPane)
-   */
-  public void createOptionPanes(OptionsDialog optionsDialog) {
-    optionsDialog.addOptionPane(new JazzyOptionPane());
-  }
 
   /**
    * Displays the spell checker dialog box.
@@ -107,13 +85,10 @@ public class JazzyPlugin extends EditPlugin {
   }
 
   /**
-   * Method called by jEdit to initialize the plugin.
+   * Method called by jEdit to finalize the plugin.
    */
-  public void start() {
-    LOAD_DICTIONARY = jEdit.getBooleanProperty("options.jazzy.load-dictionary", false);
-    if (LOAD_DICTIONARY) {
-      jazzyChecker = newSpellChecker();
-    }
+  public void stop() {
+      unloadDictionary();
   }
 
   public static void unloadDictionary() {

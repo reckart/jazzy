@@ -40,7 +40,6 @@ public class JazzyOptionPane extends AbstractOptionPane {
   private JCheckBox defaultChecker;
   protected JTextField dictDir;
   protected JCheckBox disk_based;
-  private JCheckBox loadOnStart;
   private JCheckBox resetDict;
 
   //~ Constructors ..........................................................
@@ -55,14 +54,26 @@ public class JazzyOptionPane extends AbstractOptionPane {
   //~ Methods ...............................................................
 
   protected void _init() {
-    JTextArea jta = new JTextArea();
+    JTextArea jta = new JTextArea(50,30);
     jta.setEditable(false);
     jta.setLineWrap(true);
     jta.setWrapStyleWord(true);
     jta.setText("Changing these properties will not have an effect until jEdit is restarted.");
     dictDir = new JTextField(jEdit.getProperty("options.jazzy.dictionary"), 20);
+
+    resetDict = new JCheckBox("Reset Ignored Words after each spellcheck?");
+    resetDict.getModel().setSelected(jEdit.getBooleanProperty("options.jazzy.reset-spellchecker"));
+    defaultChecker = new JCheckBox("Disable mode-specific checking?");
+    defaultChecker.getModel().setSelected(jEdit.getBooleanProperty("options.jazzy.default-checker"));
+    disk_based = new JCheckBox("Use disk based dictionary?");
+    disk_based.getModel().setSelected(jEdit.getBooleanProperty("options.jazzy.disk-based"));
+
+
+    
+    
     JLabel userDirLab = new JLabel("Dictionary Location (restart jEdit to enable)");
     JPanel p = new JPanel();
+    p.setLayout(new BoxLayout(p, BoxLayout.X_AXIS));
     p.add(userDirLab);
     p.add(dictDir);
     /* 4 Feb '03: Added filechooser to options. */
@@ -74,18 +85,12 @@ public class JazzyOptionPane extends AbstractOptionPane {
       }
     }));
     addComponent(p);
-    addComponent(loadOnStart = new JCheckBox("Load Dictionary on Start?"));
-    loadOnStart.getModel().setSelected(jEdit.getBooleanProperty("options.jazzy.load-dictionary"));
-    addComponent(resetDict = new JCheckBox("Reset Ignored Words after each spellcheck?"));
-    resetDict.getModel().setSelected(jEdit.getBooleanProperty("options.jazzy.reset-spellchecker"));
-    addComponent(defaultChecker = new JCheckBox("Disable mode-specific checking?"));
-    defaultChecker.getModel().setSelected(jEdit.getBooleanProperty("options.jazzy.default-checker"));
-    addComponent(disk_based = new JCheckBox("Use disk based dictionary?"));
-    disk_based.getModel().setSelected(jEdit.getBooleanProperty("options.jazzy.disk-based"));
+    addComponent(resetDict);
+    addComponent(defaultChecker);
+    addComponent(disk_based);
   }
 
   protected void _save() {
-    jEdit.setBooleanProperty("options.jazzy.load-dictionary", loadOnStart.getModel().isSelected());
     jEdit.setBooleanProperty("options.jazzy.reset-spellchecker", resetDict.getModel().isSelected());
     jEdit.setBooleanProperty("options.jazzy.default-checker", defaultChecker.getModel().isSelected());
     jEdit.setBooleanProperty("options.jazzy.disk-based", disk_based.getModel().isSelected());

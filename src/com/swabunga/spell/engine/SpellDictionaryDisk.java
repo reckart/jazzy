@@ -32,7 +32,7 @@ public class SpellDictionaryDisk extends SpellDictionaryASpell implements SpellD
     private File words;
     private File db;
     private Map index;
-    private boolean ready;
+    protected boolean ready;
 
     /* used at time of creation of index to speed up determining the number of words per index entry */
     private List indexCodeCache = null;
@@ -84,7 +84,7 @@ public class SpellDictionaryDisk extends SpellDictionaryASpell implements SpellD
         }
     }
 
-    private void buildNewDictionaryDatabase() throws FileNotFoundException, IOException {
+    protected void buildNewDictionaryDatabase() throws FileNotFoundException, IOException {
         /* combine all dictionary files into one sorted file */
         File sortedFile = buildSortedFile();
 
@@ -294,7 +294,7 @@ public class SpellDictionaryDisk extends SpellDictionaryASpell implements SpellD
         }
     }
 
-    private void loadIndex() throws IOException {
+    protected void loadIndex() throws IOException {
         index = new HashMap();
         File idx = new File(db, FILE_INDEX);
         BufferedReader reader = new BufferedReader(new FileReader(idx));

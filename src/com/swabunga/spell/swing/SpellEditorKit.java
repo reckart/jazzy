@@ -1,6 +1,5 @@
 package com.swabunga.spell.swing;
 
-
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
@@ -32,9 +31,9 @@ public class SpellEditorKit extends StyledEditorKit {
 	//private static Cursor linkCursor;
 
 	//private Cursor newCursor;
-	private static final Cursor linkCursor =
+	protected static final Cursor linkCursor =
 		Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
-	private  Cursor defaultCursor =
+	protected Cursor defaultCursor =
 		Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
 
 	static SpellDictionary dictionary;

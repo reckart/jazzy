@@ -44,8 +44,8 @@ public class JazzyOptionPane
     //~ Instance/static variables .............................................
 
     private JCheckBox defaultChecker;
-    private JTextField dictDir;
-    private JCheckBox disk_based;
+    protected JTextField dictDir;
+    protected JCheckBox disk_based;
     private JCheckBox loadOnStart;
     private JCheckBox resetDict;
 

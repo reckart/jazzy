@@ -148,13 +148,13 @@ public class JSpellChecker extends Applet {
 //		return null;
 //	}
 
-	private static void log(String s){
+	protected static void log(String s){
 		System.out.println(s);
 	}
 
 	private boolean initialized;
-	private SpellCheckEvent event;
-	private SpellChecker checker;
+	protected SpellCheckEvent event;
+	protected SpellChecker checker;
 	private StringWordTokenizer tokens;
 	private JSpellCheckListener listener;
 

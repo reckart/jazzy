@@ -1,0 +1,41 @@
+
+                         J A Z Z Y : Java Spell Checker
+
+
+  What is it?
+  -----------
+
+  Jazzy is a 100% pure Java library implementing a spell checking algorithm
+  similar to aspell. It may be used to spell check a variety of sources.
+
+  The Latest Version
+  ------------------
+
+  The latest version is available from the Jazzy project web site (http://sourceforge.net/prjects/jazzy).
+
+  Requirements
+  ------------
+
+  The following requirements exist for installing Jazzy:
+
+   o  Java Interpreter:
+
+      A fully compliant Java 1.3 Runtime Environment is required for 
+      Jazzy to execute.
+
+   o  Java JFC (Swing components):
+
+      These GUI extentions are required for proper GUI functionality. 
+
+  Installation Instructions and Documentation
+  -------------------------------------------
+
+  There are two ways to install Jazzy. One from a pre packaged version and the other is to compile the sources from CVS.
+
+  If you have downloaded the source code from CVS, please cd to the jazzy directory and run ant.
+
+  Licensing and legal issues
+  --------------------------
+
+  Jazzy is licensed under the LGPL. See LGPL.txt for license restrictions.
+

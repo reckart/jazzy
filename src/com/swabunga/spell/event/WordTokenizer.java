@@ -8,8 +8,11 @@ package com.swabunga.spell.event;
 public interface WordTokenizer {
   /** Returns true iif there are more words left*/
   public boolean hasMoreWords();
-  /**Returns an index representing the location in the original set of words*/
+  /**Returns an index representing the start location in the original set of words*/
   public int getCurrentWordPosition();
+  /**Returns an index representing the end location in the original set of words*/
+  public int getCurrentWordEnd();
+
   /** Returns the next word token*/
   public String nextWord();
   /** Returns the number of word tokens that have been processed thus far*/

@@ -146,7 +146,7 @@ public class SpellChecker {
 
 
   /**
-   * Returns true iif this word contains a digit
+   * Returns true iff this word contains a digit.
    *
    * @param  word  Description of the Parameter
    * @return       The digitWord value
@@ -289,7 +289,7 @@ public class SpellChecker {
    *
    * @param  tokenizer  Description of the Parameter
    * @return Either SPELLCHECK_OK, SPELLCHECK_CANCEL or the number of errors found. The number of errors are those that 
-   * are found BEFORE any corretions are made.
+   * are found BEFORE any corrections are made.
    */
   public final int checkSpelling(WordTokenizer tokenizer) {
     int errors = 0;

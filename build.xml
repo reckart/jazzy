@@ -11,8 +11,8 @@
   <property name="target" value="1.1"/>
   <property name="package" value="com.swabunga.spell.event"/>
   <property name="verbose" value="false"/>
-	<property name="jsdk-lib"  value=""/>
- 
+  <property name="jsdk-lib"  value=""/>
+
   <!-- Build classpath -->
   <path id="classpath.id">
     <pathelement path="${classpath}"/>
@@ -22,7 +22,7 @@
     </fileset>
     -->
   </path>
-  
+
   <path id="bootclass.path">
     <fileset dir="${jsdk-lib}">
       <include name="*.jar"/>
@@ -50,44 +50,47 @@
       <fileset dir="${src}" >
         <include name="**/*.properties"/>
       </fileset>
-    </copy> 
+    </copy>
   </target>
-  
+
   <target name="cross-compile" depends="init">
     <!-- Compile the java code from ${src} into ${build} -->
     <javac deprecation="true" verbose="${verbose}" srcdir="${src}" destdir="${build}" target="${target}"
            bootclasspathref="bootclass.path">
       <classpath refid="classpath.id"/>
+      <exclude name="com/swabunga/spell/jedit/**"/>
     </javac>
     <copy todir="${build}" >
       <fileset dir="${src}" >
         <include name="**/*.properties"/>
       </fileset>
-    </copy> 
+    </copy>
   </target>
 
   <target name="debug-compile" depends="init">
     <!-- Compile the java code from ${src} into ${build} -->
     <javac debug="true" srcdir="${src}" destdir="${build}" target="${target}">
       <classpath refid="classpath.id"/>
+      <exclude name="com/swabunga/spell/jedit/**"/>
     </javac>
     <copy todir="${build}" >
       <fileset dir="${src}" >
         <include name="**/*.properties"/>
       </fileset>
-    </copy> 
+    </copy>
   </target>
 
   <target name="clean-debug-compile" depends="clean,init">
     <!-- Compile the java code from ${src} into ${build} -->
     <javac debug="true" srcdir="${src}" destdir="${build}" target="${target}">
       <classpath refid="classpath.id"/>
+      <exclude name="com/swabunga/spell/jedit/**"/>
     </javac>
     <copy todir="${build}" >
       <fileset dir="${src}" >
         <include name="**/*.properties"/>
       </fileset>
-    </copy> 
+    </copy>
   </target>
 
   <target name="clean-compile" depends="clean,compile">
@@ -113,20 +116,20 @@
 	<jar jarfile="${www}/jazzy-applet.jar" basedir="${build}"/>
 	<signjar jar="${www}/jazzy-applet.jar" alias="jazzyKey" storepass="secret" verbose="true" />
   </target>
-  
+
   <target name="dictionary-release">
 	<zip zipfile="${dist}/english.0.zip" basedir="${dict}" includes="**/english.0" />
   </target>
-  
+
   <target name="website" depends="applet,dictionary-release">
   	<copy file="${dist}/english.0.zip" todir="${www}/dict"/>
   </target>
-  
+
   <target name="source-release">
     <!-- Create the distribution directories -->
     <zip zipfile="${dist}/jazzy-src.zip" basedir="." excludes="www/dict/**,bin/**,dist/**,dict/**"/>
   </target>
-  
+
   <target name="binary-release" depends="compile,library-core,library-swing,examples,javadoc,website">
   	<zip zipfile="${dist}/jazzy-bin.zip" basedir="." excludes="dict/**,bin/**,**/jazzy-bin.zip,**/english.0.zip,**/jazzy-src.zip"/>
   	<!-- DMV
@@ -136,11 +139,11 @@
 	</copy>
 	-->
   </target>
-  
+
   <target name="library-core" depends="compile">
   	<jar jarfile="${dist}/lib/jazzy-core.jar" basedir="${build}" excludes="com/swabunga/spell/examples/**,com/swabunga/spell/swing/**"/>
   </target>
-  
+
   <target name="library-all" depends="compile">
   	<jar jarfile="${dist}/lib/jazzy.jar" basedir="${build}">
   	  	<manifest>
@@ -148,7 +151,7 @@
   		</manifest>
 	</jar>
   </target>
- 
+
   <target name="library-swing" depends="compile">
   	<jar jarfile="${dist}/lib/jazzy-swing.jar" basedir="${build}" includes="com/swabunga/spell/swing/**">
   	  	<manifest>
@@ -157,7 +160,7 @@
   		</manifest>
   	</jar>
   </target>
-  
+
   <target name="examples" depends="compile">
  	<jar jarfile="${dist}/lib/jazzy-examples.jar" basedir="${build}" includes="com/swabunga/spell/examples/**">
   		<manifest>
@@ -169,10 +172,10 @@
   </target>
 
  <!-- Build jEdit Plugin from jedit_build.xml Ant file. -->
- 
+
  <target name="jedit-plugin-install">
     <ant antfile="jedit_build.xml" target="jedit-clean-install"></ant>
  </target>
- 
+
 </project>
 

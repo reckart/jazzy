@@ -95,6 +95,9 @@ public abstract class Configuration {
    * @return Configuration
    */
   public static final Configuration getConfiguration() {
+    String config = System.getProperty("jazzy.config"); // added by bd
+    if (config != null && config.length() > 0)
+      return getConfiguration(config);
     return getConfiguration(null);
   }
 

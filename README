@@ -12,7 +12,7 @@
   ------------------
 
   The latest version is available from the Jazzy project web site 
-  (http://sourceforge.net/projects/jazzy).
+  ( http://sourceforge.net/projects/jazzy ).
 
   Requirements
   ------------
@@ -39,6 +39,24 @@
   compile the sources from CVS.
 
   If you have downloaded the source code from CVS, please cd to the jazzy directory and run ant.
+  
+  
+  Building Jazzy From the Source
+  ------------------------------
+  1)In order to build the jedit plugin, you will need to have the jedit.jar in your classpath, 
+	otherwise you will get a lot of compile errors. All of the build errors relate to the files
+	under 
+		src/com/swabunga/spell/jedit/*
+	The easiest way to get jedit.jar onto your machine is to install jedit. You can find it at
+		http://sourceforge.net/projects/jedit
+
+  2)In order to build the sample applet spell checker, you will need to sign the jar with "jazzykey". 
+	In order to sign the jar, you will need a key called "jazzykey". 
+	On some systems, you should be able to run the following command to get the key built: 
+		keytool -genkey -alias jazzyKey 
+	For more information on creating keys, see: 
+		http://java.sun.com/docs/books/tutorial/security1.2/toolsign/step3.html
+  
 
   Licensing and legal issues
   --------------------------

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
     <classpathentry kind="src" path="src"/>
-    <classpathentry kind="var" path="JRE_LIB" rootpath="JRE_SRCROOT" sourcepath="JDK_SOURCE"/>
+    <classpathentry exported="true" kind="var" path="JRE_LIB" sourcepath="JDK_SOURCE"/>
+    <classpathentry kind="var" path="JEDIT_JAR"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>

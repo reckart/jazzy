@@ -13,6 +13,7 @@ import  javax.swing.event.*;
 import  java.io.File;
 import  java.awt.*;
 import  java.awt.event.*;
+import java.util.*;
 
 
 /** Implementation of a spell check form.
@@ -23,9 +24,9 @@ import  java.awt.event.*;
 public class JSpellForm extends JPanel
     implements ActionListener, ListSelectionListener {
   /** The Ignore button click action command*/
-  public static final String IGNORE_CMD = "INGORE";
+  public static final String IGNORE_CMD = "IGNORE";
   /** The Ignore All button click action command*/
-  public static final String IGNOREALL_CMD = "INGOREALL";
+  public static final String IGNOREALL_CMD = "IGNOREALL";
   /** The Add button click action command*/
   public static final String ADD_CMD = "ADD";
   /** The Replace button click action command*/
@@ -34,6 +35,9 @@ public class JSpellForm extends JPanel
   public static final String REPLACEALL_CMD = "REPLACEALL";
   /** The Cancel button click action command*/
   public static final String CANCEL_CMD = "CANCEL";
+  /** The resource for the Suggestions label*/
+  private static final String SUGGESTIONS_RES = "SUGGESTIONS";
+  private static final String INVALIDWORD_RES = "INVALIDWORD";
 
   /* Accessible GUI Components */
   protected JList suggestList;
@@ -42,9 +46,11 @@ public class JSpellForm extends JPanel
   protected SpellCheckEvent spellEvent;
   /** The listener list (holds actionlisteners) */
   protected EventListenerList listenerList = new EventListenerList();
+  protected ResourceBundle messages;
 
   /** Panel constructor */
   public JSpellForm () {
+    messages = ResourceBundle.getBundle("com.swabunga.spell.swing.messages", Locale.getDefault());
     initialiseGUI();
   }
 
@@ -60,17 +66,17 @@ public class JSpellForm extends JPanel
   protected JPanel makeEastPanel () {
     JPanel jPanel1 = new JPanel();
     jPanel1.setLayout(new BoxLayout(jPanel1, BoxLayout.Y_AXIS));
-    JButton ignoreBtn = createButton(IGNORE_CMD, "Ignore", this);
+    JButton ignoreBtn = createButton(IGNORE_CMD, messages.getString(IGNORE_CMD), this);
     jPanel1.add(ignoreBtn);
-    JButton ignoreAllBtn = createButton(IGNOREALL_CMD, "Ignore All", this);
+    JButton ignoreAllBtn = createButton(IGNOREALL_CMD, messages.getString(IGNOREALL_CMD), this);
     jPanel1.add(ignoreAllBtn);
-    JButton addBtn = createButton(ADD_CMD, "Add to Dictionary", this);
+    JButton addBtn = createButton(ADD_CMD, messages.getString(ADD_CMD), this);
     jPanel1.add(addBtn);
-    JButton changeBtn = createButton(REPLACE_CMD, "Change", this);
+    JButton changeBtn = createButton(REPLACE_CMD, messages.getString(REPLACE_CMD), this);
     jPanel1.add(changeBtn);
-    JButton changeAllBtn = createButton(REPLACEALL_CMD, "Change All", this);
+    JButton changeAllBtn = createButton(REPLACEALL_CMD, messages.getString(REPLACEALL_CMD), this);
     jPanel1.add(changeAllBtn);
-    JButton cancelBtn = createButton(CANCEL_CMD, "Cancel", this);
+    JButton cancelBtn = createButton(CANCEL_CMD, messages.getString(CANCEL_CMD), this);
     jPanel1.add(cancelBtn);
     return  jPanel1;
   }
@@ -78,11 +84,11 @@ public class JSpellForm extends JPanel
   protected JPanel makeCentrePanel () {
     JPanel jPanel2 = new JPanel();
     jPanel2.setLayout(new BoxLayout(jPanel2, BoxLayout.Y_AXIS));
-    JLabel lbl1 = new JLabel("Not in dictionary:");
+    JLabel lbl1 = new JLabel(messages.getString(INVALIDWORD_RES));
     jPanel2.add(lbl1);
     checkText = new JTextArea();
     jPanel2.add(new JScrollPane(checkText));
-    JLabel lbl2 = new JLabel("Suggestions:");
+    JLabel lbl2 = new JLabel(messages.getString(SUGGESTIONS_RES));
     jPanel2.add(lbl2);
     suggestList = new JList();
     suggestList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);

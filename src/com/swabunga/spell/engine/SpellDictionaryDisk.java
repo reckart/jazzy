@@ -214,7 +214,7 @@ public class SpellDictionaryDisk extends SpellDictionaryASpell{
         String prev = null;
         for (int i = 0; i < w.size(); i++) {
             String word = (String) w.get(i);
-            if ((prev != null) && (!prev.equals(word))) {
+            if (prev == null || !prev.equals(word)) {
                 writer.write(word);
                 writer.newLine();
             }

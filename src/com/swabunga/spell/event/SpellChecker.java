@@ -376,72 +376,70 @@ public class SpellChecker {
    * This method is called to check the spelling of the words that are returned
    * by the WordTokenizer.
    * <p>For each invalid word the action listeners will be informed with a new SpellCheckEvent</p>
+   * <p>The return value from this method is valid no matter if any SpellCheckListeners are registered or not.</p>
    *
    * @param  tokenizer  Description of the Parameter
    * @return Either SPELLCHECK_OK, SPELLCHECK_CANCEL or the number of errors found. The number of errors are those that are found BEFORE and corretions are made.
    */
   public final int checkSpelling(WordTokenizer tokenizer) {
     int errors = 0;
-    //Dont bother to execute if no-one is listening ;-)
-    if (eventListeners.size() > 0) {
-      boolean terminated = false;
-      //Keep track of the previous word
-      String previousWord = null;
-      while (tokenizer.hasMoreWords() && !terminated) {
-        String word = tokenizer.nextWord();
-        //Check the spelling of the word
-        if (!dictionary.isCorrect(word)) {
-          if ((ignoreMixedCaseWords && isMixedCaseWord(word, tokenizer.isNewSentance())) ||
-              (ignoreUpperCaseWords && isUpperCaseWord(word)) ||
-              (ignoreDigitWords && isDigitWord(word)) ||
-              (ignoreInternetAddresses && isINETWord(word))) {
-            //Null event. Since we are ignoring this word due
-            //to one of the above cases.
-          } else {
-            //We cant ignore this misspelt word
-            //For this invalid word are we ignoreing the misspelling?
-            if (!ignoredWords.contains(word)) {
-              errors++;
-              //Is this word being automagically replaced
-              if (autoReplaceWords.containsKey(word)) {
-                tokenizer.replaceWord((String) autoReplaceWords.get(word));
-              } else {
-                //JMH Need to somehow capitalise the suggestions if
-                //ignoreSentanceCapitalisation is not set to true
-                //Fire the event.
-                SpellCheckEvent event = new BasicSpellCheckEvent(word, dictionary.getSuggestions(word,
-                    threshold), tokenizer);
-                terminated = fireAndHandleEvent(tokenizer, event);
-              }
+    boolean terminated = false;
+    //Keep track of the previous word
+    String previousWord = null;
+    while (tokenizer.hasMoreWords() && !terminated) {
+      String word = tokenizer.nextWord();
+      //Check the spelling of the word
+      if (!dictionary.isCorrect(word)) {
+        if ((ignoreMixedCaseWords && isMixedCaseWord(word, tokenizer.isNewSentance())) ||
+            (ignoreUpperCaseWords && isUpperCaseWord(word)) ||
+            (ignoreDigitWords && isDigitWord(word)) ||
+            (ignoreInternetAddresses && isINETWord(word))) {
+          //Null event. Since we are ignoring this word due
+          //to one of the above cases.
+        } else {
+          //We cant ignore this misspelt word
+          //For this invalid word are we ignoreing the misspelling?
+          if (!ignoredWords.contains(word)) {
+            errors++;
+            //Is this word being automagically replaced
+            if (autoReplaceWords.containsKey(word)) {
+              tokenizer.replaceWord((String) autoReplaceWords.get(word));
+            } else {
+              //JMH Need to somehow capitalise the suggestions if
+              //ignoreSentanceCapitalisation is not set to true
+              //Fire the event.
+              SpellCheckEvent event = new BasicSpellCheckEvent(word, dictionary.getSuggestions(word,
+                  threshold), tokenizer);
+              terminated = fireAndHandleEvent(tokenizer, event);
             }
           }
-        } else {
-          //This is a correctly spelt word. However perform some extra checks
-          /*
-           *  JMH TBD          //Check for multiple words
-           *  if (!ignoreMultipleWords &&) {
-           *  }
-           */
-          //Check for capitalisation
-          if ((!ignoreSentanceCapitalisation) && (tokenizer.isNewSentance())
-              && (Character.isLowerCase(word.charAt(0)))) {
-            errors++;
-            StringBuffer buf = new StringBuffer(word);
-            buf.setCharAt(0, Character.toUpperCase(word.charAt(0)));
-            List suggestion = new LinkedList();
-            suggestion.add(new Word(buf.toString(), 0));
-            SpellCheckEvent event = new BasicSpellCheckEvent(word, suggestion,
-                tokenizer);
-            terminated = fireAndHandleEvent(tokenizer, event);
-          }
+        }
+      } else {
+        //This is a correctly spelt word. However perform some extra checks
+        /*
+         *  JMH TBD          //Check for multiple words
+         *  if (!ignoreMultipleWords &&) {
+         *  }
+         */
+        //Check for capitalisation
+        if ((!ignoreSentanceCapitalisation) && (tokenizer.isNewSentance())
+            && (Character.isLowerCase(word.charAt(0)))) {
+          errors++;
+          StringBuffer buf = new StringBuffer(word);
+          buf.setCharAt(0, Character.toUpperCase(word.charAt(0)));
+          List suggestion = new LinkedList();
+          suggestion.add(new Word(buf.toString(), 0));
+          SpellCheckEvent event = new BasicSpellCheckEvent(word, suggestion,
+              tokenizer);
+          terminated = fireAndHandleEvent(tokenizer, event);
         }
       }
-      if (terminated)
-        return SPELLCHECK_CANCEL;
-      else if (errors == 0)
-        return SPELLCHECK_OK;
     }
-    return errors;
+    if (terminated)
+      return SPELLCHECK_CANCEL;
+    else if (errors == 0)
+      return SPELLCHECK_OK;
+    else return errors;
   }
 }
 

@@ -23,6 +23,11 @@
         </fileset>
       </classpath>
     </javac>
+    <copy todir="${build}" >
+      <fileset dir="${src}" >
+        <include name="**/*.properties"/>
+      </fileset>
+    </copy> 
   </target>
 
   <target name="dist" depends="compile">

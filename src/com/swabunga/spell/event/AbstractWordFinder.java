@@ -189,25 +189,7 @@ public abstract class AbstractWordFinder implements WordFinder {
   }
 
   protected int ignore(int index, char startIgnore) {
-    int newIndex = index;
-
-    if (newIndex < text.length()) {
-      char curChar = text.charAt(newIndex);
-
-      if (curChar == startIgnore) {
-
-        while ((++newIndex) < text.length()) {
-          curChar = text.charAt(newIndex);
-
-          if (!Character.isLetterOrDigit(curChar)) {
-
-            break;
-          }
-        }
-      }
-    }
-
-    return newIndex;
+    return ignore(index, startIgnore, null);
   }
 
   protected int ignore(int index, char startIgnore, char endIgnore) {
@@ -221,8 +203,8 @@ public abstract class AbstractWordFinder implements WordFinder {
         while ((++newIndex) < text.length()) {
           curChar = text.charAt(newIndex);
 
-          if (curChar == endIgnore) {
-
+          if ((endIgnore != null && curChar == endIgnore)||
+             (endIgnore == null && !Character.isLetterOrDigit(curChar))){
             break;
           }
         }

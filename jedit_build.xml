@@ -108,15 +108,12 @@
         <attribute name="Built-By" value="${user.name}"/>
       </manifest>
     </jar>
-        <zip basedir="../" zipfile="${dist}\JazzySrc${DSTAMP}.zip">
-          <include name="jazzy/jedit_build.xml"/>
-          <include name="jazzy/${dict}\english.0"/>
-          <include name="jazzy/src/**"/>
-          <exclude name="jazzy/**/examples/*"/>
-          <exclude name="jazzy/**/swing/*"/>
-          <include name="jazzy/**/swing/JSpellDialog.java"/>
-          <include name="jazzy/**/swing/JSpellForm.java"/>
-        </zip>
+    <zip basedir="../" zipfile="${dist}\JazzySrc${DSTAMP}.zip">
+      <include name="jazzy/jedit_build.xml"/>
+      <include name="jazzy/${dict}\english.0"/>
+      <include name="jazzy/src/**"/>
+      <exclude name="jazzy/**/examples/*"/>
+    </zip>
   </target>
 
   <target name="jedit-install" depends="jedit-plugin">

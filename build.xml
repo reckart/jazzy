@@ -1,4 +1,4 @@
-<project name="JAZZY - Java Spell Checker" default="dist" basedir=".">
+<project name="JAZZY - Java Spell Checker" default="library-all" basedir=".">
 
   <!-- set global properties for this build (directory names) -->
   <property name="src" value="src"/>
@@ -7,6 +7,8 @@
   <property name="dict" value="dict"/>
   <property name="www" value="www"/>
   <property name="javadoc"  value="javadoc"/>
+  <property name="jedit-config" value="${src}/com/swabunga/spell/jedit/config"/>
+  <property name="target" value="1.1"/>
  
   <!-- Build classpath -->
   <path id="classpath">
@@ -21,12 +23,17 @@
   <target name="init">
     <!-- Create the time stamp -->
     <tstamp/>
+    <mkdir dir="${build}"/>
+    <mkdir dir="${dist}"/>
+    <mkdir dir="${dist}/lib"/>
+    <mkdir dir="${www}"/>
+    <mkdir dir="${www}/dict"/>
+    <mkdir dir="${javadoc}"/>
   </target>
 
   <target name="compile" depends="init">
-    <mkdir dir="${build}"/>
     <!-- Compile the java code from ${src} into ${build} -->
-    <javac srcdir="${src}" destdir="${build}">
+    <javac srcdir="${src}" destdir="${build}" target="${target}">
       <classpath refid="classpath"/>
     </javac>
     <copy todir="${build}" >
@@ -37,7 +44,6 @@
   </target>
 
   <target name="javadoc" depends="init">
-    <mkdir dir="${javadoc}"/>
     <!-- Compile the javadoc from ${src} into ${javadoc} -->
     <javadoc sourcepath="${src}" destdir="${javadoc}" packagenames="com.swabunga.spell.*">
       <classpath refid="classpath"/>
@@ -52,41 +58,41 @@
     <delete file="${www}/jazzy-applet.jar"/>
     <delete dir="${www}/dict"/>
   </target>
-  
+
   <target name="applet" depends="compile">
 	<jar jarfile="${www}/jazzy-applet.jar" basedir="${build}"/>
   </target>
   
   <target name="dictionary-release">
-  	<mkdir dir="${dist}"/>
 	<zip zipfile="${dist}/english.0.zip" basedir="${dict}"/>
   </target>
   
   <target name="website" depends="applet,dictionary-release">
-  	<mkdir dir="${www}/dict"/>
   	<copy file="${dist}/english.0.zip" todir="${www}/dict"/>
   </target>
   
   <target name="source-release">
     <!-- Create the distribution directories -->
-    <mkdir dir="${dist}"/>
     <zip zipfile="${dist}/jazzy-src.zip" basedir="." excludes="www/dict/**,bin/**,dist/**,dict/**"/>
   </target>
   
   <target name="binary-release" depends="compile,library-core,library-swing,examples,javadoc,website">
-  	<mkdir dir="${dist}"/>
   	<zip zipfile="${dist}/jazzy-bin.zip" basedir="." excludes="dict/**,bin/**,**/jazzy-bin.zip,**/english.0.zip,**/jazzy-src.zip"/>
   </target>
   
   <target name="library-core" depends="compile">
-  	<mkdir dir="${dist}"/>
-  	<mkdir dir="${dist}/lib"/>
   	<jar jarfile="${dist}/lib/jazzy-core.jar" basedir="${build}" excludes="com/swabunga/spell/examples/**,com/swabunga/spell/swing/**"/>
   </target>
   
+  <target name="library-all" depends="compile">
+  	<jar jarfile="${dist}/lib/jazzy.jar" basedir="${build}">
+  	  	<manifest>
+  			<attribute name="Built-By" value="${user.name}"/>
+  		</manifest>
+	</jar>
+  </target>
+ 
   <target name="library-swing" depends="compile">
-  	<mkdir dir="${dist}"/>
-  	<mkdir dir="${dist}/lib"/>
   	<jar jarfile="${dist}/lib/jazzy-swing.jar" basedir="${build}" includes="com/swabunga/spell/swing/**">
   	  	<manifest>
   			<attribute name="Built-By" value="${user.name}"/>
@@ -96,15 +102,37 @@
   </target>
   
   <target name="examples" depends="compile">
-  	<mkdir dir="${dist}"/>
-  	<mkdir dir="${dist}/lib"/>
-  	<jar jarfile="${dist}/lib/jazzy-examples.jar" basedir="${build}" includes="com/swabunga/spell/examples/**">
+ 	<jar jarfile="${dist}/lib/jazzy-examples.jar" basedir="${build}" includes="com/swabunga/spell/examples/**">
   		<manifest>
   			<attribute name="Built-By" value="${user.name}"/>
   			<attribute name="Class-Path" value="jazzy-core.jar  $jazzy-swing.jar"/>
   			<attribute name="Main-Class" value="com.swabunga.spell.examples.JTextComponentSpellCheckExample"/>
   		</manifest>
   	</jar>
+  </target>
+  
+ <!-- Start of jEdit Plugin targets -->
+ 
+  <target name="jedit-pack" depends="init">
+   <copy todir="${build}">
+     <fileset dir="${jedit-config}" casesensitive="no" excludes="*.*~"/>
+   </copy>
+  </target>
+
+  <target name="jedit-plugin" depends="compile,jedit-pack">
+  	<jar jarfile="${dist}/lib/jazzy${DSTAMP}.jar" basedir="${build}">
+	  <manifest>
+	    <attribute name="Built-By" value="${user.name}"/>
+	  </manifest>
+	</jar>
+        <zip basedir="." zipfile="${dist}\JazzySrc${DSTAMP}.zip">
+          <include name="build.xml"/>
+          <include name="src/**"/>
+        </zip>
+  </target>
+
+  <target name="jedit-install" depends="jedit-plugin">
+      <copy file="${dist}/lib/jazzy${DSTAMP}.jar" tofile="${local.jedit.jars}/jazzy.jar"/>
   </target>
   
 </project>

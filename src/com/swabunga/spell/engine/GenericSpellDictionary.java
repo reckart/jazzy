@@ -75,7 +75,7 @@ public class GenericSpellDictionary extends SpellDictionaryASpell {
     public GenericSpellDictionary(File wordList)
     throws FileNotFoundException, IOException {
         dictFile = wordList;
-        replacelist=englishAlphabet;
+        replacelist=washAlphabetIntoReplaceList(englishAlphabet);
         //System.out.println("DoubleMeta");
         createDictionary(new BufferedReader(new FileReader(wordList)));
     }
@@ -94,8 +94,44 @@ public class GenericSpellDictionary extends SpellDictionaryASpell {
         // If no alphabet is availible use the english.
         if(alphabet==null)
             alphabet=englishAlphabet;
-        replacelist=alphabet;
+        replacelist=washAlphabetIntoReplaceList(alphabet);
         createDictionary(new BufferedReader(new FileReader(wordList)));
+    }
+
+    /**
+     * Goes through an alphabet and makes sure that only one of those letters
+     * that are coded equaly will be in the replace list. This is done to 
+     * improve speed in the getSuggestion method,
+     * 
+     * @param alphabet The complete alphabet to wash.
+     * @return The washed alphabet to be used as replace list.
+     */
+    private char[] washAlphabetIntoReplaceList(char[] alphabet){
+        String      tmp,code;
+        HashMap     letters=new HashMap(alphabet.length);
+        Object[]    tmpCharacters;
+        char[]      washedArray;
+        //System.out.println("Original:");
+        for(int i=0;i<alphabet.length;i++){
+            tmp=String.valueOf(alphabet[i]);
+            //System.out.print(tmp);
+            code=tf.transform(tmp);
+            //System.out.print(" Coded as:"+code);
+            if(!letters.containsKey(code)){
+                letters.put(code,new Character(alphabet[i]));
+                //System.out.print(" add");
+            }
+            //System.out.println();
+        }
+        //System.out.print("Washed:");
+        tmpCharacters=letters.values().toArray();
+        washedArray=new char[tmpCharacters.length];
+        for(int i=0;i<tmpCharacters.length;i++){
+            washedArray[i]=((Character)tmpCharacters[i]).charValue();
+            //System.out.print(" "+washedArray[i]);
+        }
+        //System.out.println();
+        return washedArray;
     }
 
     /**
@@ -174,5 +210,104 @@ public class GenericSpellDictionary extends SpellDictionaryASpell {
         else if (possible.contains(word.toLowerCase()))
             return true;
         return false;
+    }
+
+    /**
+     * Returns a linked list of Word objects that are the suggestions to an
+     * incorrect word.
+     * <p>
+     * @param word Suggestions for given mispelt word
+     * @param threshold The lower boundary of similarity to mispelt word
+     * @return LinkedList a List of suggestions
+     */
+    public List getSuggestions(String word, int threshold) {
+
+        HashSet nearmisscodes = new HashSet();
+        String code = getCode(word);
+
+        // add all words that have the same codeword
+        nearmisscodes.add(code);
+
+        // do some tranformations to pick up more results
+        //interchange
+        char[] charArray = word.toCharArray();
+        for (int i = 0; i < word.length() - 1; i++) {
+            char a = charArray[i];
+            char b = charArray[i + 1];
+            charArray[i] = b;
+            charArray[i + 1] = a;
+            nearmisscodes.add(getCode(new String(charArray)));
+            charArray[i] = a;
+            charArray[i + 1] = b;
+        }
+        //change
+        charArray = word.toCharArray();
+        for (int i = 0; i < word.length(); i++) {
+            char original = charArray[i];
+            for (int j = 0; j < replacelist.length; j++) {
+                charArray[i] = replacelist[j];
+                nearmisscodes.add(getCode(new String(charArray)));
+            }
+            charArray[i] = original;
+        }
+        //add
+        charArray = (word += " ").toCharArray();
+        int iy = charArray.length - 1;
+        while (true) {
+            for (int j = 0; j < replacelist.length; j++) {
+                charArray[iy] = replacelist[j];
+                nearmisscodes.add(getCode(new String(charArray)));
+            }
+            if (iy == 0)
+                break;
+            charArray[iy] = charArray[iy - 1];
+            --iy;
+        }
+        //delete
+        word = word.trim();
+        charArray = word.toCharArray();
+        char[] charArray2 = new char[charArray.length - 1];
+        for (int ix = 0; ix < charArray2.length; ix++) {
+            charArray2[ix] = charArray[ix];
+        }
+        char a, b;
+        a = charArray[charArray.length - 1];
+        int ii = charArray2.length;
+        while (true) {
+            nearmisscodes.add(getCode(new String(charArray)));
+            if (ii == 0)
+                break;
+            b = a;
+            a = charArray2[ii - 1];
+            charArray2[ii - 1] = b;
+            --ii;
+        }
+
+        LinkedList wordlist = getWordsFromCode(word, nearmisscodes);
+        // We sort a linkedlist at the end instead of maintaining a
+        // continously sorted TreeSet because everytime you add a collection
+        // to a treeset it has to be resorted. It's better to do this operation
+        // once at the end.
+        Collections.sort( wordlist, new Word());
+        return wordlist;
+    }
+
+    private LinkedList getWordsFromCode(String word, Collection codes) {
+        Configuration config = Configuration.getConfiguration();
+        LinkedList result = new LinkedList();
+        for (Iterator i = codes.iterator(); i.hasNext();) {
+            String code = (String) i.next();
+            List simwordlist = getWords(code);
+            for (Iterator j = simwordlist.iterator(); j.hasNext();) {
+                String similar = (String) j.next();
+                System.out.println(similar);
+                int distance = EditDistance.getDistance(word, similar);
+                if (distance < config.getInteger(Configuration.SPELL_THRESHOLD)) {
+                    Word w = new Word(similar, distance);
+                    result.add(w);
+                }
+            }
+        }
+        return result;
     }
 }

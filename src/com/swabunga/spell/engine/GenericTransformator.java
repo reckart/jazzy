@@ -128,13 +128,13 @@ public class GenericTransformator implements Transformator {
 
     while (startPos < strLength) {
 
+      add = 1;
       if (Character.isDigit(str.charAt(startPos))) {
         StringUtility.replace(str, startPos, startPos + DIGITCODE.length(), DIGITCODE);
         startPos += add;
         continue;
       }
 
-      add = 1;
       for (int i = 0; i < ruleArray.length; i++) {
         //System.out.println("Testing rule#:"+i);
         rule = (TransformationRule) ruleArray[i];
@@ -154,10 +154,10 @@ public class GenericTransformator implements Transformator {
           break;
         }
       }
-      if (add < 1) //wrs: there used to be an infinite loop on "user7" since replaceExp.length returned 0
-        add = 1;
       startPos += add;
     }
+    //System.out.println(word);
+    //System.out.println(str.toString());
     return str.toString();
   }
 
@@ -309,7 +309,7 @@ public class GenericTransformator implements Transformator {
             break;
         }
       }
-      if (end && wordPos != word.length() - 1)
+      if (end && wordPos != word.length())
         matching = false;
       return matching;
     }

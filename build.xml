@@ -44,6 +44,7 @@
     <!-- Compile the java code from ${src} into ${build} -->
     <javac deprecation="true" verbose="${verbose}" srcdir="${src}" destdir="${build}" target="${target}">
       <classpath refid="classpath.id"/>
+      <exclude name="com/swabunga/spell/jedit/**"/>
     </javac>
     <copy todir="${build}" >
       <fileset dir="${src}" >

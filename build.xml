@@ -167,38 +167,11 @@
   	</jar>
   </target>
 
- <!-- Start of jEdit Plugin targets -->
+ <!-- Build jEdit Plugin from jedit_build.xml Ant file. -->
  
-  <target name="jedit-pack" depends="init">
-   <copy todir="${build}">
-     <fileset dir="${jedit-config}" casesensitive="no" excludes="*.*~"/>
-   </copy>
-   <copy file="${dict}/english.0" todir="${build}"/>
-  </target>
-
-  <target name="jedit-plugin" depends="compile,jedit-pack">
-  	<jar jarfile="${dist}/lib/jazzy${DSTAMP}.jar" basedir="${build}">
-	  <manifest>
-	    <attribute name="Built-By" value="${user.name}"/>
-	  </manifest>
-	</jar>
-        <zip basedir="." zipfile="${dist}\JazzySrc${DSTAMP}.zip">
-          <include name="build.xml"/>
-          <include name="${dict}\english.0"/>
-          <include name="src/**"/>
-        </zip>
-  </target>
-
-  <target name="jedit-install" depends="jedit-plugin">
-      <copy file="${dist}/lib/jazzy${DSTAMP}.jar" tofile="${local.jedit.jars}/jazzy.jar"/>
-  </target>
-  
-  <target name="jedit-clean-install" depends="clean,jedit-install"/>
-  
-  <target name="test" depends="debug-compile">
-     <java classpath="%CLASSPATH%;${build}" 
-           classname="${package}.DefaultWordFinder"/>
-  </target>
-  
+ <target name="jedit-plugin-install">
+    <ant antfile="jedit_build.xml" target="jedit-clean-install"></ant>
+ </target>
+ 
 </project>
 

@@ -6,7 +6,7 @@ import java.text.BreakIterator;
  * Defines common methods and behaviour for the various word finding
  * subclasses.
  *
- * @author Anthony Roy  (ajr�antroy.co.uk)
+ * @author Anthony Roy  (ajr@antroy.co.uk)
  */
 public abstract class AbstractWordFinder implements WordFinder {
 

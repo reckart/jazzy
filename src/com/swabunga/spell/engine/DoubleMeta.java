@@ -10,6 +10,18 @@ package  com.swabunga.spell.engine;
 /**
  * Double Meta class
  * <p>
+ * A phonetic encoding algorith that takes an english word and computes a phonetic version of it. This
+ * allows for phonetic matches in a spell checker. This class is a port of the C++ DoubleMetaphone() class,
+ * which was intended to return two possible phonetic translations for certain words, although the Java version
+ * only seems to be concerned with one, making the "double" part erroneous.
+ * <br>
+ * source code for the original C++ can be found 
+ * here: <a href="http://aspell.sourceforge.net/metaphone/"/>http://aspell.sourceforge.net/metaphone/</a>   
+ * DoubleMetaphone does some processing, such as uppercasing, on the input string first to normalize it. Then, to 
+ * create the key, the function traverses the input string in a while loop, sending sucessive characters into a giant 
+ * switch statement. Before determining the appropriate pronunciation, the algorithm considers the context 
+ * surrounding each character within the input string. 
+ * <p>
  * Things that were changed:
  *   The alternate flag could be set to true but was never checked so why bother with it. REMOVED
  *   Why was this class serializable?
@@ -99,9 +111,10 @@ class DoubleMeta implements Transformator{
     private static final String[] list25 = {
         "CI", "CE", "CY", ""
     };
-    private static final String[] list26 = {
-        "CIO", "CIE", "CIA", ""
-    };
+// DMV: used by the orininal code which returned two phonetic code, but not the current code  
+//    private static final String[] list26 = {
+//        "CIO", "CIE", "CIA", ""
+//    };
     private static final String[] list27 = {
         " C", " Q", " G", ""
     };
@@ -169,9 +182,11 @@ class DoubleMeta implements Transformator{
     private static final String[] list48 = {
         "ET", ""
     };
-    private static final String[] list49 = {
-        "IER ", ""
-    };
+
+//	DMV: used by the orininal code which returned two phonetic code, but not the current code  
+//    private static final String[] list49 = {
+//        "IER ", ""
+//    };
     private static final String[] list50 = {
         "JOSE", ""
     };
@@ -310,9 +325,11 @@ class DoubleMeta implements Transformator{
     private static final String[] list95 = {
         "C", "X", ""
     };
-    private static final String[] list96 = {
-        "ZO", "ZI", "ZA", ""
-    };
+
+//	DMV: used by the orininal code which returned two phonetic code, but not the current code  
+//    private static final String[] list96 = {
+//        "ZO", "ZI", "ZA", ""
+//    };
 
   /**
    * put your documentation comment here

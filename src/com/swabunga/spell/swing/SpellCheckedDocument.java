@@ -14,12 +14,9 @@ import com.swabunga.spell.event.*;
 import com.swabunga.spell.engine.SpellDictionary;
 
 /**
- * @author administrator
+ * @author Stig Tanggaard
  *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- * To enable and disable the creation of type comments go to
- * Window>Preferences>Java>Code Generation.
+ *
  */
 public class SpellCheckedDocument extends DefaultStyledDocument {
 	
@@ -38,7 +35,6 @@ public class SpellCheckedDocument extends DefaultStyledDocument {
 	
 	static SpellDictionary dictionary;
 	
-	StringWordTokenizer tokenizer;
 	
 	boolean checkspelling = false;
 	

@@ -3,6 +3,5 @@
     <classpathentry kind="src" path="src"/>
     <classpathentry kind="var" path="JRE_LIB" rootpath="JRE_SRCROOT" sourcepath="JDK_SOURCE"/>
     <classpathentry kind="lib" path="lib/servlet.jar"/>
-    <classpathentry kind="lib" path="lib/struts.jar"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>

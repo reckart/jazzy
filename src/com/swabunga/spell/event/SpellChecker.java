@@ -128,8 +128,12 @@ public class SpellChecker {
                   }
                   tokenizer.replaceWord(replaceAllWord);
                   break;
-                  //JMH TBD        case SpellCheckEvent.ADDTODICT:
-                  case SpellCheckEvent.CANCEL:
+                case SpellCheckEvent.ADDTODICT:
+                  String addWord=event.getReplaceWord();
+                  tokenizer.replaceWord(addWord);
+                  dictionary.addWord(addWord);
+                  break;
+                case SpellCheckEvent.CANCEL:
                     terminated = true;
                     break;
                 default:

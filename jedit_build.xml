@@ -10,7 +10,7 @@
   <property name="target" value="1.3"/>
   <property name="package" value="com.swabunga.spell.event"/>
   <property name="verbose" value="false"/>
-	<property name="jsdk-lib"  value=""/>
+	<property name="jsdk1.3"  value=""/>
   <property name="jedit" value=""/>
   <property name="test-class" value="DefaultWordFinder"/>
  
@@ -25,7 +25,7 @@
   </path>
   
   <path id="bootclass.path">
-    <fileset dir="${jsdk-lib}">
+    <fileset dir="${jsdk1.3}">
       <include name="*.jar"/>
     </fileset>
   </path>
@@ -108,23 +108,19 @@
         <attribute name="Built-By" value="${user.name}"/>
       </manifest>
     </jar>
-        <move file="build.xml" tofile="temp_build.xml"/>
-        <move file="jedit_build.xml" tofile="build.xml"/>
-        <zip basedir="." zipfile="${dist}\JazzySrc${DSTAMP}.zip">
-          <include name="build.xml"/>
-          <include name="${dict}\english.0"/>
-          <include name="src/**"/>
-          <exclude name="**/examples/*"/>
-          <exclude name="**/swing/*"/>
-          <include name="**/swing/JSpellDialog.java"/>
-          <include name="**/swing/JSpellForm.java"/>
+        <zip basedir="../" zipfile="${dist}\JazzySrc${DSTAMP}.zip">
+          <include name="jazzy/jedit_build.xml"/>
+          <include name="jazzy/${dict}\english.0"/>
+          <include name="jazzy/src/**"/>
+          <exclude name="jazzy/**/examples/*"/>
+          <exclude name="jazzy/**/swing/*"/>
+          <include name="jazzy/**/swing/JSpellDialog.java"/>
+          <include name="jazzy/**/swing/JSpellForm.java"/>
         </zip>
-        <move file="build.xml" tofile="jedit_build.xml"/>
-        <move file="temp_build.xml" tofile="build.xml"/>
   </target>
 
   <target name="jedit-install" depends="jedit-plugin">
-      <copy file="${dist}/lib/jazzy${DSTAMP}.jar" tofile="${local.jedit.jars}/jazzy.jar"/>
+      <copy file="${dist}/lib/jazzy${DSTAMP}.jar" tofile="../jazzy.jar"/>
   </target>
   
   <target name="jedit-clean-install" depends="clean,jedit-install"/>

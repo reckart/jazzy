@@ -21,6 +21,13 @@ public class FileWordTokenizer implements WordTokenizer {
     return 0;
   }
 
+  /** Returns the current end word position in the text
+   *
+   */
+  public int getCurrentWordEnd() {
+    return 0;
+  }
+
   public String nextWord() {
     return null;
   }

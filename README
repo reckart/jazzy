@@ -54,8 +54,10 @@
 	 In order to sign the jar, you will need a key called "jazzykey". 
 	 On some systems, you should be able to run the following command to get the key built: 
 		keytool -genkey -alias jazzyKey 
+		when prompted for the password, use the same one that's in build.xml (search for "sign")
 	 For more information on creating keys, see: 
 		http://java.sun.com/docs/books/tutorial/security1.2/toolsign/step3.html
+		
 
   3) The ant target that builds most things is "binary-release", but you may want to build a smaller
 	 target. 

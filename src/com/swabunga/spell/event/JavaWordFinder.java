@@ -4,7 +4,7 @@ package com.swabunga.spell.event;
 /**
  * A basic word finder, which searches text for sequences of letters.
  *
- * @author Anthony Roy  (ajr�antroy.co.uk)
+ * @author Anthony Roy  (ajr@antroy.co.uk)
  */
 public class JavaWordFinder extends AbstractWordFinder {
 

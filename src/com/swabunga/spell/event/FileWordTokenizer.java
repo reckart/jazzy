@@ -8,7 +8,7 @@ import java.io.File;
  *
  * <p>
  * Any takers to do this efficiently?? Doesnt need to replace any words to
- * start with . I need this to get an idea of how quick the spell checker is.
+ * start with. I need this to get an idea of how quick the spell checker is.
  * </p>
  */
 public class FileWordTokenizer extends AbstractWordTokenizer {
@@ -22,7 +22,7 @@ public class FileWordTokenizer extends AbstractWordTokenizer {
   /**
    * Creates a new FileWordTokenizer object.
    *
-   * @param inputFile �
+   * @param inputFile
    */
   public FileWordTokenizer(File inputFile) {
     super(stringValue(inputFile));
@@ -31,9 +31,9 @@ public class FileWordTokenizer extends AbstractWordTokenizer {
   //~ Methods .................................................................
 
   /**
-   * �
    *
-   * @param s �
+   *
+   * @params
    * @throws WordNotFoundException current word not yet set.
    */
   public void replaceWord(String s) {

@@ -16,11 +16,13 @@ import com.swabunga.spell.engine.*;
 
 public class JTextComponentSpellChecker implements SpellCheckListener {
 
+    private static final String COMPLETED="COMPLETED";
     private String dialogTitle=null;
 
     private SpellChecker spellCheck = null;
     private JSpellDialog dlg=null;
     private JTextComponent textComp=null;
+    private ResourceBundle messages;
 
     public JTextComponentSpellChecker(String dictFile)
                                                         throws IOException{
@@ -40,6 +42,7 @@ public class JTextComponentSpellChecker implements SpellCheckListener {
         spellCheck = new SpellChecker(dict);
         spellCheck.addSpellCheckListener(this);
         dialogTitle=title;
+        messages = ResourceBundle.getBundle("com.swabunga.spell.swing.messages", Locale.getDefault());
     }
 
     private void setupDialog(JTextComponent textComp){
@@ -76,6 +79,7 @@ public class JTextComponentSpellChecker implements SpellCheckListener {
 
         textComp.requestFocus();
         textComp.setCaretPosition(0);
+        JOptionPane.showMessageDialog(textComp,messages.getString (COMPLETED));
         this.textComp=null;
     }
 

@@ -2,7 +2,7 @@
 
 plugin.com.swabunga.spell.jedit.JazzyPlugin.name=Jazzy
 plugin.com.swabunga.spell.jedit.JazzyPlugin.author=Anthony Roy
-plugin.com.swabunga.spell.jedit.JazzyPlugin.version=0.2.0
+plugin.com.swabunga.spell.jedit.JazzyPlugin.version=0.2.1
 plugin.com.swabunga.spell.jedit.JazzyPlugin.docs=index.html
 
 ### These tell jEdit what JDK and jEdit version we require

@@ -1,5 +1,5 @@
 /*
- * $Date: 2003/02/05 13:11:35 $
+ * $Date: 2003/02/12 13:37:36 $
  * $Author: ant-roy $
  *
  * Copyright (C) 2002 Anthony Roy
@@ -23,20 +23,27 @@ package com.swabunga.spell.jedit;
 import com.swabunga.spell.engine.SpellDictionary;
 import com.swabunga.spell.engine.SpellDictionaryDisk;
 import com.swabunga.spell.engine.SpellDictionaryHashMap;
-import com.swabunga.spell.event.*;
-import com.swabunga.spell.event.SpellCheckEvent;
 import com.swabunga.spell.event.SpellCheckListener;
+import com.swabunga.spell.event.SpellChecker;
+import com.swabunga.spell.event.SpellCheckEvent;
+import com.swabunga.spell.event.WordFinder;
+import com.swabunga.spell.event.JavaWordFinder;
+import com.swabunga.spell.event.TeXWordFinder;
+import com.swabunga.spell.event.XMLWordFinder;
+import com.swabunga.spell.event.DefaultWordFinder;
 import com.swabunga.spell.event.StringWordTokenizer;
 import com.swabunga.spell.swing.JSpellDialog;
 
-import java.io.*;
+import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
-import java.net.*;
-
-import org.gjt.sp.jedit.*;
+import org.gjt.sp.jedit.Macros;
+import org.gjt.sp.jedit.View;
+import org.gjt.sp.jedit.jEdit;
 import org.gjt.sp.jedit.textarea.JEditTextArea;
 import org.gjt.sp.jedit.textarea.Selection;
-import org.gjt.sp.util.*;
+import org.gjt.sp.util.Log;
 
 
 public class JazzySpellCheck
@@ -65,9 +72,17 @@ public class JazzySpellCheck
      */
     public JazzySpellCheck(int flags) {
         this.flags                             = flags;
+        
+        boolean loadNow = ((flags & LOAD_DICTIONARY) == LOAD_DICTIONARY);
 
-        if ((flags & LOAD_DICTIONARY) == LOAD_DICTIONARY) {
-            loadDictionary();
+        if (loadNow) {
+
+              Thread t = new Thread() {
+                    public void run() {
+                        loadDictionary();
+                    }
+              };
+              t.start();
         }
 
         setupDialog();
@@ -149,11 +164,14 @@ public class JazzySpellCheck
      * 
      * @return ¤
      */
-    public boolean loadDictionary() {
+    public synchronized boolean loadDictionary() {
+      
+      if (LOADED) return true;
+      
         File dictionaryFile = new File(jEdit.getProperty(
                                                "options.jazzy.dictionary", ""));
 
-        if (!LOADED && dictionaryFile.exists()) {
+        if (dictionaryFile.exists()) {
 
             try {
 
@@ -167,16 +185,14 @@ public class JazzySpellCheck
                     Log.log(Log.MESSAGE, this, 
                             "Memory-based SpellChecker Loaded with custom dictionary.");
                 }
-            } catch (Exception e) {
+                LOADED = true;
+             } catch (Exception e) {
                 Log.log(Log.MESSAGE, this, 
                         "TextSpellCheck: error loading dictionary: " + e);
                 LOADED = false;
-
-                return LOADED;
             }
 
-            LOADED = true;
-        } else if (!LOADED) {
+        } else {
 
             try {
                 InputStream in           = this.getClass().getResourceAsStream(
@@ -185,24 +201,20 @@ public class JazzySpellCheck
                 dictionary               = new SpellDictionaryHashMap(reader);
                 Log.log(Log.MESSAGE, this, 
                         "Memory-based SpellChecker Loaded with default dictionary.");
+                LOADED = true;
             } catch (Exception e) {
                 Log.log(Log.MESSAGE, this, 
                         "TextSpellCheck: error loading default dictionary: " + e);
                 LOADED = false;
-
-                return LOADED;
             }
+       }
 
-            LOADED = true;
-
-            //     Log.log(Log.MESSAGE,this,"File: " + b);
-        }
-
-        if (LOADED) {
+        if (LOADED){
             spellChecker = new SpellChecker(dictionary);
             spellChecker.addSpellCheckListener(this);
         }
 
+       
         return LOADED;
     }
 
@@ -220,7 +232,8 @@ public class JazzySpellCheck
      */
     public void spellingError(SpellCheckEvent event) {
         noerrors = false;
-        int oldLength = event.getInvalidWord().length();
+        String oldWord = event.getInvalidWord();
+        int oldLength = oldWord.length();
         int start     = event.getWordContextPosition() + offset;
         int end       = start + oldLength;
         Selection s   = new Selection.Range(start, end);
@@ -230,7 +243,7 @@ public class JazzySpellCheck
         dlg.show(event);
         String replace = event.getReplaceWord();
 
-        if (replace != null) {
+        if (replace != null && !replace.equals(oldWord)) {
             area.setSelectedText(replace);
 
             if (caretPosn > start) {
@@ -245,16 +258,13 @@ public class JazzySpellCheck
      */
     public void unloadDictionary() {
 
-        if (!LOADED) {
-
-            return;
+        if (LOADED) {
+            spellChecker.removeSpellCheckListener(this);
+            spellChecker = null;
+            dictionary   = null;
+            LOADED       = false;
+            System.gc();
         }
-
-        spellChecker.removeSpellCheckListener(this);
-        spellChecker = null;
-        dictionary   = null;
-        LOADED       = false;
-        System.gc();
     }
 
     private void setupDialog() {

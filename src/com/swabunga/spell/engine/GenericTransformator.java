@@ -41,6 +41,11 @@ public class GenericTransformator implements Transformator {
 
   }
 
+  public GenericTransformator(File phonetic, String encoding) throws IOException {
+    buildRules(new BufferedReader(new InputStreamReader(new FileInputStream(phonetic), encoding)));
+    alphabetString = washAlphabetIntoReplaceList(getReplaceList());
+  }
+
   public GenericTransformator(Reader phonetic) throws IOException {
     buildRules(new BufferedReader(phonetic));
     alphabetString = washAlphabetIntoReplaceList(getReplaceList());

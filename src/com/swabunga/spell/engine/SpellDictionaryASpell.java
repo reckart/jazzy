@@ -27,6 +27,13 @@ public abstract class SpellDictionaryASpell implements SpellDictionary {
       tf = new GenericTransformator(phonetic);
   }
 
+  public SpellDictionaryASpell(File phonetic, String encoding) throws IOException {
+    if (phonetic == null)
+      tf = new DoubleMeta();
+    else
+      tf = new GenericTransformator(phonetic, encoding);
+  }
+
   public SpellDictionaryASpell(Reader phonetic) throws IOException {
     if (phonetic == null)
       tf = new DoubleMeta();

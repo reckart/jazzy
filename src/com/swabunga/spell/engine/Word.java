@@ -10,7 +10,7 @@ public class Word{ //implements Comparator {
     private String word;
     private int score;
 
-	public Word() {	
+	public Word() {
 	}
 	
     public Word(String word, int score) {
@@ -25,11 +25,18 @@ public class Word{ //implements Comparator {
         return 1;
     }
 
-    public String getWord() {
+    /**
+	 * @return the actual text of the word
+	 */
+	public String getWord() {
         return word;
     }
 
-    public int getScore() {
+    /**
+	 * @return the number that represents how good a match this word was, probably based on 
+	 * EditDistantce. The lower the score, the better the match. A score of 0 is an exact match. 
+	 */
+	public int getScore() {
         return score;
     }
 

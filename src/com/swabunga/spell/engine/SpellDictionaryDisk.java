@@ -115,9 +115,9 @@ public class SpellDictionaryDisk extends SpellDictionaryASpell implements SpellD
                 input.close();
 
                 String data = new String(bytes);
-                String[] lines = data.split("\\n");
+                String[] lines = split(data,"\n");
                 for (int i = 0; i < lines.length; i++) {
-                    String[] s = lines[i].split(",");
+                    String[] s = split(lines[i],",");
                     if (s[0].equals(code)) words.add(s[1]);
                 }
             } catch (Exception e) {
@@ -155,7 +155,7 @@ public class SpellDictionaryDisk extends SpellDictionaryASpell implements SpellD
                 String line;
                 while ((line = reader.readLine()) != null) {
                     // format of file should be [filename],[size]
-                    String[] s = line.split(",");
+                    String[] s = split(line,",");
                     contents.add(new FileSize(s[0], Integer.parseInt(s[1])));
                 }
             } catch (FileNotFoundException e) {
@@ -300,7 +300,7 @@ public class SpellDictionaryDisk extends SpellDictionaryASpell implements SpellD
         BufferedReader reader = new BufferedReader(new FileReader(idx));
         String line;
         while ((line = reader.readLine()) != null) {
-            String[] fields = line.split(",");
+            String[] fields = split(line,",");
             index.put(fields[0], new int[] { Integer.parseInt(fields[1]), Integer.parseInt(fields[2]) });
         }
         reader.close();
@@ -356,6 +356,18 @@ public class SpellDictionaryDisk extends SpellDictionaryASpell implements SpellD
         String newCode = (foundSize == -1) ? code : code.substring(0, foundSize);
         if (cacheable) indexCodeCache.add(newCode);
         return newCode;
+    }
+    
+    private static String[] split(String input, String delimiter){
+      StringTokenizer st = new StringTokenizer(input,delimiter);
+      int count = st.countTokens();
+      String[] out = new String[count];
+      
+      for(int i = 0; i < count; i++){
+        out[i] = st.nextToken();
+      }
+      
+      return out;
     }
 
     private class CodeWord implements Comparable {

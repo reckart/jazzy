@@ -178,6 +178,17 @@ public class DocumentWordTokenizer implements WordTokenizer {
 
   /** Returns true if the current word is at the start of a sentence*/
   public boolean isNewSentence() {
-    return startsSentence;
+    // BreakIterator doesn't work when the first word in a sentence is not capitalised,
+    // but we need to check for capitalisation
+    if (startsSentence || currentWordPos < 2)
+      return(true);
+    
+    String textBefore = null;
+    try {
+      textBefore = document.getText(currentWordPos-2, 2);
+    } catch (BadLocationException ex) {
+      return(false);
+    }
+    return(textBefore != null && ".".equals(textBefore.trim()));
   }
 }

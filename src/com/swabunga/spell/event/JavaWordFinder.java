@@ -77,7 +77,8 @@ public class JavaWordFinder
 			i = ignore(i,"<CODE>","</CODE>");
 			i = ignore(i,'<','>');
 			
-			
+			if (i >= text.length()) break search;
+      
       char currentLetter = text.charAt(i);
 			
 			if (inComment){

@@ -41,7 +41,8 @@ public class JazzyOptionPane
 
   private JTextField dictDir;
   private JCheckBox loadOnStart,
-                    resetDict;
+                    resetDict,
+		    defaultChecker;
 
   //~ Constructors ............................................................
 
@@ -64,17 +65,20 @@ public class JazzyOptionPane
           "Changing these properties will not have an effect until jEdit is restarted.");
     dictDir = new JTextField(jEdit.getProperty("options.jazzy.dictionary"),20);
 
-    JLabel userDirLab = new JLabel("Dictionary Location");
+    JLabel userDirLab = new JLabel("Dictionary Location (restart jEdit to enable)");
     JPanel p = new JPanel();
     p.add(userDirLab);
     p.add(dictDir);
     addComponent(p);
-    addComponent(loadOnStart = new JCheckBox("Load Dictionary on Start:"));
+    addComponent(loadOnStart = new JCheckBox("Load Dictionary on Start?"));
     loadOnStart.getModel().setSelected(jEdit.getBooleanProperty(
                                              "options.jazzy.load-dictionary"));
-    addComponent(resetDict = new JCheckBox("Reset Ignored Words after each spellcheck:"));
+    addComponent(resetDict = new JCheckBox("Reset Ignored Words after each spellcheck?"));
     resetDict.getModel().setSelected(jEdit.getBooleanProperty(
                                              "options.jazzy.reset-spellchecker"));
+    addComponent(defaultChecker = new JCheckBox("Disable mode-specific checking?"));
+    defaultChecker.getModel().setSelected(jEdit.getBooleanProperty(
+                                             "options.jazzy.default-checker"));
   }
 
 
@@ -83,6 +87,8 @@ public class JazzyOptionPane
                              loadOnStart.getModel().isSelected());
     jEdit.setBooleanProperty("options.jazzy.reset-spellchecker", 
                              resetDict.getModel().isSelected());
+    jEdit.setBooleanProperty("options.jazzy.default-checker", 
+                             defaultChecker.getModel().isSelected());
     jEdit.setProperty("options.jazzy.dictionary", dictDir.getText());
   }
 }

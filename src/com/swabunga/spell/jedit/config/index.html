@@ -1,4 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"> 
+<!-- :wrap=soft: -->
 <html> 
 <head> 
 <title>Jazzy Spellchecker</title> 
@@ -9,6 +10,22 @@
  <h1>Jazzy Spellchecker</h1>
  
  This spellchecker directly uses the Jazzy spellchecker classes, and as such offers an entirely Java based spellchecking solution. There are just two menu commands, 'Spell check selection' is pretty self explanatory - if there is no text selected the whole document is checked; 'Unload Dictionary' simply unloads the dictionary from memory this may be an issue if the dictionary used is fairly large. If the dictionary is large, it is advised to increase the maximum heap size.
+ 
+ <h2>Features</h2>
+ 
+ <ul>
+   <li>Internal Dictionary - used if no user dictionary is specified in the options. Note, words cannot be added to the default dictionary.</li>
+   <li>Error Highlighting - misspelled text highlighted when the dialog is shown.</li>
+   <li>Dynamic Replace - text replaced in the buffer as the spellchecker progresses.</li>
+   <li>Mode specific spellchecking - the following special modes are supported:
+      <ul>
+        <li>Java - only documentation comments and range comments are checked. The contents of &lt;CODE&gt; tags are ignored, as are any tags themselves, and JavaDoc tags are also ignored.</li>
+        <li>HTML / XML - All tags are ignored.</li>
+        <li>TeX - All commands and environment names are ignored. Comments are ignored. Math environments (at present only $ and $$ math environments) are ignored.</li>
+      </ul>
+      This feature can be disabled through the options panel.
+   </li>
+ </ul>
  
  <h2>Options</h2>
  

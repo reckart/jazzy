@@ -1,5 +1,5 @@
 /*
- * $Date: 2003/01/28 11:24:54 $
+ * $Date: 2003/01/28 15:50:52 $
  * $Author: ant-roy $
  *
  * Copyright (C) 2002 Anthony Roy
@@ -112,14 +112,13 @@ public class JazzyPlugin
       jta.selectAll();
     }else{
 			offset = jta.getSelection()[0].getStart();
+      caretPosn = offset;
 		}
-
+    
     String mode = view.getBuffer().getMode().toString();
     
-    String out = jazzyChecker.checkText(text, mode, offset);
+    String out = jazzyChecker.checkText(text, mode, offset, caretPosn);
     
-    if (!out.equals(text)){ jta.setSelectedText(out);}
-    if (wholeDocument){ jta.setCaretPosition(caretPosn);}
   }
 
 

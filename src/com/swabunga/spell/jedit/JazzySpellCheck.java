@@ -1,5 +1,5 @@
 /*
- * $Date: 2003/01/28 11:24:54 $
+ * $Date: 2003/01/28 15:50:52 $
  * $Author: ant-roy $
  *
  * Copyright (C) 2002 Anthony Roy
@@ -27,9 +27,11 @@ import com.swabunga.spell.event.*;
 import com.swabunga.spell.event.StringWordTokenizer;
 import com.swabunga.spell.swing.JSpellDialog;
 
-import java.io.File;
+import java.io.*;
+import java.net.*;
 
-import org.gjt.sp.jedit.jEdit;
+import org.gjt.sp.jedit.*;
+import org.gjt.sp.util.*;
 import org.gjt.sp.jedit.textarea.Selection;
 import org.gjt.sp.jedit.textarea.JEditTextArea;
 
@@ -44,9 +46,12 @@ public class JazzySpellCheck
   private File dictionaryFile;
   private JSpellDialog dlg;
   private SpellChecker spellChecker;
+  private JEditTextArea area;
   private int flags,
-	            offset;
-  private boolean LOADED = false;
+	            offset,
+              caretPosn;
+  private boolean LOADED = false,
+                  noerrors = true;
 
   //~ Constructors ............................................................
 
@@ -84,24 +89,41 @@ public class JazzySpellCheck
    * @param input ¤
    * @return ¤ 
    */
-  public String checkText(String input, String mode, int offset) {
+  public String checkText(String input, String mode, int offset, int caret) {
 
 			if (!LOADED){
 				return null;
 			}
 
 			this.offset = offset;
-		
+		  this.caretPosn = caret;
       WordFinder wf;
-
-      if (mode.equals("java")) {wf = new JavaWordFinder(input);}
-      else if (mode.equals("tex")) {wf = new TeXWordFinder(input);}
-      else if ((mode.equals("html"))||(mode.equals("xml"))) {wf = new XMLWordFinder(input);}
-      else  {wf = new DefaultWordFinder(input);}
+      View view = jEdit.getActiveView();
+      area = view.getTextArea();
+      boolean defaultChecker = jEdit.getBooleanProperty("options.jazzy.default-checker", false);
+      
+      if (!defaultChecker){
+        if (mode.equals("java")) {wf = new JavaWordFinder(input);}
+        else if (mode.equals("tex")) {wf = new TeXWordFinder(input);}
+        else if ((mode.equals("html"))||(mode.equals("xml"))) {wf = new XMLWordFinder(input);}
+        else  {wf = new DefaultWordFinder(input);}
+      }
+      else{
+        wf = new DefaultWordFinder(input);
+      }
       
     StringWordTokenizer toks = new StringWordTokenizer(wf);
+    
     spellChecker.checkSpelling(toks);
 
+    if (noerrors) {
+      Macros.message(view,"No Spelling Errors Found");
+    }else{
+      noerrors = true;
+    }
+    
+    area.setCaretPosition(caretPosn);
+    
     String output = toks.getFinalText();
     if ((flags & RESET_SPELLCHECKER)==RESET_SPELLCHECKER) spellChecker.reset();
 
@@ -120,15 +142,32 @@ public class JazzySpellCheck
       try {
         dictionary = new SpellDictionary(dictionaryFile);
       } catch (Exception e) {
-        System.out.println("TextSpellCheck: error loading dictionary: " + e);
+        Log.log(Log.MESSAGE,this,"TextSpellCheck: error loading dictionary: " + e);
         LOADED = false;
 
         return LOADED;
       }
 
+      LOADED = true;
+    }
+    else{
+      try{
+        InputStream in = this.getClass().getResourceAsStream("/english.0");
+        InputStreamReader reader = new InputStreamReader(in);
+        dictionary = new SpellDictionary(reader);      
+      }catch(Exception e) {
+        Log.log(Log.MESSAGE,this,"TextSpellCheck: error loading default dictionary: " + e);
+        LOADED = false;
+
+        return LOADED;
+      }
+      LOADED = true;
+ //     Log.log(Log.MESSAGE,this,"File: " + b);
+    }
+
+    if (LOADED){
       spellChecker = new SpellChecker(dictionary);
       spellChecker.addSpellCheckListener(this);
-      LOADED = true;
     }
 
     return LOADED;
@@ -140,10 +179,10 @@ public class JazzySpellCheck
    * @param event ¤
    */
   public void spellingError(SpellCheckEvent event) {
-		
-		JEditTextArea area = jEdit.getActiveView().getTextArea();
+		noerrors = false;
+    int oldLength = event.getInvalidWord().length();
 		int start=event.getWordContextPosition() + offset;
-    int end=start+event.getInvalidWord().length();
+    int end=start+oldLength;
 
 		Selection s = new Selection.Range(start, end);
 		area.setCaretPosition(start);
@@ -151,12 +190,25 @@ public class JazzySpellCheck
 		area.setSelection(s);
 		
     dlg.show(event);
+    
+    String replace = event.getReplaceWord();
+    
+    if (replace!=null){
+      area.setSelectedText(replace);
+      if (caretPosn > start){
+        int diff = replace.length() - oldLength;
+        caretPosn += diff;
+      }
+    }
+    
   }
 
   /**
    * ¤
    */
   public void unloadDictionary() {
+    if (!LOADED) return;
+    
     spellChecker.removeSpellCheckListener(this);
     spellChecker = null;
     dictionary = null;

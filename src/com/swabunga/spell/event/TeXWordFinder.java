@@ -90,9 +90,22 @@ public class TeXWordFinder extends AbstractWordFinder {
 // Ignore user defined.
         j = ignoreUserDefined(j);
         
+// Ignore certain command parameters.
+        j = ignore(j, "\\newcommand", "}");
+        j = ignore(j, "\\documentclass", "}");
+        j = ignore(j, "\\usepackage", "}");
+        j = ignore(j, "\\newcounter{", "}");
+        j = ignore(j, "\\newenvironment", "}");
+        j = ignore(j, "\\setlength", "}");
+        
 // Ignore environment names.
         j = ignore(j, "\\begin{", "}");
-        j = ignore(j, "\\end{", "}");
+        j = ignore(j, "\\end{", "}");        
+        if (i != j){
+          i = j;
+          continue search;
+        }
+        
 // Ignore commands.
         j = ignore(j, '\\');
         

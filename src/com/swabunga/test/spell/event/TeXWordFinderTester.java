@@ -72,12 +72,16 @@ public class TeXWordFinderTester extends TestCase {
     assertFound("$$testing$$a time","a");
   }
   
+  public void testUnaryWordFindH(){
+    assertFound("\\newcommand{not these}\\newcommand{not these}a time","a");
+  }
+
   public void testNoWordsFoundA(){
     assertNotFound("");
   }
   
   public void testNoWordsFoundB(){
-    assertNotFound("\\string  \\of \\words");
+    assertNotFound("\\string  \\of\\words");
   }
   
   public void testNoWordsFoundC(){

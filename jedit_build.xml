@@ -13,6 +13,7 @@
 	<property name="jsdk1.3"  value=""/>
   <property name="jedit" value=""/>
   <property name="test-class" value="DefaultWordFinder"/>
+  <property name="local.jedit.jars" value=".."/>
  
   <!-- Build classpath -->
   <path id="classpath">
@@ -32,11 +33,11 @@
   
   <selector id="jedit-src">
      <or>
-        <filename name="**/jedit/*.java"/>
-        <filename name="**/engine/*.java"/>
-        <filename name="**/event/*.java"/>
-        <filename name="**/swing/JSpellDialog.java"/>
-        <filename name="**/swing/JSpellForm.java"/>
+        <filename name="com/swabunga/spell/jedit/*.java"/>
+        <filename name="com/swabunga/spell/engine/*.java"/>
+        <filename name="com/swabunga/spell/event/*.java"/>
+        <filename name="com/swabunga/spell/swing/JSpellDialog.java"/>
+        <filename name="com/swabunga/spell/swing/JSpellForm.java"/>
       </or>
   </selector>
   
@@ -110,14 +111,14 @@
     </jar>
     <zip basedir="../" zipfile="${dist}\JazzySrc${DSTAMP}.zip">
       <include name="jazzy/jedit_build.xml"/>
-      <include name="jazzy/${dict}\english.0"/>
+      <include name="jazzy/${dict}/english.0"/>
       <include name="jazzy/src/**"/>
       <exclude name="jazzy/**/examples/*"/>
     </zip>
   </target>
 
   <target name="jedit-install" depends="jedit-plugin">
-      <copy file="${dist}/lib/jazzy${DSTAMP}.jar" tofile="../jazzy.jar"/>
+      <copy file="${dist}/lib/jazzy${DSTAMP}.jar" tofile="${local.jedit.jars}/jazzy.jar"/>
   </target>
   
   <target name="jedit-clean-install" depends="clean,jedit-install"/>

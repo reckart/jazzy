@@ -16,7 +16,7 @@ public class FileWordTokenizer
 
   //~ Instance/static variables ...............................................
 
-  private File inFile;
+//  private File inFile;
 
   //~ Constructors ............................................................
 
@@ -41,7 +41,7 @@ public class FileWordTokenizer
   }
 
   private static String stringValue(File inFile) {
-    File stringFile = inFile;
+//    File stringFile = inFile;
 
     String out = "";
 

@@ -92,6 +92,13 @@ public class JTextComponentSpellChecker implements SpellCheckListener {
     }
   }
 
+  /**
+   * This method is called to check the spelling of a JTextComponent.
+   *
+   * @param  textComp  The JTextComponent to spellcheck.
+   * @return Either SpellChecker.SPELLCHECK_OK,  SpellChecker.SPELLCHECK_CANCEL or the number of errors found. The number of errors are those that
+   * are found BEFORE any corrections are made.
+   */
   public synchronized int spellCheck(JTextComponent textComp) {
     setupDialog(textComp);
     this.textComp = textComp;

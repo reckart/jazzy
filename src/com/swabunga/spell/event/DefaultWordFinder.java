@@ -6,14 +6,12 @@ import java.text.BreakIterator;
 /**
  * A basic word finder, which searches text for sequences of letters.
  * 
- * @author Anthony Roy  (ajr¤antroy.co.uk)
+ * @author Anthony Roy  (ajr@antroy.co.uk)
  */
 public class DefaultWordFinder
   extends AbstractWordFinder {
 
   //~ Instance/static variables ...............................................
-
-  private BreakIterator sentenceIterator;
 
   //~ Constructors ............................................................
 
@@ -87,27 +85,8 @@ public class DefaultWordFinder
       throw new WordNotFoundException("No more words found.");
     }
 
-//    Word tempWord = new Word(currentWord);
-
-//    if (nextWord != null) {
       currentWord.copy(nextWord);
-
-      int current = sentenceIterator.current();
-
-      if (current == currentWord.getStart())
-        startsSentence = true;
-      else {
-        startsSentence = false;
-
-        if (currentWord.getEnd() > current) {
-          sentenceIterator.next();
-        }
-      }
-//    } else {
-//      currentWord = null;
-//
-//      return tempWord;
-//    }
+      setSentenceIterator(currentWord);
 
     int i = currentWord.getEnd();
     boolean finished = false;
@@ -116,11 +95,6 @@ public class DefaultWordFinder
 	search:
     while (i < text.length() && !finished) {
 
-      //removed following line, as isWordChar now requires an int for the word position.(11 Feb '03)
-      
-//      char currentLetter = text.charAt(i);
-
-      //Find words. Changed to use more intelligent character recognition. (11 Feb '03)
       if (!started && isWordChar(i)) {
         nextWord.setStart(i);
         started = true;
@@ -143,22 +117,4 @@ public class DefaultWordFinder
     return currentWord;
   }
 
-  /**
-   * Replace the current word in the search with a replacement string.
-   * 
-   * @param newWord the replacement string.
-   */
-  public void replace(String newWord) {
-    super.replace(newWord);
-    sentenceIterator.setText(text);
-
-    int start = currentWord.getStart();
-    sentenceIterator.following(start);
-    startsSentence = sentenceIterator.current() == start;
-  }
-
-  protected void init() {
-    sentenceIterator = BreakIterator.getSentenceInstance();
-    sentenceIterator.setText(text);
-  }
 }

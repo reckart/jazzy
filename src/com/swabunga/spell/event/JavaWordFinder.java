@@ -13,7 +13,6 @@ public class JavaWordFinder
 
   //~ Instance/static variables ...............................................
 
-	private BreakIterator sentenceIterator;
 	private boolean inComment;
 
   //~ Constructors ............................................................
@@ -43,27 +42,10 @@ public class JavaWordFinder
       throw new WordNotFoundException("No more words found.");
     }
 
-//    Word tempWord = new Word(currentWord);
-
-//    if (nextWord != null) {
       currentWord.copy(nextWord);
 
       int current = sentenceIterator.current();
-
-      if (current == currentWord.getStart())
-        startsSentence = true;
-      else {
-        startsSentence = false;
-
-        if (currentWord.getEnd() > current) {
-          sentenceIterator.next();
-        }
-      }
-//    } else {
-//      currentWord = null;
-//
-//      return tempWord;
-//    }
+      setSentenceIterator(currentWord);
 
     int i = currentWord.getEnd();
     boolean finished = false;
@@ -80,7 +62,6 @@ public class JavaWordFinder
 			if (i >= text.length()) break search;
       
       char currentLetter = text.charAt(i);
-			/* Changed isWordChar() method in following block to use new improved position based version (11 Feb '03) */
 			if (inComment){
 				//Reset on new line.
 				if (currentLetter == '\n'){
@@ -130,18 +111,11 @@ public class JavaWordFinder
    * 
    * @param newWord the replacement string.
    */
-  public void replace(String newWord) {
-    super.replace(newWord);
-    sentenceIterator.setText(text);
-
-    int start = currentWord.getStart();
-    sentenceIterator.following(start);
-    startsSentence = sentenceIterator.current() == start;
-  }
 
   protected void init() {
-    sentenceIterator = BreakIterator.getSentenceInstance();
-    sentenceIterator.setText(text);
+//    sentenceIterator = BreakIterator.getSentenceInstance();
+//    sentenceIterator.setText(text);
+    super.init();
 		inComment = false;
   }
 }

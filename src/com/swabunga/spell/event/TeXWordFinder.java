@@ -18,7 +18,6 @@ public class TeXWordFinder
 
 //{{{ ~ Instance/static variables ...............................................
 
-  private BreakIterator sentenceIterator;
   private boolean IGNORE_COMMENTS = true;
  //}}}
 //{{{ ~ Constructors ............................................................
@@ -48,29 +47,15 @@ public class TeXWordFinder
       throw new WordNotFoundException("No more words found.");
 
       currentWord.copy(nextWord);
+      setSentenceIterator(currentWord);
 
-      int current = sentenceIterator.current();
-
-      if (current == currentWord.getStart())
-        startsSentence = true;
-      else {
-        startsSentence = false;
-
-        if (currentWord.getEnd() > current) {
-          sentenceIterator.next();
-        }
-      }
 
     int i = currentWord.getEnd();
     boolean finished = false;
     boolean started = false;
-//    boolean ignore = false;
-//    String endIgnore = "";
-search: 
-    while (i < text.length() && !finished) {
 
-			/* Changed isWordChar() method in this block to use new improved position based version (11 Feb '03) */
-//      char currentLetter = text.charAt(i);
+  search: 
+    while (i < text.length() && !finished) {
 
 //{{{ Find words.
       if (!started && isWordChar(i)) {
@@ -96,7 +81,7 @@ search:
 // Ignore environment names.
 	i = ignore(i,"\\begin{","}");
 	i = ignore(i,"\\end{","}");
-	// Ignore commands.
+// Ignore commands.
 	i = ignore(i,'\\');
 	
       i++;
@@ -113,32 +98,10 @@ search:
   }
  //}}}
  
- 
-  /**
-   * Replace the current word in the search with a replacement string.
-   * 
-   * @param newWord the replacement string.
-   */
-
-	 
-  public void replace(String newWord) {
-//{{{ 
-    super.replace(newWord);
-    sentenceIterator.setText(text);
-
-    int start = currentWord.getStart();
-    sentenceIterator.following(start);
-    startsSentence = sentenceIterator.current() == start;
-  } 
-//}}}
   public void setIgnoreComments(boolean ignore){
 //{{{ 
         IGNORE_COMMENTS = ignore;
   }
  //}}}  
-  protected void init() {
-//{{{ 
-        sentenceIterator = BreakIterator.getSentenceInstance();
-    sentenceIterator.setText(text);
-  }  //}}}//}}}
+//}}}
 }

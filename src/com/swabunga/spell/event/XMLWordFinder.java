@@ -15,8 +15,6 @@ public class XMLWordFinder
 
   //~ Instance/static variables ...............................................
 
-  private BreakIterator sentenceIterator;
-
   //~ Constructors ............................................................
 
   /**
@@ -44,27 +42,14 @@ public class XMLWordFinder
 
       currentWord.copy(nextWord);
 
-      int current = sentenceIterator.current();
-
-      if (current == currentWord.getStart())
-        startsSentence = true;
-      else {
-        startsSentence = false;
-
-        if (currentWord.getEnd() > current) {
-          sentenceIterator.next();
-        }
-      }
-
+      setSentenceIterator(currentWord);
+      
     int i = currentWord.getEnd();
     boolean finished = false;
     boolean started = false;
-//    boolean ignore = false;
   
 	  search:      /* Find words. */
     while (i < text.length() && !finished) {
-      /* Changed isWordChar() method in following block to use new improved position based version (11 Feb '03) */
-      //char currentLetter = text.charAt(i);
       if (!started && isWordChar(i)) {
         nextWord.setStart(i++);
         started = true;
@@ -94,24 +79,5 @@ public class XMLWordFinder
 		}
 
     return currentWord;
-  }
-
-  /**
-   * Replace the current word in the search with a replacement string.
-   * 
-   * @param newWord the replacement string.
-   */
-  public void replace(String newWord) {
-    super.replace(newWord);
-    sentenceIterator.setText(text);
-
-    int start = currentWord.getStart();
-    sentenceIterator.following(start);
-    startsSentence = sentenceIterator.current() == start;
-  }
-
-  protected void init() {
-    sentenceIterator = BreakIterator.getSentenceInstance();
-    sentenceIterator.setText(text);
   }
 }

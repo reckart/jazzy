@@ -1,5 +1,6 @@
 package com.swabunga.spell.event;
 
+import java.text.BreakIterator;
 
 /**
  * Defines common methods and behaviour for the various word finding
@@ -16,6 +17,7 @@ public abstract class AbstractWordFinder
     protected Word nextWord          = new Word("", 0);
     protected boolean startsSentence = true;
     protected String text;
+    protected BreakIterator sentenceIterator;
 
     //~ Constructors ..........................................................
 
@@ -104,6 +106,12 @@ public abstract class AbstractWordFinder
           nextWord.setStart(nextWord.getStart() + diff);
         }
         text = sb.toString();
+        
+        sentenceIterator.setText(text);
+        int start = currentWord.getStart();
+        sentenceIterator.following(start);
+        startsSentence = sentenceIterator.current() == start;
+
     }
 
     /**
@@ -130,6 +138,20 @@ public abstract class AbstractWordFinder
         return text;
     }
 
+    protected void setSentenceIterator(Word wd){
+           int current = sentenceIterator.current();
+
+      if (current == currentWord.getStart())
+        startsSentence = true;
+      else {
+        startsSentence = false;
+
+        if (currentWord.getEnd() > current) {
+          sentenceIterator.next();
+        }
+      }
+    }
+    
     //Added more intelligent character recognition (11 Feb '03)
     protected boolean isWordChar(int posn) {
          boolean out = false;
@@ -249,5 +271,7 @@ cycle:          while (true) {
     } //}}}
 
     protected void init() {
+      sentenceIterator = BreakIterator.getSentenceInstance();
+      sentenceIterator.setText(text);
     }
 }

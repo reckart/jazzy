@@ -118,14 +118,21 @@
   	<copy file="${dist}/english.0.zip" todir="${www}/dict"/>
   </target>
 
+  <target name="javadoc-release" depends="javadoc">
+    <!-- Create the distribution directories -->
+    <zip zipfile="${dist}/jazzy-doc.zip" basedir="${javadoc}"/>
+  </target>
+  
   <target name="source-release">
     <!-- Create the distribution directories -->
-    <zip zipfile="${dist}/jazzy-src.zip" basedir="." excludes="www/dict/**,bin/**,dist/**,dict/**"/>
+    <zip zipfile="${dist}/jazzy-src.zip" basedir="."
+         excludes="www/dict/**,bin/**,dist/**,dict/**,src/**/jedit/**,test/**,javadoc/**"/>
   </target>
 
   <target name="binary-release" depends="compile,library-core,library-swing,examples,javadoc,website">
-  	<zip zipfile="${dist}/jazzy-bin.zip" basedir="." excludes="dict/**,bin/**,**/jazzy-bin.zip,**/english.0.zip,**/jazzy-src.zip"/>
-  	<!-- DMV
+<!--   	<zip zipfile="${dist}/jazzy-bin.zip" basedir="." excludes="dict/**,bin/**,**/jazzy-bin.zip,**/english.0.zip,**/jazzy-src.zip"/> -->
+   	<zip zipfile="${dist}/jazzy-bin.zip" basedir="${dist}/lib" includes="jazzy-core.jar,jazzy-swing.jar,jazzy-examples.jar"/>
+ 	<!-- DMV
   	<copy todir="\cygwin\home\don\oddpost\build\jboss_webapps\jazzy.war">
   		<fileset dir="${www}"/>
   		<fileset dir="bin"/>
@@ -138,7 +145,7 @@
   </target>
 
   <target name="library-all" depends="compile">
-  	<jar jarfile="${dist}/lib/jazzy.jar" basedir="${build}">
+  	<jar jarfile="${dist}/lib/jazzy.jar" basedir="${build}" excludes="**/test/**,**/jedit/**">
   	  	<manifest>
   			<attribute name="Built-By" value="${user.name}"/>
   		</manifest>

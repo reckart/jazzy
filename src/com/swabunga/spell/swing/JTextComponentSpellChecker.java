@@ -16,8 +16,6 @@ import com.swabunga.spell.engine.*;
 
 public class JTextComponentSpellChecker implements SpellCheckListener {
 
-    public static final int SPELLCHECK_CANCEL=-1;
-
     private static final String COMPLETED="COMPLETED";
     private String dialogTitle=null;
 
@@ -25,7 +23,6 @@ public class JTextComponentSpellChecker implements SpellCheckListener {
     private JSpellDialog dlg=null;
     private JTextComponent textComp=null;
     private ResourceBundle messages;
-    private int spellCheckState=0;
 
     // Constructor
     public JTextComponentSpellChecker(SpellDictionary dict){
@@ -84,22 +81,17 @@ public class JTextComponentSpellChecker implements SpellCheckListener {
         }
     }
 
-    /**
-    * Performes the actual spellchecking and returns the number of misspelled
-    * words or SPELLCHECK_CANCEL (-1) if the spellcheck was cancelled.
-    */
     public synchronized int spellCheck(JTextComponent textComp){
-        spellCheckState=0;
         setupDialog(textComp);
         this.textComp=textComp;
 
         DocumentWordTokenizer tokenizer = new DocumentWordTokenizer(textComp.getDocument());
-        spellCheck.checkSpelling(tokenizer);
+        int exitStatus = spellCheck.checkSpelling(tokenizer);
 
         textComp.requestFocus();
         textComp.setCaretPosition(0);
         this.textComp=null;
-        return spellCheckState;
+        return exitStatus;
     }
 
     public void spellingError(SpellCheckEvent event) {
@@ -115,9 +107,5 @@ public class JTextComponentSpellChecker implements SpellCheckListener {
         textComp.moveCaretPosition(end);
 
         dlg.show(event);
-
-        spellCheckState++;
-        if(event.getAction()==SpellCheckEvent.CANCEL)
-            spellCheckState=SPELLCHECK_CANCEL;
     }
 }

@@ -53,30 +53,35 @@ public class AutoSpellCheckHandler extends MouseAdapter implements DocumentListe
 		Segment					seg=new Segment();
 		
 		docTok=new DocumentWordTokenizer(doc);
-		
 		if(start>0){
 			docTok.posStartFullWordFrom(start);
 		}
 		
 		while(docTok.hasMoreWords() && docTok.getCurrentWordPosition()<=end){
 			word=docTok.nextWord();
-			
 			wordStart=docTok.getCurrentWordPosition();
-			if(wordEnd!=-1)
+			
+			// Mark non word parts (spaces) as correct
+			if(wordEnd!=-1){
+				//System.out.println("Space:"+wordEnd+","+wordStart);
 				markAsCorrect(doc, wordEnd, wordStart);
+			}
 			wordEnd=docTok.getCurrentWordEnd();
 			
-			if(wordEnd>=doc.getLength())
+			if(wordEnd>doc.getLength())
 				wordEnd=doc.getLength()-1;
 			if(wordStart>=wordEnd)
 				continue;
+			//System.out.println("Word:"+wordStart+","+wordEnd);
 			if(sCheck.isCorrect(word) || sCheck.isIgnored(word)){
 				markAsCorrect(doc, wordStart, wordEnd);
 			}else{
 				markAsMisspelled(doc, wordStart, wordEnd);
 			}
 		}
-		if(wordStart>=wordEnd && wordEnd!=-1){
+		// Mark the rest (if any) as correct.
+		if(wordEnd<end && wordEnd!=-1){
+			//System.out.println("End:"+wordEnd+","+end);
 			markAsCorrect(doc, wordEnd, end);
 		}
 	}
@@ -97,13 +102,26 @@ public class AutoSpellCheckHandler extends MouseAdapter implements DocumentListe
 	}
 	
 	private void handleDocumentChange(DocumentEvent evt){
-		StyledDocument			doc;
+		Element			curElem,
+						parElem;
+		StyledDocument	doc;
+		int				start,
+						end;
 		
 		if(evt.getDocument() instanceof StyledDocument){
-			int start=evt.getOffset()-1,
-				end=evt.getOffset()+evt.getLength();
 			doc=(StyledDocument)evt.getDocument();
-			Element e=doc.getCharacterElement((start+end)/2);
+			curElem=doc.getCharacterElement(evt.getOffset());
+			parElem=curElem.getParentElement();
+			if(parElem!=null){
+				start=parElem.getStartOffset();
+				end=parElem.getEndOffset();
+			}else{
+				start=curElem.getStartOffset();
+				end=curElem.getEndOffset();
+			}
+			//System.out.println("curElem: "+curElem.getStartOffset()+", "+curElem.getEndOffset());
+			//System.out.println("parElem: "+parElem.getStartOffset()+", "+parElem.getEndOffset());
+			//System.out.println("change: "+start+", "+end);
 			markupSpelling(doc,start, end);
 		}		
 	}

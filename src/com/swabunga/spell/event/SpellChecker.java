@@ -1,7 +1,14 @@
 package com.swabunga.spell.event;
 
 import com.swabunga.spell.engine.*;
-import java.util.*;
+import com.swabunga.spell.engine.Word;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * This is the main class for spell checking (using the new event based spell

@@ -77,6 +77,13 @@ public class SpellChecker {
   }
 
   /**
+   * Set user dictionary (used when a word is added)
+   */
+  public void setUserDictionary(SpellDictionary dictionary) {
+    userdictionary = dictionary;
+  }
+
+  /**
    *
    * @return Current Configuration
    */

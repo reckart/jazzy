@@ -57,6 +57,15 @@ public class JTextComponentSpellChecker implements SpellCheckListener {
   }
 
   // MEMBER METHODS
+  
+  /**
+   * Set user dictionary (used when a word is added)
+   */
+  public void setUserDictionary(SpellDictionary dictionary) {
+    if (spellCheck != null)
+      spellCheck.setUserDictionary(dictionary);
+  }
+
   private void setupDialog(JTextComponent textComp) {
 
     Component comp = SwingUtilities.getRoot(textComp);

@@ -46,4 +46,9 @@ public class FileWordTokenizer implements WordTokenizer {
   public String getContext() {
     return null;
   }
+
+  /** returns true iif the current word is at the start of a sentance*/
+  public boolean isNewSentance() {
+    return false;
+  }
 }

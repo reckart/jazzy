@@ -8,31 +8,33 @@ import java.io.InputStreamReader;
  */
 public class EditDistance {
 
-    public static final int getDistance(String word, String similar, EditDistanceWeights w) {
+	public static Configuration config = Configuration.getConfiguration();
+
+    public static final int getDistance(String word, String similar) {
         int a_size = word.length() + 1;
         int b_size = similar.length() + 1;
         int[][] matrix = new int[a_size][b_size];
         matrix[0][0] = 0;
         for (int j = 1; j != b_size; ++j)
-            matrix[0][j] = matrix[0][j - 1] + w.del1;
+            matrix[0][j] = matrix[0][j - 1] + config.getInteger(Configuration.EDIT_DEL1);
         word = " " + word;
         similar = " " + similar;
         int te;
         for (int i = 1; i != a_size; ++i) {
-            matrix[i][0] = matrix[i - 1][0] + w.del2;
+            matrix[i][0] = matrix[i - 1][0] + config.getInteger(Configuration.EDIT_DEL2);
             for (int j = 1; j != b_size; ++j) {
                 if (word.charAt(i) == similar.charAt(j)) {
                     matrix[i][j] = matrix[i - 1][j - 1];
                 } else {
-                    matrix[i][j] = w.sub + matrix[i - 1][j - 1];
+                    matrix[i][j] = config.getInteger(Configuration.EDIT_SUB) + matrix[i - 1][j - 1];
                     if (i != 1 && j != 1 &&
                             word.charAt(i) == similar.charAt(j - 1) && word.charAt(i - 1) == similar.charAt(j)) {
-                        te = w.swap + matrix[i - 2][j - 2];
+                        te = config.getInteger(Configuration.EDIT_SWAP) + matrix[i - 2][j - 2];
                         if (te < matrix[i][j]) matrix[i][j] = te;
                     }
-                    te = w.del1 + matrix[i - 1][j];
+                    te = config.getInteger(Configuration.EDIT_DEL1) + matrix[i - 1][j];
                     if (te < matrix[i][j]) matrix[i][j] = te;
-                    te = w.del2 + matrix[i][j - 1];
+                    te = config.getInteger(Configuration.EDIT_DEL2) + matrix[i][j - 1];
                     if (te < matrix[i][j]) matrix[i][j] = te;
                 }
             }
@@ -48,7 +50,7 @@ public class EditDistance {
         while (input != null) {
             input = stdin.readLine();
             input2 = stdin.readLine();
-            System.out.println(ed.getDistance(input, input2, new EditDistanceWeights()));
+            System.out.println(ed.getDistance(input, input2));
         }
     }
 }

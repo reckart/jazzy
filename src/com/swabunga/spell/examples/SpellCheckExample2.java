@@ -10,7 +10,7 @@ import com.swabunga.spell.engine.*;
  * @author Jason Height (jheight@chariot.net.au)
  */
 public class SpellCheckExample2 implements SpellCheckListener {
-  private static int threshold = 200;
+
   private static String dictFile = "dict/english.0";
   private SpellChecker spellCheck = null;
 
@@ -28,7 +28,7 @@ public class SpellCheckExample2 implements SpellCheckListener {
 	if (line.length() == -1)
 	  break;
 
-        spellCheck.checkString(line);
+		spellCheck.checkSpelling( new StringWordTokenizer(line) );
       }
 
     } catch (Exception e) {

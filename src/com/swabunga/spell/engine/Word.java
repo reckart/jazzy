@@ -10,6 +10,9 @@ public class Word implements Comparator {
     private String word;
     private int score;
 
+	public Word() {	
+	}
+	
     public Word(String word, int score) {
       this.word = word;
       this.score = score;

@@ -18,32 +18,12 @@ public class SpellChecker {
 
   private List eventListeners = new ArrayList();
   private SpellDictionary dictionary;
-  private int threshold = 100;
+  
+  private Configuration config = Configuration.getConfiguration();
 
   /**This variable holds all of the words that are to be always ignored */
   private Set ignoredWords = new HashSet();
   private Map autoReplaceWords = new HashMap();
-  /** Field indicating if upper case words be ignored during spell checking */
-  private boolean ignoreUpperCaseWords = false;
-  /** Field indicating if mixed case words be ignored during spell checking */
-  private boolean ignoreMixedCaseWords = false;
-
-  /**
-   * Field indicating if words that appear to be internet addresses should be ingored
-   */
-  private boolean ignoreInternetAddresses = false;
-
-  /** Field indicating that words containing a digit(s) should be ignored */
-  private boolean ignoreDigitWords = true;
-  /**
-   * Field indicating that words containing multiple occurences of a word straight after each other
-   * should be ignored
-   */
-  private boolean ignoreMultipleWords = false;
-  /**
-   * Field indicating that words that start a sentance can ignore capitalisation
-   */
-  private boolean ignoreSentanceCapitalisation = false;
 
 
   /**
@@ -67,7 +47,7 @@ public class SpellChecker {
    */
   public SpellChecker(SpellDictionary dictionary, int threshold) {
     this(dictionary);
-    this.threshold = threshold;
+    config.setInteger( Configuration.SPELL_THRESHOLD, threshold );
   }
 
 
@@ -88,128 +68,6 @@ public class SpellChecker {
    */
   public void removeSpellCheckListener(SpellCheckListener listener) {
     eventListeners.remove(listener);
-  }
-
-
-  /**
-   *Alter the threshold
-   *
-   * @param  threshold  The new threshold value
-   */
-  public void setThreshold(int threshold) {
-    this.threshold = threshold;
-  }
-
-
-  /**
-   *Returns the threshold
-   *
-   * @return    The threshold value
-   */
-  public int getThreshold() {
-    return threshold;
-  }
-
-
-  /**
-   * Sets whether upper case words be ignored during spell checking
-   *
-   * @param  ignore  The new ignoreUpperCaseWord value
-   */
-  public void setIgnoreUpperCaseWord(boolean ignore) {
-    ignoreUpperCaseWords = ignore;
-  }
-
-
-  /**
-   *  Gets the ignoreUpperCaseWord attribute of the SpellChecker object
-   *
-   * @return    The ignoreUpperCaseWord value
-   */
-  public boolean getIgnoreUpperCaseWord() {
-    return ignoreUpperCaseWords;
-  }
-
-
-  /**
-   * Sets whether words that appear to be internet addresses should be ingored
-   *
-   * @param  ignore  The new ignoreINETAddresses value
-   */
-  public void setIgnoreINETAddresses(boolean ignore) {
-    ignoreInternetAddresses = ignore;
-  }
-
-
-  /**
-   *  Gets the ignoreINETAddresses attribute of the SpellChecker object
-   *
-   * @return    The ignoreINETAddresses value
-   */
-  public boolean getIgnoreINETAddresses() {
-    return ignoreInternetAddresses;
-  }
-
-
-  /**
-   * Sets whether words containing a digit(s) should be ignored
-   *
-   * @param  ignore  The new ignoreDigitWords value
-   */
-  public void setIgnoreDigitWords(boolean ignore) {
-    ignoreDigitWords = ignore;
-  }
-
-
-  /**
-   *  Gets the ignoreDigitWords attribute of the SpellChecker object
-   *
-   * @return    The ignoreDigitWords value
-   */
-  public boolean getIgnoreDigitWords() {
-    return ignoreDigitWords;
-  }
-
-
-  /**
-   * Sets whether words containing multiple occurences of a word straight after each other
-   * should be ignored
-   *
-   * @param  ignore  The new ignoreMultipleWords value
-   */
-  public void setIgnoreMultipleWords(boolean ignore) {
-    ignoreMultipleWords = ignore;
-  }
-
-
-  /**
-   *  Gets the ignoreMultipleWords attribute of the SpellChecker object
-   *
-   * @return    The ignoreMultipleWords value
-   */
-  public boolean getIgnoreMultipleWords() {
-    return ignoreMultipleWords;
-  }
-
-
-  /**
-   * Sets whether words containing multiple occurences of a word straight after each other
-   * should be ignored
-   *
-   * @param  ignore  The new ignoreSentanceCapitalisation value
-   */
-  public void setIgnoreSentanceCapitalisation(boolean ignore) {
-    ignoreSentanceCapitalisation = ignore;
-  }
-
-
-  /**
-   *  Gets the ignoreSentanceCapitalisation attribute of the SpellChecker object
-   *
-   * @return    The ignoreSentanceCapitalisation value
-   */
-  public boolean getIgnoreSentanceCapitalisation() {
-    return ignoreSentanceCapitalisation;
   }
 
 
@@ -376,7 +234,6 @@ public class SpellChecker {
    * This method is called to check the spelling of the words that are returned
    * by the WordTokenizer.
    * <p>For each invalid word the action listeners will be informed with a new SpellCheckEvent</p>
-   * <p>The return value from this method is valid no matter if any SpellCheckListeners are registered or not.</p>
    *
    * @param  tokenizer  Description of the Parameter
    * @return Either SPELLCHECK_OK, SPELLCHECK_CANCEL or the number of errors found. The number of errors are those that are found BEFORE and corretions are made.
@@ -390,10 +247,11 @@ public class SpellChecker {
       String word = tokenizer.nextWord();
       //Check the spelling of the word
       if (!dictionary.isCorrect(word)) {
-        if ((ignoreMixedCaseWords && isMixedCaseWord(word, tokenizer.isNewSentance())) ||
-            (ignoreUpperCaseWords && isUpperCaseWord(word)) ||
-            (ignoreDigitWords && isDigitWord(word)) ||
-            (ignoreInternetAddresses && isINETWord(word))) {
+ 		if (
+          	  (config.getBoolean(Configuration.SPELL_IGNOREMIXEDCASE) && isMixedCaseWord(word, tokenizer.isNewSentance())) ||
+              (config.getBoolean(Configuration.SPELL_IGNOREUPPERCASE) && isUpperCaseWord(word)) ||
+              (config.getBoolean(Configuration.SPELL_IGNOREDIGITWORDS) && isDigitWord(word)) ||
+              (config.getBoolean(Configuration.SPELL_IGNOREINTERNETADDRESSES) && isINETWord(word))) {
           //Null event. Since we are ignoring this word due
           //to one of the above cases.
         } else {
@@ -409,7 +267,7 @@ public class SpellChecker {
               //ignoreSentanceCapitalisation is not set to true
               //Fire the event.
               SpellCheckEvent event = new BasicSpellCheckEvent(word, dictionary.getSuggestions(word,
-                  threshold), tokenizer);
+                  config.getInteger(Configuration.SPELL_THRESHOLD)), tokenizer);
               terminated = fireAndHandleEvent(tokenizer, event);
             }
           }
@@ -422,7 +280,7 @@ public class SpellChecker {
          *  }
          */
         //Check for capitalisation
-        if ((!ignoreSentanceCapitalisation) && (tokenizer.isNewSentance())
+        if ((!config.getBoolean(Configuration.SPELL_IGNORESENTANCECAPITALIZATION)) && (tokenizer.isNewSentance())
             && (Character.isLowerCase(word.charAt(0)))) {
           errors++;
           StringBuffer buf = new StringBuffer(word);

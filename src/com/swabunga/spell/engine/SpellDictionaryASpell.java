@@ -1,6 +1,7 @@
 /* Created by bgalbs on Jan 30, 2003 at 11:45:25 PM */
 package com.swabunga.spell.engine;
 
+import java.io.*;
 import java.io.File;
 import java.io.IOException;
 import java.security.InvalidParameterException;
@@ -26,6 +27,15 @@ public abstract class SpellDictionaryASpell implements SpellDictionary {
 		else
 			tf = new GenericTransformator(phonetic);
 	}
+
+	public SpellDictionaryASpell(Reader phonetic) throws IOException
+	{
+		if (phonetic == null)
+			tf = new DoubleMeta();
+		else
+			tf = new GenericTransformator(phonetic);
+	}
+
 	
     /**
      * Returns a list of Word objects that are the suggestions to an
@@ -122,8 +132,8 @@ public abstract class SpellDictionaryASpell implements SpellDictionary {
         // to a treeset it has to be resorted. It's better to do this operation
         // once at the end.
 
-//		Collections.sort( phoneticList, new Word()); //always sort phonetic matches along the top
-//        Collections.sort( wordlist, new Word()); //the non-phonetic matches can be listed below
+		Collections.sort( phoneticList, new Word()); //always sort phonetic matches along the top
+        Collections.sort( wordlist, new Word()); //the non-phonetic matches can be listed below
         
         phoneticList.addAll(wordlist);
         return phoneticList;

@@ -48,6 +48,9 @@ public class SpellDictionary {
   /**The distance weights*/
   private final EditDistanceWeights distanceWeights = new EditDistanceWeights();
 
+  /** Holds the dictionary file for appending*/
+  private File dictFile = null;
+
   /**
    * Dictionary Constructor.
    */
@@ -62,6 +65,25 @@ public class SpellDictionary {
   public SpellDictionary (File wordList) throws FileNotFoundException, IOException
   {
     this(new FileReader(wordList));
+    dictFile=wordList;
+  }
+
+  /**
+   * Add a word permanantly to the dictionary (and the dictionary file).
+   * <p>This needs to be made thread safe (synchronized)</p>
+   */
+  public void addWord(String word){
+      putWord(word);
+      if(dictFile==null)
+          return;
+      try{
+          FileWriter w=new FileWriter(dictFile.toString(),true);// Open with append.
+          w.write(word);
+          w.write("\n");
+          w.close();
+      }catch(IOException ex){
+          System.out.println("Error writing to dictionary file");
+      }
   }
 
   /**

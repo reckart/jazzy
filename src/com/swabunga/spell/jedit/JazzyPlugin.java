@@ -1,5 +1,5 @@
 /*
- * $Date: 2003/01/28 15:50:52 $
+ * $Date: 2003/02/03 13:52:16 $
  * $Author: ant-roy $
  *
  * Copyright (C) 2002 Anthony Roy
@@ -31,105 +31,109 @@ import org.gjt.sp.jedit.textarea.JEditTextArea;
 
 
 public class JazzyPlugin
-  extends EditPlugin {
+    extends EditPlugin {
 
-  //~ Instance/static variables ...............................................
+    //~ Instance/static variables .............................................
 
-  public static final String PLUGIN_NAME = "Jazzy";
-  public static final String SPELL_CHECK_ACTIONS = "jazzy.menu";
-  private static String JAZZY_DICTIONARY;
-  private static boolean LOAD_DICTIONARY,
-                         RESET_SPELLCHECKER;
-  private static JazzySpellCheck jazzyChecker;
+    public static final String PLUGIN_NAME         = "Jazzy";
+    public static final String SPELL_CHECK_ACTIONS = "jazzy.menu";
+    private static String JAZZY_DICTIONARY;
+    private static boolean LOAD_DICTIONARY;
+    private static boolean RESET_SPELLCHECKER;
+    private static JazzySpellCheck jazzyChecker;
 
-  //~ Methods .................................................................
-  /**
-   * Method called by jEdit to initialize the plugin.
-   */
-  public void start() {
-    System.setProperty("jazzy.config","com.swabunga.spell.engine.JeditConfiguration");
-    LOAD_DICTIONARY = jEdit.getBooleanProperty("options.jazzy.load-dictionary", false);
-    RESET_SPELLCHECKER = jEdit.getBooleanProperty("options.jazzy.reset-spellchecker", false);
-    JAZZY_DICTIONARY = jEdit.getProperty("options.jazzy.dictionary","");
+    //~ Methods ...............................................................
 
-    int flags = 0;
-    if (LOAD_DICTIONARY) flags += JazzySpellCheck.LOAD_DICTIONARY;
-    if (RESET_SPELLCHECKER) flags += JazzySpellCheck.RESET_SPELLCHECKER;
-    
-    jazzyChecker = new JazzySpellCheck(JAZZY_DICTIONARY, flags);
-  }
-
-  /**
-   * Method called every time a view is created to set up the Plugins menu.
-   * Menus and menu items should be loaded using the methods in the
-   * GUIUtilities class, and added to the list.
-   * 
-   * @param menuItems Add menuitems here
-   */
-  public void createMenuItems(Vector menuItems) {
-    menuItems.addElement(GUIUtilities.loadMenu(SPELL_CHECK_ACTIONS));
-  }
-
-  /**
-   * Method called every time the plugin options dialog box is displayed. Any
-   * option panes created by the plugin should be added here.
-   * 
-   * @param optionsDialog The plugin options dialog box
-   * @see OptionPane
-   * @see OptionsDialog#addOptionPane(OptionPane)
-   */
-  public void createOptionPanes(OptionsDialog optionsDialog) {
-    optionsDialog.addOptionPane(new JazzyOptionPane());
-  }
-
-  /**
-   * Displays the spell checker dialog box with specified lang dictionary.
-   * This method is called by the spell-check-selection-with-lang action,
-   * defined in actions.xml.
-   * 
-   * @param view ¤
-   */
-  public static void showJazzyDialog(View view) {
-
-    JEditTextArea jta = view.getTextArea();
-
-    if (!jazzyChecker.isLoaded()) {
-
-      if (!jazzyChecker.loadDictionary())
-
-        return;
+    /**
+     * Method called every time a view is created to set up the Plugins menu.
+     * Menus and menu items should be loaded using the methods in the
+     * GUIUtilities class, and added to the list.
+     * 
+     * @param menuItems Add menuitems here
+     */
+    public void createMenuItems(Vector menuItems) {
+        menuItems.addElement(GUIUtilities.loadMenu(SPELL_CHECK_ACTIONS));
     }
 
-    String text = jta.getSelectedText();
-    int caretPosn = 0,
-		    offset    = 0;
-    boolean wholeDocument = false;
-    
-    if (text == null) {
-      wholeDocument = true;
-      caretPosn = jta.getCaretPosition();
-      text = jta.getText();
-      jta.selectAll();
-    }else{
-			offset = jta.getSelection()[0].getStart();
-      caretPosn = offset;
-		}
-    
-    String mode = view.getBuffer().getMode().toString();
-    
-    String out = jazzyChecker.checkText(text, mode, offset, caretPosn);
-    
-  }
+    /**
+     * Method called every time the plugin options dialog box is displayed.
+     * Any option panes created by the plugin should be added here.
+     * 
+     * @param optionsDialog The plugin options dialog box
+     * @see OptionPane
+     * @see OptionsDialog#addOptionPane(OptionPane)
+     */
+    public void createOptionPanes(OptionsDialog optionsDialog) {
+        optionsDialog.addOptionPane(new JazzyOptionPane());
+    }
 
+    /**
+     * Displays the spell checker dialog box with specified lang dictionary.
+     * This method is called by the spell-check-selection-with-lang action,
+     * defined in actions.xml.
+     * 
+     * @param view ¤
+     */
+    public static void showJazzyDialog(View view) {
+        JEditTextArea jta                          = view.getTextArea();
 
-  /**
-   * Displays the spell checker dialog box with default lang dictionary. This
-   * method is called by the spell-check-selection action, defined in
-   * actions.xml.
-   * 
-   * @param view ¤
-   */
-  public static void unloadDictionary() {
-    jazzyChecker.unloadDictionary();
-  }
+        if (!jazzyChecker.isLoaded()) {
+
+            if (!jazzyChecker.loadDictionary()) {
+
+                return;
+            }
+        }
+
+        String text           = jta.getSelectedText();
+        int caretPosn         = 0;
+        int offset            = 0;
+        boolean wholeDocument = false;
+
+        if (text == null) {
+            wholeDocument = true;
+            caretPosn     = jta.getCaretPosition();
+            text          = jta.getText();
+            jta.selectAll();
+        } else {
+            offset    = jta.getSelection()[0].getStart();
+            caretPosn = offset;
+        }
+
+        String mode = view.getBuffer().getMode().toString();
+        String out  = jazzyChecker.checkText(text, mode, offset, caretPosn);
+    }
+
+    /**
+     * Method called by jEdit to initialize the plugin.
+     */
+    public void start() {
+        System.setProperty("jazzy.config", 
+                           "com.swabunga.spell.engine.JeditConfiguration");
+        LOAD_DICTIONARY    = jEdit.getBooleanProperty(
+                                     "options.jazzy.load-dictionary", false);
+        RESET_SPELLCHECKER = jEdit.getBooleanProperty(
+                                     "options.jazzy.reset-spellchecker", false);
+        JAZZY_DICTIONARY   = jEdit.getProperty("options.jazzy.dictionary", "");
+        int flags          = 0;
+
+        if (LOAD_DICTIONARY) {
+            flags += JazzySpellCheck.LOAD_DICTIONARY;
+        }
+
+        if (RESET_SPELLCHECKER) {
+            flags += JazzySpellCheck.RESET_SPELLCHECKER;
+        }
+
+        jazzyChecker = new JazzySpellCheck(JAZZY_DICTIONARY, flags);
+    }
+
+    /**
+     * Displays the spell checker dialog box with default lang dictionary.
+     * This method is called by the spell-check-selection action, defined in
+     * actions.xml.
+     */
+    public static void unloadDictionary() {
+        jazzyChecker.unloadDictionary();
+    }
 }

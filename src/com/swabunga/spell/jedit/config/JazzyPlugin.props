@@ -28,6 +28,7 @@ options.jazzy.load-dictionary=false
 options.jazzy.reset-spellchecker=false
 options.jazzy.dictionary=
 options.jazzy.default-checker=false
+options.jazzy.disk-based=false
 
 options.jazzy.EDIT_DEL1=95
 options.jazzy.EDIT_DEL2=95

@@ -37,13 +37,13 @@ public class SpellCheckedDocument extends DefaultStyledDocument {
 		
 		super();
 		
-		this.dictionary = dictionary;
+		SpellCheckedDocument.dictionary = dictionary;
 		
 		
-		StyleContext context = StyleContext.getDefaultStyleContext();
+//		StyleContext context = StyleContext.getDefaultStyleContext();
 
 		Style def =
-			context.getDefaultStyleContext().getStyle(
+			StyleContext.getDefaultStyleContext().getStyle(
 				StyleContext.DEFAULT_STYLE);
 
 		normal = addStyle("normal",def);

@@ -32,6 +32,9 @@ public class EditDistance {
 	 * I also fixed a bug with how the distance was being calculated. You could get wrong
 	 * distances if you compared ("abc" to "ab") depending on what you had setup your 
 	 * COST_REMOVE_CHAR and EDIT_INSERTION_COST values to - that is now fixed.  
+	 * 
+	 * WRS: I added a distance for case comparison, so a misspelling of "i" would be closer to "I" than
+	 * to "a".
 	 */
 
 	public static Configuration config = Configuration.getConfiguration();
@@ -43,6 +46,7 @@ public class EditDistance {
 		final int costOfInsertingSourceCharacter = config.getInteger(Configuration.COST_INSERT_CHAR);
 		final int costOfSubstitutingLetters = config.getInteger(Configuration.COST_SUBST_CHARS);
 		final int costOfSwappingLetters = config.getInteger(Configuration.COST_SWAP_CHARS);
+		final int costOfChangingCase = config.getInteger(Configuration.COST_CHANGE_CASE);
 
 		int a_size = word.length() + 1;
 		int b_size = similar.length() + 1;
@@ -74,10 +78,18 @@ public class EditDistance {
 				boolean isSwap = (i != 1) && (j != 1) && sourceChar == similar.charAt(j - 1) && word.charAt(i - 1) == otherChar;
 				if (isSwap) 
 					costOfSwap = costOfSwappingLetters + matrix[i - 2][j - 2];
+					
 				int costOfDelete = costOfDeletingSourceCharacter + matrix[i][j-1];
 				int costOfInsertion = costOfInsertingSourceCharacter + matrix[i-1][j];
+				
+				int costOfCaseChange = Integer.MAX_VALUE;
+				String strSrcChar = "" + sourceChar;
+				String strOtherChar = "" + otherChar;
+				
+				if( strSrcChar.compareToIgnoreCase(strOtherChar) == 0 )
+					costOfCaseChange = costOfChangingCase; //to do put somewhere.
 					
-				matrix[i][j] = minimum(costOfSubst,costOfSwap,costOfDelete,costOfInsertion);
+				matrix[i][j] = minimum(costOfSubst,costOfSwap,costOfDelete,costOfInsertion, costOfCaseChange);
 			}
 		}
 		int cost = matrix[a_size - 1][b_size - 1]; 
@@ -109,7 +121,7 @@ public class EditDistance {
 			{
 				if (i == 0 && j == 0)
 				{
-					s.append(" ");
+					s.append("\n ");
 					continue;
 
 				}
@@ -137,6 +149,7 @@ public class EditDistance {
 		
 	}
 	
+	/*
 	static private int minimum(int a, int b, int c, int d)
 	{
 		int mi = a;
@@ -148,6 +161,23 @@ public class EditDistance {
 			mi = d;
 		return mi;
 	}
+	*/
+	
+	static private int minimum(int a, int b, int c, int d, int e)
+	{
+		int mi = a;
+		if (b < mi)
+			mi = b;
+		if (c < mi)
+			mi = c;
+		if (d < mi)
+			mi = d;
+		if (e < mi)
+			mi = e;
+			
+		return mi;
+	}
+	
 	
     public static void main(String[] args) throws Exception {
 		BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));

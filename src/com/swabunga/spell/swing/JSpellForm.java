@@ -6,6 +6,7 @@
 
 package  com.swabunga.spell.swing;
 
+import com.swabunga.spell.engine.Word;
 import  com.swabunga.spell.event.*;
 import  javax.swing.*;
 import  javax.swing.text.*;
@@ -151,8 +152,10 @@ public class JSpellForm extends JPanel
     suggestList.setModel(m);
     if (m.size()>0) {
     	suggestList.setSelectedIndex(0);
+    	checkText.setText(((Word)m.get(0)).getWord());
+    } else {
+    	checkText.setText(event.getInvalidWord());
     }
-    checkText.setText(event.getInvalidWord());
   }
 
   /** Fired when a value in the list is selected*/

@@ -4,6 +4,10 @@ import java.util.*;
 
 /** This event is fired off by the SpellChecker and is passed to the
  *  registered SpellCheckListeners
+ *  <p>AFAIK we will only require one implementation of the SpellCheckEvent
+ *  (BasicSpellCheckEvent) but I have defnied this interface just in case. The
+ *  BasicSpellCheckEvent implementation is currently package private.
+ *  </p>
  *
  * @author Jason Height (jheight@chariot.net.au)
  */
@@ -18,6 +22,8 @@ public interface SpellCheckEvent {
   public static final short REPLACEALL = 3;
   /** Field indicating that the incorrect word should be added to the dictionary*/
   public static final short ADDTODICT  = 4;
+  /** Field indicating that the spell checking should be terminated*/
+  public static final short CANCEL = 5;
   /** Initial case for the action */
   public static final short INITIAL = -1;
 
@@ -54,4 +60,8 @@ public interface SpellCheckEvent {
    *  currently misspelt word.
    */
   public void addToDictionary(String newWord);
+
+  /** Set the action to terminate processing of the spellchecker.
+   */
+  public void cancel();
 }

@@ -1,5 +1,5 @@
 /*
- * $Date: 2003/06/02 16:40:54 $
+ * $Date: 2003/06/02 20:07:03 $
  * $Author: happyclown $
  *
  * Copyright (C) 2002 Anthony Roy
@@ -60,7 +60,7 @@ public class JazzySpellCheck implements SpellCheckListener {
   /**
    * Creates a new JazzySpellCheck object.
    *
-   * @param flags �
+   * @param flags
    */
   public JazzySpellCheck(int flags) {
     this.flags = flags;
@@ -88,9 +88,9 @@ public class JazzySpellCheck implements SpellCheckListener {
   //~ Methods ...............................................................
 
   /**
-   * �
    *
-   * @return �
+   *
+   * @return
    */
   public boolean isLoaded() {
 
@@ -98,13 +98,13 @@ public class JazzySpellCheck implements SpellCheckListener {
   }
 
   /**
-   * �
    *
-   * @param input �
-   * @param mode �
-   * @param offset �
-   * @param caret �
-   * @return �
+   *
+   * @param input
+   * @param mode
+   * @param offset
+   * @param caret
+   * @return
    */
   public String checkText(String input, String mode, int offset, int caret) {
 
@@ -155,9 +155,9 @@ public class JazzySpellCheck implements SpellCheckListener {
   }
 
   /**
-   * �
    *
-   * @return �
+   *
+   * @return
    */
   public synchronized boolean loadDictionary() {
 
@@ -213,9 +213,9 @@ public class JazzySpellCheck implements SpellCheckListener {
   }
 
   /**
-   * �
+   * 
    *
-   * @param event �
+   * @param event
    */
   public void spellingError(SpellCheckEvent event) {
     noerrors = false;
@@ -241,7 +241,7 @@ public class JazzySpellCheck implements SpellCheckListener {
   }
 
   /**
-   * �
+   * 
    */
   public void unloadDictionary() {
 

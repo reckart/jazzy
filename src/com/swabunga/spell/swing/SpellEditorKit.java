@@ -1,34 +1,16 @@
 package com.swabunga.spell.swing;
 
 
-import java.io.File;
-
-
-import javax.swing.JEditorPane;
-import javax.swing.UIManager;
-import javax.swing.text.*;
-
-
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-
-import java.awt.Point;
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Shape;
-import java.awt.Rectangle;
-
+import java.awt.*;
 import java.awt.event.*;
-
-import javax.swing.plaf.TextUI;
-
-import java.util.LinkedList;
+import java.io.File;
 import java.util.List;
 
+import javax.swing.*;
+import javax.swing.plaf.TextUI;
+import javax.swing.text.*;
 
-import com.swabunga.spell.engine.SpellDictionary;
-import com.swabunga.spell.engine.Word;
-import com.swabunga.spell.engine.SpellDictionaryHashMap;
+import com.swabunga.spell.engine.*;
 
 /**
  * 
@@ -45,7 +27,7 @@ import com.swabunga.spell.engine.SpellDictionaryHashMap;
  */
 public class SpellEditorKit extends StyledEditorKit {
 
-	private static Color replyColor = null;
+//	private static Color replyColor = null;
 
 	//private static Cursor linkCursor;
 
@@ -222,7 +204,7 @@ public class SpellEditorKit extends StyledEditorKit {
 
 			int pos = -1;
 
-			int offset = 0;
+//			int offset = 0;
 
 			JEditorPane editor = (JEditorPane) e.getSource();
 			//MailEditorKit kit = (MailEditorKit)editor.getEditorKit();
@@ -247,7 +229,7 @@ public class SpellEditorKit extends StyledEditorKit {
 						elem = null;
 					}
 					if (curElem != elem || curElemImage) {
-						Element lastElem = curElem;
+//						Element lastElem = curElem;
 						curElem = elem;
 						//String href = null;
 						curElemImage = false;
@@ -275,7 +257,7 @@ public class SpellEditorKit extends StyledEditorKit {
 								} catch (BadLocationException f) {
 								}
 
-								offset = elem.getStartOffset();
+//								offset = elem.getStartOffset();
 
 							} else {
 								href = null;

@@ -7,8 +7,6 @@ import javax.swing.text.BadLocationException;
 
 /** This class tokenizes a swing document model. It also allows for the
  *  document model to be changed when corrections occur.
- * <p>This class is currently untried and untested. If someone could implement
- * it then I would be grateful</p>
  *
  * @author Jason Height (jheight@chariot.net.au)
  */

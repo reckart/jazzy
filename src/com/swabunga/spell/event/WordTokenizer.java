@@ -28,4 +28,6 @@ public interface WordTokenizer {
    *  that have been made)
    */
   public String getContext();
+  /** Returns true iif the current word is at the start of a sentance*/
+  public boolean isNewSentance();
 }

@@ -18,6 +18,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.zip.ZipInputStream;
 
 import javax.swing.JApplet;
 import javax.swing.JButton;
@@ -36,7 +37,7 @@ import com.swabunga.spell.engine.SpellDictionary;
  */
 public class JSpellApplet extends JApplet {
 
-	private static final String dictionaryFile = "dict/english.0";
+	private static final String dictionaryFile = "dict/english.0.zip";
 	private SpellDictionary dictionary;
 	JTextArea text = null;
 	JButton spell = null;
@@ -58,10 +59,12 @@ public class JSpellApplet extends JApplet {
 		URL resource = null;
 		try {
 			resource = new URL(getCodeBase().toExternalForm() + dictionaryFile);
+			ZipInputStream zip = new ZipInputStream(resource.openStream());
+			zip.getNextEntry();
 			dictionary =
 				new SpellDictionary(
 					new BufferedReader(
-						new InputStreamReader(resource.openStream())));
+						new InputStreamReader(zip)));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

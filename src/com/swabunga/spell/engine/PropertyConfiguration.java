@@ -51,7 +51,13 @@ public class PropertyConfiguration extends Configuration {
 	 * @see com.swabunga.spell.engine.Configuration#setBoolean(String, boolean)
 	 */
 	public void setBoolean(String key, boolean value) {
-		prop.setProperty(key,Boolean.toString(value));
+		String string = null;
+		if (value)
+			string = "true";
+		else
+			string = "false";
+			
+		prop.setProperty(key, string);
 		save();
 	}
 

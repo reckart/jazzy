@@ -37,7 +37,7 @@ import com.swabunga.spell.engine.SpellDictionary;
  */
 public class JSpellApplet extends JApplet {
 
-	private static final String dictionaryFile = "dict/english.0.zip";
+	private static final String dictionaryFile = "www/english.0.zip";
 	private SpellDictionary dictionary;
 	JTextArea text = null;
 	JButton spell = null;

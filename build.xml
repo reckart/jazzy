@@ -4,14 +4,18 @@
   <property name="src" value="src"/>
   <property name="build" value="build"/>
   <property name="dist"  value="dist"/>
+  <property name="dict" value="dict"/>
+  <property name="www" value="www"/>
   <property name="javadoc"  value="javadoc"/>
  
   <!-- Build classpath -->
   <path id="classpath">
     <pathelement path="${classpath}"/>
+    <!-- external libs needed for build
     <fileset dir="lib">
       <include name="**/*.jar"/>
     </fileset>
+    -->
   </path>
  
   <target name="init">
@@ -56,7 +60,11 @@
   </target>
   
   <target name="applet" depends="compile">
-	<jar jarfile="${dist}/lib/jazzy.jar" basedir="${build}"/>
+	<jar jarfile="${www}/jazzy.jar" basedir="${build}"/>
+  </target>
+  
+  <target name="website" depends="applet">
+  	<zip zipfile="${www}/english.0.zip" basedir="${dict}" includes="english.0"/>
   </target>
 </project>
 

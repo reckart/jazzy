@@ -11,7 +11,8 @@
   The Latest Version
   ------------------
 
-  The latest version is available from the Jazzy project web site (http://sourceforge.net/prjects/jazzy).
+  The latest version is available from the Jazzy project web site 
+  (http://sourceforge.net/projects/jazzy).
 
   Requirements
   ------------
@@ -20,17 +21,22 @@
 
    o  Java Interpreter:
 
-      A fully compliant Java 1.3 Runtime Environment is required for 
-      Jazzy to execute.
+      A fully compliant Java 1.1 Runtime environment is needed for the core engine of Jazzy 
+      to operate. (For example: for use in a servlet)
+      
+      A fully compliant Java 1.3 Runtime environment is needed for the swing components of
+      Jazzy to operate.
 
    o  Java JFC (Swing components):
 
-      These GUI extentions are required for proper GUI functionality. 
+      These GUI extentions are required for proper GUI functionality. However, core 
+      spell check functionality can work without Swing Components. 
 
   Installation Instructions and Documentation
   -------------------------------------------
 
-  There are two ways to install Jazzy. One from a pre packaged version and the other is to compile the sources from CVS.
+  There are two ways to install Jazzy. One from a pre packaged version and the other is to 
+  compile the sources from CVS.
 
   If you have downloaded the source code from CVS, please cd to the jazzy directory and run ant.
 

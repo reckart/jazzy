@@ -1,67 +1,28 @@
 package com.swabunga.spell.event;
 
-import java.util.*;
-
-/** This class tokenizes a input string
+/** This interface returns words.
+ *  It also allows for the current word to be mutated
  *
  * @author Jason Height (jheight@chariot.net.au)
  */
-public class WordTokenizer {
-  private int currentPos = 0;
-  private int nextWordPos = -1;
-  private char[] text;
-
-  public WordTokenizer(String text) {
-    this.text = text.toCharArray();
-    currentPos = getNextWordStart(this.text, 0);
-    nextWordPos = getNextWordEnd(this.text, currentPos);
-  }
-
-  private static int getNextWordStart(char[] text, int startPos) {
-    int size = text.length;
-    for (int i=startPos;i<size;i++) {
-      if (Character.isLetterOrDigit(text[i])) {
-        return i;
-      }
-    }
-    return -1;
-  }
-
-  private static int getNextWordEnd(char[] text, int startPos) {
-    int size = text.length;
-    for (int i=startPos;i<size;i++) {
-      if (!Character.isLetterOrDigit(text[i])) {
-        return i;
-      }
-    }
-    return size;
-  }
-
-
-  public boolean hasMoreWords() {
-    return (nextWordPos != -1);
-  }
-
-  public int getCurrentPosition() {
-    return currentPos;
-  }
-
-  public String nextWord() {
-    //The nextWordPos has already been populated
-    String word = new String(text, currentPos, (nextWordPos-currentPos));
-
-    currentPos = getNextWordStart(text, nextWordPos+1);
-    if (currentPos != -1)
-      nextWordPos = getNextWordEnd(text, currentPos);
-    else nextWordPos = -1;
-    return word;
-  }
-
-  public static void main(String args[]) {
-    WordTokenizer t = new WordTokenizer("  This is a test  problem");
-    while(t.hasMoreWords()) {
-      System.out.println("Word is '"+t.nextWord()+"'");
-    }
-  }
-
+public interface WordTokenizer {
+  /** Returns true iif there are more words left*/
+  public boolean hasMoreWords();
+  /**Returns an index representing the location in the original set of words*/
+  public int getCurrentWordPosition();
+  /** Returns the next word token*/
+  public String nextWord();
+  /** Returns the number of word tokens that have been processed thus far*/
+  public int getCurrentWordCount();
+  /** Replaces the current word token
+   * <p>When a word is replaced care should be taken that the WordTokenizer
+   * repositions itself such that the words that were added arent rechecked. Of
+   * course this is not mandatory, maybe there is a case when an application
+   * doesnt need to do this.</p>
+   */
+  public void replaceWord(String newWord);
+  /** Returns the context text that is being tokenized (should include any changes
+   *  that have been made)
+   */
+  public String getContext();
 }

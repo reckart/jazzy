@@ -23,7 +23,7 @@ public class GenericSpellDictionary extends SpellDictionaryASpell {
      * This replace list is used if no phonetic file is supplied or it doesn't
      * contain the alphabet.
      */
-    protected static final char[] englishAlphabet =
+    protected static final char[] englishAlphabet = 
     {
         'A',
         'B',
@@ -76,7 +76,6 @@ public class GenericSpellDictionary extends SpellDictionaryASpell {
     throws FileNotFoundException, IOException {
         dictFile = wordList;
         replacelist=washAlphabetIntoReplaceList(englishAlphabet);
-        //System.out.println("DoubleMeta");
         createDictionary(new BufferedReader(new FileReader(wordList)));
     }
 
@@ -88,7 +87,6 @@ public class GenericSpellDictionary extends SpellDictionaryASpell {
     throws FileNotFoundException, IOException {
         char[]  alphabet=null;
         dictFile = wordList;
-        //System.out.println("Phonetic");
         tf=new GenericTransformator(phonetic);
         alphabet=((GenericTransformator)tf).getAlphaReplaceList();
         // If no alphabet is availible use the english.
@@ -111,26 +109,18 @@ public class GenericSpellDictionary extends SpellDictionaryASpell {
         HashMap     letters=new HashMap(alphabet.length);
         Object[]    tmpCharacters;
         char[]      washedArray;
-        //System.out.println("Original:");
         for(int i=0;i<alphabet.length;i++){
             tmp=String.valueOf(alphabet[i]);
-            //System.out.print(tmp);
             code=tf.transform(tmp);
-            //System.out.print(" Coded as:"+code);
             if(!letters.containsKey(code)){
                 letters.put(code,new Character(alphabet[i]));
-                //System.out.print(" add");
             }
-            //System.out.println();
         }
-        //System.out.print("Washed:");
         tmpCharacters=letters.values().toArray();
         washedArray=new char[tmpCharacters.length];
         for(int i=0;i<tmpCharacters.length;i++){
             washedArray[i]=((Character)tmpCharacters[i]).charValue();
-            //System.out.print(" "+washedArray[i]);
         }
-        //System.out.println();
         return washedArray;
     }
 

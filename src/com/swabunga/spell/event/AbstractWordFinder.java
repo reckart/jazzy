@@ -145,7 +145,11 @@ public abstract class AbstractWordFinder
         
          
          switch (curr){
-           case '\'': out = (Character.isLetterOrDigit(prev)&&Character.isLetter(next));
+           case '\'': 
+           case '@' :
+           case '.' :
+           case '_' :
+                      out = (Character.isLetterOrDigit(prev)&&Character.isLetterOrDigit(next));
                       break;
            default  : out = Character.isLetterOrDigit(curr);
          }

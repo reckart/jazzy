@@ -37,14 +37,14 @@ public class PropertyConfiguration extends Configuration {
 	 * @see com.swabunga.spell.engine.Configuration#getBoolean(String)
 	 */
 	public boolean getBoolean(String key) {
-		return Boolean.getBoolean( prop.getProperty(key));
+    return new Boolean(prop.getProperty(key)).booleanValue(); 
 	}
 
 	/**
 	 * @see com.swabunga.spell.engine.Configuration#getInteger(String)
 	 */
 	public int getInteger(String key) {
-		return Integer.parseInt(prop.getProperty(key));
+    return new Integer(prop.getProperty(key)).intValue(); 
 	}
 
 	/**

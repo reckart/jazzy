@@ -44,7 +44,7 @@ options.jazzy.SPELL_THRESHOLD=140
 options.jazzy.SPELL_IGNOREUPPERCASE=false
 options.jazzy.SPELL_IGNOREMIXEDCASE=true
 options.jazzy.SPELL_IGNOREINTERNETADDRESS=false
-options.jazzy.SPELL_IGNOREDIGITWORDS=true
+options.jazzy.SPELL_IGNOREDIGITWORDS=false
 options.jazzy.SPELL_IGNOREMULTIPLEWORDS=false
 options.jazzy.SPELL_IGNORESENTANCECAPTILIZATION=true
 

@@ -15,39 +15,46 @@ import com.swabunga.spell.engine.*;
  */
 
 public class JTextComponentSpellChecker implements SpellCheckListener {
-    private JTextComponent textComp=null;
+
+    private String dialogTitle=null;
+
     private SpellChecker spellCheck = null;
     private JSpellDialog dlg=null;
+    private JTextComponent textComp=null;
 
-    public JTextComponentSpellChecker(JTextComponent textComp, String dictFile)
+    public JTextComponentSpellChecker(String dictFile)
                                                         throws IOException{
-        this(textComp, dictFile, null);
+        this(dictFile, null);
     }
 
-    public JTextComponentSpellChecker(JTextComponent textComp, String dictFile, String title)
+    public JTextComponentSpellChecker(String dictFile, String title)
                                                         throws IOException{
-        this(textComp,new SpellDictionary(new File(dictFile)),title);
+        this(new SpellDictionary(new File(dictFile)),title);
     }
 
-    public JTextComponentSpellChecker(JTextComponent textComp, SpellDictionary dict){
-        this(textComp, dict, null);
+    public JTextComponentSpellChecker(SpellDictionary dict){
+        this(dict, null);
     }
 
-    public JTextComponentSpellChecker(JTextComponent textComp, SpellDictionary dict, String title){
-        this.textComp=textComp;
+    public JTextComponentSpellChecker(SpellDictionary dict, String title){
         spellCheck = new SpellChecker(dict);
         spellCheck.addSpellCheckListener(this);
-        setupDialog(textComp, title);
+        dialogTitle=title;
     }
 
-    private void setupDialog(JTextComponent textComp, String title){
+    private void setupDialog(JTextComponent textComp){
 
         Component comp=SwingUtilities.getRoot(textComp);
+
+        // Probably the most common situation efter the first time.
+        if(dlg!=null && dlg.getOwner()==comp)
+            return;
+
         if (comp!=null && comp instanceof Window) {
             if(comp instanceof Frame)
-                dlg = new JSpellDialog((Frame)comp, title, true);
+                dlg = new JSpellDialog((Frame)comp, dialogTitle, true);
             if(comp instanceof Dialog)
-                dlg = new JSpellDialog((Dialog)comp, title, true);
+                dlg = new JSpellDialog((Dialog)comp, dialogTitle, true);
             // Put the dialog in the middle of it's parent.
             if(dlg!=null){
                 Window win=(Window)comp;
@@ -55,17 +62,21 @@ public class JTextComponentSpellChecker implements SpellCheckListener {
                 int y=(int)(win.getLocation().getY()+win.getHeight()/2-dlg.getHeight()/2);
                 dlg.setLocation(x,y);
             }
-
         } else {
-            dlg = new JSpellDialog((Frame)null, title, true);
+            dlg = new JSpellDialog((Frame)null, dialogTitle, true);
         }
     }
 
-    public void spellCheck(){
+    public synchronized void spellCheck(JTextComponent textComp){
+        setupDialog(textComp);
+        this.textComp=textComp;
+
         DocumentWordTokenizer tokenizer = new DocumentWordTokenizer(textComp.getDocument());
         spellCheck.checkSpelling(tokenizer);
-//        dlg.dispose();
-//        dlg=null;
+
+        textComp.requestFocus();
+        textComp.setCaretPosition(0);
+        this.textComp=null;
     }
 
     public void spellingError(SpellCheckEvent event) {

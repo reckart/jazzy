@@ -1,0 +1,87 @@
+
+package com.swabunga.spell.examples;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.text.*;
+import com.swabunga.spell.swing.*;
+import com.swabunga.spell.engine.*;
+import java.io.*;
+
+/** This class shows an example of how to use the spell checking capability
+ *  on a JTextComponent.
+ *
+ * @author Robert Gustavsson (robert@lindesign.se)
+ */
+public class JTextComponentSpellCheckExample extends JFrame {
+  private static final String dictionaryFile = "dict/english.0";
+  private SpellDictionary dictionary;
+
+    JTextComponent text=null;
+    JButton        spell=null;
+
+    public JTextComponentSpellCheckExample(){
+      try {
+        dictionary = new SpellDictionary(new File(dictionaryFile));
+      } catch (Exception ex) {
+        ex.printStackTrace();
+      }
+        initGUI();
+        pack();
+    }
+
+    private void initGUI(){
+        Container frame=getContentPane();
+        GridBagLayout gridbag = new GridBagLayout();
+        GridBagConstraints c = new GridBagConstraints();
+        frame.setLayout(gridbag);
+
+        c.anchor=GridBagConstraints.CENTER;
+        c.fill=GridBagConstraints.BOTH;
+        c.insets=new Insets(5,5,5,5);
+        c.weightx=1.0;
+        c.weighty=1.0;
+
+        text=new JTextArea(10,40);
+        addToFrame(frame, text, gridbag, c, 0,0,1,1);
+
+        spell=new JButton("spell");
+        spell.addActionListener(new ButtonListener());
+        addToFrame(frame, spell, gridbag, c, 0,1,1,1);
+    }
+
+    // Helps build gridbaglayout.
+    private void addToFrame(Container f,Component c,GridBagLayout gbl,
+                     GridBagConstraints gbc,int x,int y,int w,int h){
+        gbc.gridx=x;
+        gbc.gridy=y;
+        gbc.gridwidth=w;
+        gbc.gridheight=h;
+        gbl.setConstraints(c,gbc);
+        f.add(c);
+    }
+
+    public static void main(String[] args){
+        JTextComponentSpellCheckExample d=new JTextComponentSpellCheckExample();
+        d.show();
+    }
+
+    // INNER CLASSES
+    private class ButtonListener implements ActionListener{
+        public void actionPerformed(ActionEvent e) {
+            Thread t=new SpellThread();
+            t.start();
+        }
+    }
+    private class SpellThread extends Thread{
+        public void run() {
+            try{
+                JTextComponentSpellChecker sc=new JTextComponentSpellChecker(text,dictionary);
+                sc.spellCheck();
+            }catch(Exception ex){
+                ex.printStackTrace();
+            }
+        }
+    }
+}

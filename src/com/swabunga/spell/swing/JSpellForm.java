@@ -149,6 +149,9 @@ public class JSpellForm extends JPanel
       m.addElement(suggestions.get(i));
     }
     suggestList.setModel(m);
+    if (m.size()>0) {
+    	suggestList.setSelectedIndex(0);
+    }
     checkText.setText(event.getInvalidWord());
   }
 

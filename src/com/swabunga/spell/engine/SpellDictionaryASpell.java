@@ -11,7 +11,7 @@ public abstract class SpellDictionaryASpell implements SpellDictionary {
     /** The replace list is used in the getSuggestions method*/
     protected static char[] replacelist =
         {
-            'A',
+            'A',	
             'B',
             'X',
             'S',
@@ -32,6 +32,7 @@ public abstract class SpellDictionaryASpell implements SpellDictionary {
      */
     protected Transformator tf = new DoubleMeta();
 
+
     /**
      * Returns a list of Word objects that are the suggestions to an
      * incorrect word.
@@ -45,11 +46,13 @@ public abstract class SpellDictionaryASpell implements SpellDictionary {
 		Hashtable nearmisscodes = new Hashtable();
         String code = getCode(word);
 
-        // add all words that have the same codeword
+        // add all words that have the same phonetics
 		nearmisscodes.put(code, code);
+		Vector phoneticList = getWordsFromCode(word, nearmisscodes);
 
         // do some tranformations to pick up more results
         //interchange
+		nearmisscodes = new Hashtable();
         char[] charArray = word.toCharArray();
         for (int i = 0; i < word.length() - 1; i++) {
             char a = charArray[i];
@@ -107,25 +110,75 @@ public abstract class SpellDictionaryASpell implements SpellDictionary {
             --ii;
         }
 
+		nearmisscodes.remove(code); //already accounted for in phoneticList
+
         Vector wordlist = getWordsFromCode(word, nearmisscodes);
 		// We sort a Vector at the end instead of maintaining a
         // continously sorted TreeSet because everytime you add a collection
         // to a treeset it has to be resorted. It's better to do this operation
         // once at the end.
-		//Collections.sort( wordlist, new Word());
-        return wordlist;
+
+        if (wordlist.size() == 0 && phoneticList.size() == 0)
+        	addBestGuess(word,phoneticList);
+        
+//		Collections.sort( phoneticList, new Word()); //always sort phonetic matches along the top
+//        Collections.sort( wordlist, new Word()); //the non-phonetic matches can be listed below
+        
+        phoneticList.addAll(wordlist);
+        return phoneticList;
     }
+
+	/**	 
+	 * When we don't come up with any suggestions (probably because the threshold was too strict), 
+	 * then pick the best guesses from the those words that have the same phonetic coce. 
+	 * @param word - the word we are trying spell correct
+	 * @param wordList - the linked list that will get the best guess
+	 */
+	private void addBestGuess(String word, Vector wordList)
+	{
+		assert wordList.size() == 0;
+		int bestScore = Integer.MAX_VALUE;
+
+		String code = getCode(word);
+		List simwordlist = getWords(code);
+		
+		LinkedList candidates = new LinkedList();
+		
+		for (Iterator j = simwordlist.iterator(); j.hasNext();)
+		{
+			String similar = (String) j.next();
+			int distance = EditDistance.getDistance(word, similar);
+			if (distance <= bestScore)
+			{
+				bestScore = distance;
+				Word goodGuess = new Word(similar, distance);
+				candidates.add(goodGuess);
+			}
+		}
+
+		//now, only pull out the guesses that had the best score
+		for (Iterator iter = candidates.iterator(); iter.hasNext();)
+		{
+			Word candidate = (Word) iter.next();
+			if (candidate.getScore() == bestScore)
+				wordList.add(candidate);
+		}
+
+	}
 
 	private Vector getWordsFromCode(String word, Hashtable codes) {
         Configuration config = Configuration.getConfiguration();
-		Vector result = new Vector();
-		for (Enumeration i = codes.keys();i.hasMoreElements();) {
+        Vector result = new Vector();
+		final int configDistance = config.getInteger(Configuration.SPELL_THRESHOLD);
+		
+		for (Enumeration i = codes.keys();i.hasMoreElements();) {		
 			String code = (String) i.nextElement();
+			
 			Vector simwordlist = getWords(code);
 			for (Enumeration j = simwordlist.elements(); j.hasMoreElements();) {
 				String similar = (String) j.nextElement();
                 int distance = EditDistance.getDistance(word, similar);
-                if (distance < config.getInteger(Configuration.SPELL_THRESHOLD)) {
+				if (distance < configDistance) {
                     Word w = new Word(similar, distance);
 					result.addElement(w);
 				}
@@ -135,14 +188,14 @@ public abstract class SpellDictionaryASpell implements SpellDictionary {
     }
 
     /**
-     * Returns the code representing the word.
+     * Returns the phonetic code representing the word.
      */
     public String getCode(String word) {
         return tf.transform(word);
     }
 
     /**
-     * Returns a list of strings (words) for the code.
+     * Returns a list of words that have the same phonetic code.
      */
-    protected abstract Vector getWords(String code);
+    protected abstract Vector getWords(String phoneticCode);
 }

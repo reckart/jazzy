@@ -1,13 +1,15 @@
 /*
  * put your module comment here
  * formatted with JxBeauty (c) johann.langhofer@nextra.at
+ *
+ * formatted with JxBeauty (c) johann.langhofer@nextra.at
  */
 
 
 package  com.swabunga.spell.event;
 
 import  java.util.*;
-import com.swabunga.spell.engine.*;
+import  com.swabunga.spell.engine.*;
 
 
 /** This is the main class for spell checking (using the new event based spell
@@ -23,11 +25,27 @@ public class SpellChecker {
   /**This variable holds all of the words that are to be always ignored*/
   private Set ignoredWords = new HashSet();
   private Map autoReplaceWords = new HashMap();
+  /** Field indicating if upper case words be ignored during spell checking
+   */
+  private boolean ignoreUpperCaseWords = false;
+  /** Field indicating if mixed case words be ignored during spell checking
+   */
+  private boolean ignoreMixedCaseWords = false;
+
+  /** Field indicating if words that appear to be internet addresses should be ingored*/
+  private boolean ignoreInternetAddresses = false;
+
+  /** Field indicating that words containing a digit(s) should be ignored*/
+  private boolean ignoreDigitWords = true;
+  /** Field indicating that words containing multiple occurences of a word straight after each other
+   * should be ignored
+   */
+  private boolean ignoreMultipleWords = false;
 
   /** Constructs the SpellChecker. The default threshold is used*/
   public SpellChecker (SpellDictionary dictionary) {
     if (dictionary == null)
-      throw  new IllegalArgumentException("dictionary must no be null");
+      throw  new IllegalArgumentException("dictionary must non-null");
     this.dictionary = dictionary;
   }
 
@@ -57,6 +75,45 @@ public class SpellChecker {
     return  threshold;
   }
 
+  /** Sets whether upper case words be ignored during spell checking
+   */
+  public void setIgnoreUpperCaseWord (boolean ignore) {
+    ignoreUpperCaseWords = ignore;
+  }
+
+  public boolean getIgnoreUpperCaseWord () {
+    return  ignoreUpperCaseWords;
+  }
+
+  /** Sets whether words that appear to be internet addresses should be ingored*/
+  public void setIgnoreINETAddresses (boolean ignore) {
+    ignoreInternetAddresses = ignore;
+  }
+
+  public boolean getIgnoreINETAddresses () {
+    return  ignoreInternetAddresses;
+  }
+
+  /** Sets whether words containing a digit(s) should be ignored*/
+  public void setIgnoreDigitWords (boolean ignore) {
+    ignoreDigitWords = ignore;
+  }
+
+  public boolean getIgnoreDigitWords () {
+    return  ignoreDigitWords;
+  }
+
+  /** Sets whether words containing multiple occurences of a word straight after each other
+   * should be ignored
+   */
+  public void setIgnoreMultipleWords (boolean ignore) {
+    ignoreMultipleWords = ignore;
+  }
+
+  public boolean getIgnoreMultipleWords () {
+    return  ignoreMultipleWords;
+  }
+
   /** Fires off a spell check event to the listeners.
    */
   protected void fireSpellCheckEvent (SpellCheckEvent event) {
@@ -68,7 +125,7 @@ public class SpellChecker {
   /** This method clears the words that are currently being remembered as
    *  Ignore All words and Replace All words.
    */
-  public void reset() {
+  public void reset () {
     ignoredWords.clear();
     autoReplaceWords.clear();
   }
@@ -81,21 +138,70 @@ public class SpellChecker {
   public String checkString (String text) {
     StringWordTokenizer tokens = new StringWordTokenizer(text);
     checkSpelling(tokens);
-    return tokens.getFinalText();
+    return  tokens.getFinalText();
   }
 
-  /** This method is called to check the spelling of the words that are returned
+  /** Returns true iif this word contains a digit*/
+  private static final boolean isDigitWord (String word) {
+    for (int i = word.length() - 1; i >= 0; i--) {
+      if (Character.isDigit(word.charAt(i)))
+        return  true;
+    }
+    return  false;
+  }
+
+  /** Returns true iif this word looks like an internet address*/
+  private static final boolean isINETWord (String word) {
+    //JMH TBD
+    return  false;
+  }
+
+  /** Returns true iif this word contains all upper case characters*/
+  private static final boolean isUpperCaseWord (String word) {
+    for (int i = word.length() - 1; i >= 0; i--) {
+      if (Character.isLowerCase(word.charAt(i)))
+        return  false;
+    }
+    return  true;
+  }
+
+  /** Returns true iif this word contains mixed case characters*/
+  private static final boolean isMixedCaseWord (String word) {
+    int strLen = word.length();
+    boolean isUpper = Character.isUpperCase(word.charAt(strLen - 1));
+    if (isUpper) {
+      for (int i = word.length() - 2; i >= 0; i--) {
+        if (Character.isLowerCase(word.charAt(i)))
+          return  true;
+      }
+    }
+    else {
+      for (int i = word.length() - 2; i >= 0; i--) {
+        if (Character.isUpperCase(word.charAt(i)))
+          return  true;
+      }
+    }
+    return  false;
+  }
+
+  /**
+   /** This method is called to check the spelling of the words that are returned
    *  by the WordTokenizer.
    *  <p>For each invalid word the action listeners will be informed with a new SpellCheckEvent</p>
    */
-  public final void checkSpelling(WordTokenizer tokenizer) {
+  public final void checkSpelling (WordTokenizer tokenizer) {
     //Dont bother to execute if no-one is listening ;-)
     if (eventListeners.size() > 0) {
       boolean terminated = false;
       while (tokenizer.hasMoreWords() && !terminated) {
         String word = tokenizer.nextWord();
+        if (ignoreDigitWords) {}
         //Check the spelling of the word
         if (!dictionary.isCorrect(word)) {
+          //JMH Is it faster to check each word for the options or only
+          //the misspelt ones?
+
+
           //For this invalid word are we ignoreing the misspelling?
           if (!ignoredWords.contains(word)) {
             //Is this word being automagically replaced
@@ -103,7 +209,7 @@ public class SpellChecker {
               tokenizer.replaceWord((String)autoReplaceWords.get(word));
             }
             else {
-              System.out.println("Current word position="+tokenizer.getCurrentWordPosition());
+              System.out.println("Current word position=" + tokenizer.getCurrentWordPosition());
               //Fire the event.
               SpellCheckEvent event = new BasicSpellCheckEvent(word, dictionary.getSuggestions(word,
                   threshold), tokenizer);
@@ -129,13 +235,13 @@ public class SpellChecker {
                   tokenizer.replaceWord(replaceAllWord);
                   break;
                 case SpellCheckEvent.ADDTODICT:
-                  String addWord=event.getReplaceWord();
+                  String addWord = event.getReplaceWord();
                   tokenizer.replaceWord(addWord);
                   dictionary.addWord(addWord);
                   break;
                 case SpellCheckEvent.CANCEL:
-                    terminated = true;
-                    break;
+                  terminated = true;
+                  break;
                 default:
                   throw  new IllegalArgumentException("Unhandled case.");
               }

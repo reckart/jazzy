@@ -92,6 +92,7 @@ public interface WordFinder {
   public void replace(String newWord);
 
   /**
+   * Indicates if the current word starts a new sentence.
    * @return true if the current word starts a new sentence.
    * @throws WordNotFoundException current word has not yet been set.
    */

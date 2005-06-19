@@ -75,7 +75,7 @@ public interface WordTokenizer {
   public boolean isNewSentence();
 
   /**
-   * Returns true if there are more words left
+   * Indicates if there are more words left
    * @return true if more words can be found in the text.
    */
   public boolean hasMoreWords();
@@ -96,7 +96,7 @@ public interface WordTokenizer {
    * When a word is replaced care should be taken that the WordTokenizer
    * repositions itself such that the words that were added aren't rechecked.
    * Of course this is not mandatory, maybe there is a case when an
-   * application doesnt need to do this.
+   * application doesn't need to do this.
    * <p/>
    * @param newWord the string which should replace the current word.
    * @throws WordNotFoundException current word has not yet been set.

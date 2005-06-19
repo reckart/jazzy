@@ -39,6 +39,9 @@ import java.util.Vector;
  * <p/>
  * This dictionary class reads words one per line. Make sure that your word list
  * is formatted in this way (most are).
+ * <p/>
+ * Note that you must create the dictionary with a word list for the added
+ * words to persist.
  */
 public class SpellDictionaryHashMap extends SpellDictionaryASpell {
   /** A field indicating the initial hash map capacity (16KB) for the main
@@ -58,6 +61,7 @@ public class SpellDictionaryHashMap extends SpellDictionaryASpell {
 
   /**
    * Dictionary Constructor.
+   * @throws java.io.IOException indicates a problem with the file system
    */
   public SpellDictionaryHashMap() throws IOException {
     super((File) null);
@@ -65,6 +69,9 @@ public class SpellDictionaryHashMap extends SpellDictionaryASpell {
 
   /**
    * Dictionary Constructor.
+   * @param wordList The file containing the words list for the dictionary
+   * @throws java.io.IOException indicates problems reading the words list
+   * file
    */
   public SpellDictionaryHashMap(Reader wordList) throws IOException {
     super((File) null);
@@ -72,7 +79,12 @@ public class SpellDictionaryHashMap extends SpellDictionaryASpell {
   }
 
   /**
-   * Dictionary Convienence Constructor.
+   * Dictionary convenience Constructor.
+   * @param wordList The file containing the words list for the dictionary
+   * @throws java.io.FileNotFoundException indicates problems locating the
+   * words list file on the system
+   * @throws java.io.IOException indicates problems reading the words list
+   * file
    */
   public SpellDictionaryHashMap(File wordList) throws FileNotFoundException, IOException {
     this(new FileReader(wordList));
@@ -82,6 +94,13 @@ public class SpellDictionaryHashMap extends SpellDictionaryASpell {
   /**
    * Dictionary constructor that uses an aspell phonetic file to
    * build the transformation table.
+   * @param wordList The file containing the words list for the dictionary
+   * @param phonetic The file to use for phonetic transformation of the 
+   * wordlist.
+   * @throws java.io.FileNotFoundException indicates problems locating the
+   * file on the system
+   * @throws java.io.IOException indicates problems reading the words list
+   * file
    */
   public SpellDictionaryHashMap(File wordList, File phonetic) throws FileNotFoundException, IOException {
     super(phonetic);
@@ -91,8 +110,16 @@ public class SpellDictionaryHashMap extends SpellDictionaryASpell {
 
   /**
    * Dictionary constructor that uses an aspell phonetic file to
-   * build the transformation table.
-   * encoding is used for phonetic file only; default encoding is used for wordList
+   * build the transformation table. Encoding is used for phonetic file only; 
+   * default encoding is used for wordList
+   * @param wordList The file containing the words list for the dictionary
+   * @param phonetic The file to use for phonetic transformation of the 
+   * wordlist.
+   * @param phoneticEncoding Uses the character set encoding specified
+   * @throws java.io.FileNotFoundException indicates problems locating the
+   * file on the system
+   * @throws java.io.IOException indicates problems reading the words list
+   * or phonetic information
    */
   public SpellDictionaryHashMap(File wordList, File phonetic, String phoneticEncoding) throws FileNotFoundException, IOException {
     super(phonetic, phoneticEncoding);
@@ -103,6 +130,11 @@ public class SpellDictionaryHashMap extends SpellDictionaryASpell {
   /**
    * Dictionary constructor that uses an aspell phonetic file to
    * build the transformation table.
+   * @param wordList The file containing the words list for the dictionary
+   * @param phonetic The reader to use for phonetic transformation of the 
+   * wordlist.
+   * @throws java.io.IOException indicates problems reading the words list
+   * or phonetic information
    */
   public SpellDictionaryHashMap(Reader wordList, Reader phonetic) throws IOException {
     super(phonetic);
@@ -127,12 +159,24 @@ public class SpellDictionaryHashMap extends SpellDictionaryASpell {
     addDictionaryHelper(new BufferedReader(new FileReader(wordList)));
   }
 
+  /**
+   * Add words from a Reader to existing dictionary hashmap.
+   * This function can be called as many times as needed to
+   * build the internal word list. Duplicates are not added.
+   * <p>
+   * Note that adding a dictionary does not affect the target
+   * dictionary file for the addWord method. That is, addWord() continues
+   * to make additions to the dictionary file specified in createDictionary()
+   * <P>
+   * @param wordList a Reader object that contains the words, on word per line.
+   * @throws IOException
+   */
   public void addDictionary(Reader wordList) throws IOException {
     addDictionaryHelper(new BufferedReader(wordList));
   }
 
   /**
-   * Add a word permanantly to the dictionary (and the dictionary file).
+   * Add a word permanently to the dictionary (and the dictionary file).
    * <p>This needs to be made thread safe (synchronized)</p>
    */
   public void addWord(String word) {
@@ -153,10 +197,10 @@ public class SpellDictionaryHashMap extends SpellDictionaryASpell {
   /**
    * Constructs the dictionary from a word list file.
    * <p>
-   * Each word in the reader should be on a seperate line.
+   * Each word in the reader should be on a separate line.
    * <p>
    * This is a very slow function. On my machine it takes quite a while to
-   * load the data in. I suspect that we could speed this up quite alot.
+   * load the data in. I suspect that we could speed this up quite allot.
    */
   protected void createDictionary(BufferedReader in) throws IOException {
     String line = "";
@@ -173,7 +217,7 @@ public class SpellDictionaryHashMap extends SpellDictionaryASpell {
    * Adds to the existing dictionary from a word list file. If the word
    * already exists in the dictionary, a new entry is not added.
    * <p>
-   * Each word in the reader should be on a seperate line.
+   * Each word in the reader should be on a separate line.
    * <p>
    * Note: for whatever reason that I haven't yet looked into, the phonetic codes
    * for a particular word map to a vector of words rather than a hash table.
@@ -196,6 +240,7 @@ public class SpellDictionaryHashMap extends SpellDictionaryASpell {
 
   /**
    * Allocates a word in the dictionary
+   * @param word The word to add
    */
   protected void putWord(String word) {
     String code = getCode(word);
@@ -209,6 +254,11 @@ public class SpellDictionaryHashMap extends SpellDictionaryASpell {
     }
   }
 
+  /**
+   * Allocates a word, if it is not already present in the dictionary. A word
+   * with a different case is considered the same.
+   * @param word The word to add
+   */
   protected void putWordUnique(String word) {
 
     String code = getCode(word);

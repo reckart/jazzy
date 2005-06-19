@@ -42,7 +42,7 @@ public abstract class Configuration {
   public static final String COST_INSERT_CHAR = "EDIT_DEL2";
 
   /**
-   * used by EditDistance: the cost of having to swap two adjoinging characters
+   * used by EditDistance: the cost of having to swap two adjoining characters
    * for the swap value to ever be used, it should be smaller than the COST_REMOVE_CHAR or COST_INSERT_CHAR values
    * <br/>(integer greater than 0)
    */
@@ -74,13 +74,13 @@ public abstract class Configuration {
   public static final String SPELL_IGNOREUPPERCASE = "SPELL_IGNOREUPPERCASE";
   /**  words that have mixed case are not spell checked, example: "SpellChecker"<br/>(boolean) */
   public static final String SPELL_IGNOREMIXEDCASE = "SPELL_IGNOREMIXEDCASE";
-  /** words that look like an internet address are not spell checked, example: "http://www.google.com" <br/>(boolean)*/
+  /** words that look like an Internet address are not spell checked, example: "http://www.google.com" <br/>(boolean)*/
   public static final String SPELL_IGNOREINTERNETADDRESSES = "SPELL_IGNOREINTERNETADDRESS";
   /** words that have digits in them are not spell checked, example: "mach5" <br/>(boolean) */
   public static final String SPELL_IGNOREDIGITWORDS = "SPELL_IGNOREDIGITWORDS";
   /** I don't know what this does. It doesn't seem to be used <br/>(boolean) */
   public static final String SPELL_IGNOREMULTIPLEWORDS = "SPELL_IGNOREMULTIPLEWORDS";
-  /** the first word of a sentance is expected to start with an upper case letter <br/>(boolean) */
+  /** the first word of a sentence is expected to start with an upper case letter <br/>(boolean) */
   public static final String SPELL_IGNORESENTENCECAPITALIZATION = "SPELL_IGNORESENTENCECAPTILIZATION";
 
   /**

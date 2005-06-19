@@ -28,10 +28,34 @@ import java.util.*;
 
 /**
  * Container for various methods that any <code>SpellDictionary</code> will use.
- * Based on the original Jazzy <a href="http://aspell.net/">aspell</a> port.
+ * This class is based on the original Jazzy aspell port.
  * <p/>
+ * Derived classes will need words list files as spell checking reference. 
+ * Words list file is a dictionary with one word per line. There are many 
+ * open source dictionary files, see: 
+ * <a href="http://wordlist.sourceforge.net/">
+ * http://wordlist.sourceforge.net/</a>
+ * <p/>
+ * You can choose words lists form <a href="http://aspell.net/">aspell</a> 
+ * many differents languages dictionaries. To grab some, install 
+ * <code>aspell</code> and the dictionaries you require. Then run aspell 
+ * specifying the name of the dictionary and the words list file to dump it 
+ * into, for example:
+ * <pre>
+ * aspell --master=fr-40 dump master > fr-40.txt
+ * </pre>
+ * Note: the number following the language is the size indicator. A bigger
+ * number gives a more extensive language coverage. Size 40 is more than 
+ * adequate for many usages.
+ * <p/>
+ * For some languages, Aspell can also supply you with the phonetic file. 
+ * On Windows, go into aspell <code>data</code> directory and copy the 
+ * phonetic file corresponding to your language, for example the 
+ * <code>fr_phonet.dat</code> for the <code>fr</code> language. The phonetic
+ * file should be in directory <code>/usr/share/aspell</code> on Unix.
  *
- *
+ * @see GenericTransformator GenericTransformator for information on 
+ * phonetic files.
  */
 public abstract class SpellDictionaryASpell implements SpellDictionary {
 
@@ -39,6 +63,14 @@ public abstract class SpellDictionaryASpell implements SpellDictionary {
   /** The reference to a Transformator, used to transform a word into it's phonetic code. */
   protected Transformator tf;
 
+  /**
+   * Constructs a new SpellDictionaryASpell
+   * @param phonetic The file to use for phonetic transformation of the 
+   * words list. If <code>phonetic</code> is null, the the transformation
+   * uses {@link DoubleMeta} transformation.
+   * @throws java.io.IOException  indicates problems reading the phonetic 
+   * information
+   */
   public SpellDictionaryASpell(File phonetic) throws IOException {
     if (phonetic == null)
       tf = new DoubleMeta();
@@ -46,6 +78,15 @@ public abstract class SpellDictionaryASpell implements SpellDictionary {
       tf = new GenericTransformator(phonetic);
   }
 
+  /**
+   * Constructs a new SpellDictionaryASpell
+   * @param phonetic The file to use for phonetic transformation of the 
+   * words list. If <code>phonetic</code> is null, the the transformation
+   * uses {@link DoubleMeta} transformation.
+   * @param encoding Uses the character set encoding specified
+   * @throws java.io.IOException  indicates problems reading the phonetic 
+   * information
+   */
   public SpellDictionaryASpell(File phonetic, String encoding) throws IOException {
     if (phonetic == null)
       tf = new DoubleMeta();
@@ -53,6 +94,14 @@ public abstract class SpellDictionaryASpell implements SpellDictionary {
       tf = new GenericTransformator(phonetic, encoding);
   }
 
+  /**
+   * Constructs a new SpellDictionaryASpell
+   * @param phonetic The Reader to use for phonetic transformation of the 
+   * words list. If <code>phonetic</code> is null, the the transformation
+   * uses {@link DoubleMeta} transformation.
+   * @throws java.io.IOException  indicates problems reading the phonetic 
+   * information
+   */
   public SpellDictionaryASpell(Reader phonetic) throws IOException {
     if (phonetic == null)
       tf = new DoubleMeta();
@@ -65,8 +114,8 @@ public abstract class SpellDictionaryASpell implements SpellDictionary {
    * Returns a list of Word objects that are the suggestions to an
    * incorrect word.
    * <p>
-   * @param word Suggestions for given mispelt word
-   * @param threshold The lower boundary of similarity to mispelt word
+   * @param word Suggestions for given misspelt word
+   * @param threshold The lower boundary of similarity to misspelt word
    * @return Vector a List of suggestions
    */
   public List getSuggestions(String word, int threshold) {
@@ -222,6 +271,8 @@ public abstract class SpellDictionaryASpell implements SpellDictionary {
 
   /**
    * Returns the phonetic code representing the word.
+   * @param word The word we want the phonetic code.
+   * @return The value of the phonetic code for the word.
    */
   public String getCode(String word) {
     return tf.transform(word);
@@ -229,6 +280,8 @@ public abstract class SpellDictionaryASpell implements SpellDictionary {
 
   /**
    * Returns a list of words that have the same phonetic code.
+   * @param phoneticCode The phonetic code common to the list of words
+   * @return A list of words having the same phonetic code
    */
   protected abstract List getWords(String phoneticCode);
 

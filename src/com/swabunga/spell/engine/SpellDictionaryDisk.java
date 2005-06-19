@@ -51,22 +51,55 @@ public class SpellDictionaryDisk extends SpellDictionaryASpell {
   private File words;
   private File db;
   private Map index;
+  /**
+   * The flag indicating if the initial preparation or loading of the on 
+   * disk dictionary is complete.
+   */
   protected boolean ready;
 
   /* used at time of creation of index to speed up determining the number of words per index entry */
   private List indexCodeCache = null;
 
   /**
-   * NOTE: Do *not* create two instances of this class pointing to the same <code>File</code> unless
+   * Construct a spell dictionary on disk. 
+   * The spell dictionary is created from words list(s) contained in file(s).
+   * A words list file is a file with one word per line. Words list files are
+   * located in a <code>base/words</code> dictionary where <code>base</code> 
+   * is the path to <code>words</code> dictionary. The on disk spell 
+   * dictionary is created in <code>base/db</code> dictionary and contains 
+   * files:
+   * <ul>
+   * <li><code>contents</code> list the words files used for spelling.</li>
+   * <li><code>words.db</code> the content of words files organized as
+   * a <em>database</em> of words.</li>
+   * <li><code>words.idx</code> an index file to the <code>words.db</code>
+   * file content.</li>
+   * </ul>
+   * The <code>contents</code> file has a list of 
+   * <code>filename, size</code> indicating the name and length of each files
+   * in the <code>base/words</code> dictionary. If one of theses files was 
+   * changed, added or deleted before the call to the constructor, the process 
+   * of producing new or updated <code>words.db</code> and 
+   * <code>words.idx</code> files is started again.
+   * <p/>
+   * The spellchecking process is then worked upon the <code>words.db</code>
+   * and <code>words.idx</code> files.
+   * <p/>
+   * 
+   * NOTE: Do *not* create two instances of this class pointing to the same <code>base</code> unless
    * you are sure that a new dictionary does not have to be created. In the future, some sort of
    * external locking mechanism may be created that handles this scenario gracefully.
-   *
+   * 
    * @param base the base directory in which <code>SpellDictionaryDisk</code> can expect to find
-   * its necessary files
+   * its necessary files.
+   * @param phonetic the phonetic file used by the spellchecker.
    * @param block if a new word db needs to be created, there can be a considerable delay before
    * the constructor returns. If block is true, this method will block while the db is created
    * and return when done. If block is false, this method will create a thread to create the new
    * dictionary and return immediately.
+   * @throws java.io.FileNotFoundException indicates problems locating the
+   * files on the system
+   * @throws java.io.IOException indicates problems reading the files
    */
   public SpellDictionaryDisk(File base, File phonetic, boolean block) throws FileNotFoundException, IOException {
     super(phonetic);
@@ -101,9 +134,14 @@ public class SpellDictionaryDisk extends SpellDictionaryASpell {
       }
     } else {
       loadIndex();
+      ready = true;
     }
   }
 
+  /**
+   * Builds the file words database file and the contents file for the on
+   * disk dictionary.
+   */
   protected void buildNewDictionaryDatabase() throws FileNotFoundException, IOException {
     /* combine all dictionary files into one sorted file */
     File sortedFile = buildSortedFile();
@@ -116,10 +154,20 @@ public class SpellDictionaryDisk extends SpellDictionaryASpell {
     buildContentsFile();
   }
 
+  /**
+   * Adds another word to the dictionary. <em>This method is  not yet implemented
+   * for this class</em>.
+   * @param word The word to add.
+   */
   public void addWord(String word) {
     throw new UnsupportedOperationException("addWord not yet implemented (sorry)");
   }
 
+  /**
+   * Returns a list of words that have the same phonetic code.
+   * @param code The phonetic code common to the list of words
+   * @return A list of words having the same phonetic code
+   */
   public List getWords(String code) {
     Vector words = new Vector();
 
@@ -146,6 +194,11 @@ public class SpellDictionaryDisk extends SpellDictionaryASpell {
     return words;
   }
 
+  /**
+   * Indicates if the initial preparation or loading of the on disk dictionary
+   * is complete.
+   * @return the indication that the dictionary initial setup is done.
+   */
   public boolean isReady() {
     return ready;
   }
@@ -304,6 +357,10 @@ public class SpellDictionaryDisk extends SpellDictionaryASpell {
     }
   }
 
+  /**
+   * Loads the index file from disk. The index file accelerates words lookup
+   * into the dictionary db file.
+   */
   protected void loadIndex() throws IOException {
     index = new HashMap();
     File idx = new File(db, FILE_INDEX);

@@ -39,6 +39,9 @@ public class DefaultWordFinder extends AbstractWordFinder {
     super(inText);
   }
 
+  /**
+   * Creates a new DefaultWordFinder object.
+   */
   public DefaultWordFinder() {
     super();
   }

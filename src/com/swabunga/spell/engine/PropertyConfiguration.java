@@ -25,18 +25,25 @@ import java.util.Properties;
 
 
 /**
- * @author aim4min
+ * Implementation class to read the properties controlling the spell engine. 
+ * The properties are read form the <code>configuration.properties</code> file.
  *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- * To enable and disable the creation of type comments go to
- * Window>Preferences>Java>Code Generation.
+ * @author aim4min
  */
 public class PropertyConfiguration extends Configuration {
 
+  /**
+   * The persistent set of properties supported by the spell engine
+   */
   public Properties prop;
+  /**
+   * The name of the file containing spell engine properties
+   */
   public URL filename;
 
+  /**
+   * Constructs and loads spell engine properties configuration.
+   */
   public PropertyConfiguration() {
     prop = new Properties();
     try {
@@ -84,6 +91,10 @@ public class PropertyConfiguration extends Configuration {
     save();
   }
 
+  /**
+   * Writes the property list (key and element pairs) in the 
+   * PropertyConfiguration file.
+   */
   public void save() {
     try {
       File file = new File(filename.getFile());

@@ -41,7 +41,13 @@ public class TeXWordFinder extends AbstractWordFinder {
   private boolean IGNORE_COMMENTS = true;
   private HashSet user_defined_ignores = new HashSet();
   private int regex_user_defined_ignores = STRING_EXPR;
+  /**
+   * A type where string expressions are used to define expression to ignore
+   */
   public static final int STRING_EXPR = 0;
+  /**
+   * A type where regular expressions are used to define expression to ignore
+   */
   public static final int REG_EXPR = 1;
 //  public static final int GLOB_EXPR = 2;
 //}}}
@@ -56,6 +62,9 @@ public class TeXWordFinder extends AbstractWordFinder {
     super(inText);
   }
   
+  /**
+   * Creates a new DefaultWordFinder object.
+   */
   public TeXWordFinder() {
     super();
   }
@@ -156,7 +165,7 @@ public class TeXWordFinder extends AbstractWordFinder {
 //}}}
   /**
    * This method is used to import a user defined set of either strings or regular expressions to ignore.
-   * @param expressions a collection of of Objects whose toString() value should be the expression. Typically String objects.
+   * @param expressions a collection of Objects whose toString() value should be the expression. Typically String objects.
    * @param regex is an integer specifying the type of expression to use. e.g. REG_EXPR, STRING_EXPR.
    */
   public void addUserDefinedIgnores(Collection expressions, int regex){
@@ -168,6 +177,10 @@ public class TeXWordFinder extends AbstractWordFinder {
     return i;
   }
   
+  /**
+   * Define if comments contents are ignored during spell checking
+   * @param ignore an indication if comments content is to be ignored
+   */
   public void setIgnoreComments(boolean ignore) {
     IGNORE_COMMENTS = ignore;
   }

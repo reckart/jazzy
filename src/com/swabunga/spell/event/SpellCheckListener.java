@@ -27,5 +27,10 @@ import java.util.EventListener;
  * @author Jason Height (jheight@chariot.net.au)
  */
 public interface SpellCheckListener extends EventListener {
+    
+  /**
+   * Propagates the spelling errors to listeners.
+   * @param event The event to handle
+   */
   public void spellingError(SpellCheckEvent event);
 }

@@ -29,7 +29,7 @@ import java.io.IOException;
  * This class tokenizes a input file.
  *
  * <p>
- * Any takers to do this efficiently?? Doesnt need to replace any words to
+ * Any takers to do this efficiently?? doesn't need to replace any words to
  * start with. I need this to get an idea of how quick the spell checker is.
  * </p>
  */
@@ -44,12 +44,19 @@ public class FileWordTokenizer extends AbstractWordTokenizer {
   /**
    * Creates a new FileWordTokenizer object.
    *
-   * @param inputFile
+   * @param inputFile the file to work upon
    */
   public FileWordTokenizer(File inputFile) {
     super(stringValue(inputFile));
   }
 
+  /**
+   * Creates a new FileWordTokenizer object and associate a WordFinder to it's
+   * processing.
+   *
+   * @param inputFile the file to word upon.
+   * @param finder the specialize processing for words.
+   */
   public FileWordTokenizer(File inputFile, WordFinder finder) {
     super(finder);
     finder.setText(stringValue(inputFile));
@@ -57,9 +64,9 @@ public class FileWordTokenizer extends AbstractWordTokenizer {
   //~ Methods .................................................................
 
   /**
+   * Replaces the current word token
    *
-   *
-   * @params
+   * @param s the new string
    * @throws WordNotFoundException current word not yet set.
    */
   public void replaceWord(String s) {

@@ -29,7 +29,7 @@ package com.swabunga.spell.engine;
  * source code for the original C++ can be found
  * here: <a href="http://aspell.sourceforge.net/metaphone/"/>http://aspell.sourceforge.net/metaphone/</a>
  * DoubleMetaphone does some processing, such as uppercasing, on the input string first to normalize it. Then, to
- * create the key, the function traverses the input string in a while loop, sending sucessive characters into a giant
+ * create the key, the function traverses the input string in a while loop, sending successive characters into a giant
  * switch statement. Before determining the appropriate pronunciation, the algorithm considers the context
  * surrounding each character within the input string.
  * <p>
@@ -37,7 +37,7 @@ package com.swabunga.spell.engine;
  *   <br/>The alternate flag could be set to true but was never checked so why bother with it. REMOVED
  *   <br/>Why was this class serializable?
  *   <br/>The primary, in, length and last variables could be initialized and local to the
- *   process method and references passed arround the appropriate methods. As such there are
+ *   process method and references passed around the appropriate methods. As such there are
  *   no class variables and this class becomes firstly threadsafe and secondly could be static final.
  *   <br/>The function call SlavoGermaic was called repeatedly in the process function, it is now only called once.
  *
@@ -50,7 +50,7 @@ public class DoubleMeta implements Transformator {
    * this list to try and generate more suggestions, which implies l*n tries,
    * if l is the size of the string, and n is the size of this list.
    *
-   * In addition to that, each of these letters is added to the mispelled word.
+   * In addition to that, each of these letters is added to the misspelled word.
    */
   private static char[] replaceList = {'A', 'B', 'X', 'S', 'K', 'J', 'T', 'F', 'H', 'L', 'M', 'N', 'P', 'R', '0'};
 
@@ -226,6 +226,8 @@ public class DoubleMeta implements Transformator {
    * Vowels are minimized as much as possible, and consenants
    * that have similiar sounds are converted to the same consenant
    * for example, 'v' and 'f' are both converted to 'f'
+   * @param word the texte to transform
+   * @return the result of the phonetic transformation
    */
   public final String transform(String word) {
     StringBuffer primary = new StringBuffer(word.length() + 5);

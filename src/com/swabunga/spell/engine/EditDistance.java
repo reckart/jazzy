@@ -24,7 +24,7 @@ import java.io.InputStreamReader;
 
 /**
  * This class is based on Levenshtein Distance algorithms, and it calculates how similar two words are.
- * If the words are identitical, then the distance is 0. The more that the words have in common, the lower the distance value.
+ * If the words are identical, then the distance is 0. The more that the words have in common, the lower the distance value.
  * The distance value is based on how many operations it takes to get from one word to the other. Possible operations are
  * swapping characters, adding a character, deleting a character, and substituting a character.
  * The resulting distance is the sum of these operations weighted by their cost, which can be set in the Configuration object.
@@ -44,21 +44,28 @@ import java.io.InputStreamReader;
 public class EditDistance {
 
   /**
-   * JMH Again, there is no need to have a global class matrix variable
-   *  in this class. I have removed it and made the getDistance static final
-   *
-   * DMV: I refactored this method to make it more efficient, more readable, and simpler.
-   * I also fixed a bug with how the distance was being calculated. You could get wrong
-   * distances if you compared ("abc" to "ab") depending on what you had setup your
-   * COST_REMOVE_CHAR and EDIT_INSERTION_COST values to - that is now fixed.
-   *
-   * WRS: I added a distance for case comparison, so a misspelling of "i" would be closer to "I" than
-   * to "a".
+   * Fetches the spell engine configuration properties.
    */
-
   public static Configuration config = Configuration.getConfiguration();
 
+  /**
+   * Evaluates the distance between two words.
+   * 
+   * @param word One word to evaluates
+   * @param similar The other word to evaluates
+   * @return a number representing how easy or complex it is to transform on
+   * word into a similar one.
+   */
   public static final int getDistance(String word, String similar) {
+    /* JMH Again, there is no need to have a global class matrix variable
+     *  in this class. I have removed it and made the getDistance static final
+     * DMV: I refactored this method to make it more efficient, more readable, and simpler.
+     * I also fixed a bug with how the distance was being calculated. You could get wrong
+     * distances if you compared ("abc" to "ab") depending on what you had setup your
+     * COST_REMOVE_CHAR and EDIT_INSERTION_COST values to - that is now fixed.
+     * WRS: I added a distance for case comparison, so a misspelling of "i" would be closer to "I" than
+     * to "a".
+     */
 
     //get the weights for each possible operation
     final int costOfDeletingSourceCharacter = config.getInteger(Configuration.COST_REMOVE_CHAR);
@@ -177,7 +184,11 @@ public class EditDistance {
     return mi;
   }
 
-
+  /**
+   * For testing edit distances
+   * @param args an array of two strings we want to evaluate their distances.
+   * @throws java.lang.Exception when problems occurs during reading args.
+   */
   public static void main(String[] args) throws Exception {
     BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
 

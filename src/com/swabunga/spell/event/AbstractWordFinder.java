@@ -31,10 +31,15 @@ public abstract class AbstractWordFinder implements WordFinder {
 
   //~ Instance/static variables .............................................
 
+  /** The word being analyzed */
   protected Word currentWord;
+  /** The word following the current one */
   protected Word nextWord;
+  /** Indicate if the current word starts a new sentence */
   protected boolean startsSentence;
+  /** Holds the text to analyze */
   protected String text;
+  /** An iterator to work through the sentence */
   protected BreakIterator sentenceIterator;
 
   //~ Constructors ..........................................................
@@ -49,6 +54,9 @@ public abstract class AbstractWordFinder implements WordFinder {
     setup();
   }
 
+  /**
+   * Creates a new default AbstractWordFinder object.
+   */
   public AbstractWordFinder() {
     text = "";
     setup();
@@ -59,7 +67,7 @@ public abstract class AbstractWordFinder implements WordFinder {
    * This method scans the text from the end of the last word,  and returns
    * a new Word object corresponding to the next word.
    *
-   * @return the next word.
+   * @return the following word.
    */
   public abstract Word next();
 
@@ -74,6 +82,10 @@ public abstract class AbstractWordFinder implements WordFinder {
     return text;
   }
   
+  /**
+   * Defines the text to search.
+   * @param newText The text to be analyzed
+   */
   public void setText(String newText) {
     text = newText;
     setup();
@@ -95,6 +107,7 @@ public abstract class AbstractWordFinder implements WordFinder {
   }
 
   /**
+   * Indicates if there is some more word to analyze
    * @return true if there are further words in the string.
    */
   public boolean hasNext() {
@@ -157,6 +170,11 @@ public abstract class AbstractWordFinder implements WordFinder {
     return text;
   }
 
+  /**
+   * Adjusts the sentence iterator and the startSentence flag according to the
+   * currentWord.
+   * @param wd the wd parameter is not presently used.
+   */
   protected void setSentenceIterator(Word wd) {
     int current = sentenceIterator.current();
 
@@ -171,6 +189,14 @@ public abstract class AbstractWordFinder implements WordFinder {
     }
   }
 
+  /**
+   * Indicates if the character at the specified position is acceptable as
+   * part of a word. To be acceptable, the character need to be a letter
+   * or a digit. It is also acceptable if the character is one of ''', '@',
+   * '.' or '_' and is preceded and followed by letter or digit.
+   * @param posn The character position to analyze.
+   * @return true if the character is a letter or digit
+   */
   //Added more intelligent character recognition (11 Feb '03)
   protected boolean isWordChar(int posn) {
     boolean out = false;
@@ -199,6 +225,13 @@ public abstract class AbstractWordFinder implements WordFinder {
     return out;
   }
 
+  /**
+   * Indicates if the character at the specified character is acceptable as
+   * part of a word. To be acceptable, the character need to be a letter
+   * or a digit or a ' (an apostrophe).
+   * @param c The character to evaluates if it can be part of a word
+   * @return true if the character is a letter, digit or a ' (an apostrophe).
+   */
   protected boolean isWordChar(char c) {
     boolean out = false;
 
@@ -209,14 +242,53 @@ public abstract class AbstractWordFinder implements WordFinder {
     return out;
   }
 
+  /**
+   * Ignores or skip over text starting from the index position specified 
+   * if it contains the <code>startIgnore</code>, and until the 
+   * first non letter or digit character is encountered or end of text is 
+   * detected.
+   * @param index The start position in text.
+   * @param startIgnore The character that should be at <code>index</code> 
+   * position to start skipping through.
+   * @return The index position pointing after the skipped characters or the
+   * original index if the ignore condition could not be met.
+   */
   protected int ignore(int index, char startIgnore) {
     return ignore(index, new Character(startIgnore), null);
   }
 
+  /**
+   * Ignores or skip over text starting from the index position specified 
+   * if it contains the <code>startIgnore</code>, and until the 
+   * <code>endIgnore</code> character is encountered or end of text is 
+   * detected.
+   * @param index The start position in text.
+   * @param startIgnore The character that should be at <code>index</code> 
+   * position to start skipping through.
+   * @param endIgnore The character which mark the end of skipping through. If
+   * the value of endIgnore is <code>null</code>, skipping characters stop
+   * at first non letter or digit character.
+   * @return The index position pointing after the skipped characters or the
+   * original index if the ignore condition could not be met.
+   */
   protected int ignore(int index, char startIgnore, char endIgnore) {
     return ignore(index, new Character(startIgnore), new Character(endIgnore));
   }
-    
+
+  /**
+   * Ignores or skip over text starting from the index position specified 
+   * if it contains the <code>startIgnore</code>, and until the 
+   * <code>endIgnore</code> character is encountered or end of text is 
+   * detected.
+   * @param index The start position in text.
+   * @param startIgnore The character that should be at <code>index</code> 
+   * position to start skipping through.
+   * @param endIgnore The character which mark the end of skipping through. If
+   * the value of endIgnore is <code>null</code>, skipping characters stop
+   * at first non letter or digit character.
+   * @return The index position pointing after the skipped characters or the
+   * original index if the ignore condition could not be met.
+   */
   protected int ignore(int index, Character startIgnore, Character endIgnore) {
     int newIndex = index;
 
@@ -241,6 +313,18 @@ public abstract class AbstractWordFinder implements WordFinder {
     return newIndex;
   }
 
+  /**
+   * Ignores or skip over text starting from the index position specified 
+   * if it contains the <code>startIgnore</code> string, and until the 
+   * <code>endIgnore</code> string is encountered or end of text is 
+   * detected.
+   * @param index The start position in text.
+   * @param startIgnore The string that should be at <code>index</code> 
+   * position to start skipping through.
+   * @param endIgnore The string which mark the end of skipping through.
+   * @return The index position pointing after the skipped characters or the
+   * original index if the ignore condition could not be met.
+   */
   protected int ignore(int index, String startIgnore, String endIgnore) {
 
     //{{{
@@ -278,11 +362,17 @@ public abstract class AbstractWordFinder implements WordFinder {
     return newIndex;
   } //}}}
 
+  /**
+   * Initializes the sentenseIterator
+   */
   protected void init() {
     sentenceIterator = BreakIterator.getSentenceInstance();
     sentenceIterator.setText(text);
   }
   
+  /**
+   * Defines the starting positions for text analysis
+   */
   private void setup() {
     currentWord = new Word("", 0);
     nextWord = new Word("", 0);

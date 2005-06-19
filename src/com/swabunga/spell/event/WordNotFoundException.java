@@ -19,6 +19,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package com.swabunga.spell.event;
 
+/**
+ * An exception to indicate that there not enough words as expected.
+ */
 public class WordNotFoundException extends RuntimeException {
 
   //~ Constructors ............................................................

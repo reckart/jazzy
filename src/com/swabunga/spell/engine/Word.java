@@ -32,11 +32,19 @@ public class Word implements Comparator {
   private String word;
   private int score;
 
+  /**
+   * Constructs a new Word.
+   * @param word The text of a word.
+   * @param score The word's distance cost
+   */
   public Word(String word, int score) {
     this.word = word;
     this.score = score;
   }
 
+  /**
+   * Constructs a new Word.
+   */
   public Word() {
     this.word = "";
     this.score = 0;
@@ -46,7 +54,7 @@ public class Word implements Comparator {
    * Compares two words, mostly for the purpose of sorting words.
    * @param o1 the first word
    * @param o2 the second word
-   * @return -1 if the first word is more similar to the mispelled word
+   * @return -1 if the first word is more similar to the misspelled word
    * <br>1 if the second word is more similar to the misspelled word
    * <br>0 if both words are equally similar
    *
@@ -57,6 +65,11 @@ public class Word implements Comparator {
     return 1;
   }
 
+  /**
+   * Indicates if this word is equal to another one.
+   * @param o The other word to compare
+   * @return The indication of equality
+   */
   public boolean equals(Object o) {
     if (o instanceof Word)  // added by bd
       return(((Word)o).getWord().equals(getWord()));
@@ -73,6 +86,7 @@ public class Word implements Comparator {
 
   /**
    * sets suggested spelling
+   * @param word The text to set for suggestd spelling
    */
   public void setWord(String word) {
     this.word = word;
@@ -89,6 +103,7 @@ public class Word implements Comparator {
 
   /**
    * returns the suggested spelling
+   * @return The word's text 
    */
   public String toString() {
     return word;

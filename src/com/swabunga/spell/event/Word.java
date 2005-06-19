@@ -19,6 +19,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 package com.swabunga.spell.event;
 
+/**
+ * Offers basic methods to manipulate a text string representing a word.
+ */
 public class Word {
 
   //~ Instance/static variables ...............................................
@@ -53,6 +56,7 @@ public class Word {
   //~ Methods .................................................................
 
   /**
+   * Evaluate the end of word position.
    * @return the end index of the word.
    */
   public int getEnd() {
@@ -71,6 +75,7 @@ public class Word {
   }
 
   /**
+   * Evaluate the start of word position.
    * @return the start index.
    */
   public int getStart() {
@@ -89,6 +94,7 @@ public class Word {
   }
 
   /**
+   * Supply the text string representing the word
    * @return the String representing the word.
    */
   public String getText() {
@@ -108,6 +114,7 @@ public class Word {
   }
 
   /**
+   * Evaluate the length of the word.
    * @return the length of the word.
    */
   public int length() {
@@ -116,6 +123,7 @@ public class Word {
   }
 
   /**
+   * Supply the text representing the word.
    * @return the text representing the word.
    */
   public String toString() {

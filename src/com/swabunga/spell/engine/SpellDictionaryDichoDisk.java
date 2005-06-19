@@ -38,12 +38,17 @@ public class SpellDictionaryDichoDisk extends SpellDictionaryASpell {
 
   /** Holds the dictionary file for reading*/
   private RandomAccessFile dictFile = null;
-  
+
   /** dictionary and phonetic file encoding */
   private String encoding = null;
 
   /**
-   * Dictionary Convienence Constructor.
+   * Dictionary convenience Constructor.
+   * @param wordList The file containing the words list for the dictionary
+   * @throws java.io.FileNotFoundException indicates problems locating the
+   * words list file on the system
+   * @throws java.io.IOException indicates problems reading the words list
+   * file
    */
   public SpellDictionaryDichoDisk(File wordList)
     throws FileNotFoundException, IOException {
@@ -52,7 +57,13 @@ public class SpellDictionaryDichoDisk extends SpellDictionaryASpell {
   }
 
   /**
-   * Dictionary Convienence Constructor.
+   * Dictionary convenience Constructor.
+   * @param wordList The file containing the words list for the dictionary
+   * @param encoding Uses the character set encoding specified
+   * @throws java.io.FileNotFoundException indicates problems locating the
+   * words list file on the system
+   * @throws java.io.IOException indicates problems reading the words list
+   * file
    */
   public SpellDictionaryDichoDisk(File wordList, String encoding)
     throws FileNotFoundException, IOException {
@@ -64,6 +75,13 @@ public class SpellDictionaryDichoDisk extends SpellDictionaryASpell {
   /**
   * Dictionary constructor that uses an aspell phonetic file to
   * build the transformation table.
+  * @param wordList The file containing the words list for the dictionary
+  * @param phonetic The file to use for phonetic transformation of the 
+  * wordlist.
+  * @throws java.io.FileNotFoundException indicates problems locating the
+  * file on the system
+  * @throws java.io.IOException indicates problems reading the words list
+  * file
   */
   public SpellDictionaryDichoDisk(File wordList, File phonetic)
     throws FileNotFoundException, IOException {
@@ -74,6 +92,14 @@ public class SpellDictionaryDichoDisk extends SpellDictionaryASpell {
   /**
   * Dictionary constructor that uses an aspell phonetic file to
   * build the transformation table.
+  * @param wordList The file containing the words list for the dictionary
+  * @param phonetic The file to use for phonetic transformation of the 
+  * wordlist.
+  * @param encoding Uses the character set encoding specified
+  * @throws java.io.FileNotFoundException indicates problems locating the
+  * file on the system
+  * @throws java.io.IOException indicates problems reading the words list
+  * file
   */
   public SpellDictionaryDichoDisk(File wordList, File phonetic, String encoding)
     throws FileNotFoundException, IOException {
@@ -83,8 +109,9 @@ public class SpellDictionaryDichoDisk extends SpellDictionaryASpell {
   }
   
   /**
-   * Add a word permanantly to the dictionary (and the dictionary file).
+   * Add a word permanently to the dictionary (and the dictionary file).
    * <i>not implemented !</i>
+   * @param word The word to add.
    */
   public void addWord(String word) {
     System.err.println("error: addWord is not implemented for SpellDictionaryDichoDisk");
@@ -175,6 +202,8 @@ public class SpellDictionaryDichoDisk extends SpellDictionaryASpell {
    
   /**
    * Returns a list of strings (words) for the code.
+   * @param code The phonetic code common to the list of words
+   * @return A list of words having the same phonetic code
    */
   public List getWords(String code) {
      //System.out.println("getWords("+code+")");
@@ -190,3 +219,4 @@ public class SpellDictionaryDichoDisk extends SpellDictionaryASpell {
   }
 
 }
+

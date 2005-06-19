@@ -68,7 +68,12 @@ public class GenericSpellDictionary extends SpellDictionaryASpell {
 
   /**
    * Dictionary constructor that uses the DoubleMeta class with the
-   * english alphabet.
+   * English alphabet.
+   * @param wordList The file containing dictionary as a words list.
+   * @throws java.io.FileNotFoundException when the words list file could not 
+   * be located on the system.
+   * @throws java.io.IOException when problems occurs while reading the words 
+   * list file
    */
   public GenericSpellDictionary(File wordList) throws FileNotFoundException, IOException {
     this(wordList, (File) null);
@@ -77,7 +82,14 @@ public class GenericSpellDictionary extends SpellDictionaryASpell {
   /**
    * Dictionary constructor that uses an aspell phonetic file to
    * build the transformation table.
-   * If phonetic is null, then DoubleMeta is used with the english alphabet
+   * If phonetic is null, then DoubleMeta is used with the English alphabet
+   * @param wordList The file containing dictionary as a words list.
+   * @param phonetic The file containing the phonetic transformation 
+   * information.
+   * @throws java.io.FileNotFoundException when the words list or phonetic 
+   * file could not be located on the system
+   * @throws java.io.IOException when problems occurs while reading the 
+   * words list or phonetic file
    */
   public GenericSpellDictionary(File wordList, File phonetic) throws FileNotFoundException, IOException {
 
@@ -88,8 +100,9 @@ public class GenericSpellDictionary extends SpellDictionaryASpell {
 
 
   /**
-   * Add a word permanantly to the dictionary (and the dictionary file).
+   * Add a word permanently to the dictionary (and the dictionary file).
    * <p>This needs to be made thread safe (synchronized)</p>
+   * @param word The word to add to the dictionary
    */
   public void addWord(String word) {
     putWord(word);
@@ -109,10 +122,10 @@ public class GenericSpellDictionary extends SpellDictionaryASpell {
   /**
    * Constructs the dictionary from a word list file.
    * <p>
-   * Each word in the reader should be on a seperate line.
+   * Each word in the reader should be on a separate line.
    * <p>
    * This is a very slow function. On my machine it takes quite a while to
-   * load the data in. I suspect that we could speed this up quite alot.
+   * load the data in. I suspect that we could speed this up quite allot.
    */
   protected void createDictionary(BufferedReader in) throws IOException {
     String line = "";
@@ -142,6 +155,8 @@ public class GenericSpellDictionary extends SpellDictionaryASpell {
 
   /**
    * Returns a list of strings (words) for the code.
+   * @param code The phonetic code we want to find words for
+   * @return the list of words having the same phonetic code
    */
   public List getWords(String code) {
     //Check the main dictionary.
@@ -153,6 +168,8 @@ public class GenericSpellDictionary extends SpellDictionaryASpell {
 
   /**
    * Returns true if the word is correctly spelled against the current word list.
+   * @param word The word to checked in the dictionary
+   * @return indication if the word is in the dictionary
    */
   public boolean isCorrect(String word) {
     List possible = getWords(getCode(word));

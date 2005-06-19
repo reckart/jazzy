@@ -54,6 +54,12 @@ public class StringWordTokenizer extends AbstractWordTokenizer {
     super(wf);
   }
 
+  /**
+   * Creates a new StringWordTokenizer object.
+   * @param s the string to work on
+   * @param finder the custom WordFinder to use in tokenizing. Note
+   * that the string to tokenize will be encapsulated within the WordFinder.
+   */
   public StringWordTokenizer(String s, WordFinder finder) {
     super(finder);
     finder.setText(s);

@@ -41,9 +41,9 @@ class BasicSpellCheckEvent implements SpellCheckEvent {
   private int startPosition;
 
 
-  /**Consructs the SpellCheckEvent
+  /**Constructs the SpellCheckEvent
    * @param invalidWord The word that is misspelt
-   * @param suggestions A list of Word objects that are suggested to replace the currently mispelt word
+   * @param suggestions A list of Word objects that are suggested to replace the currently misspelt word
    * @param tokenizer The reference to the tokenizer that caused this
    * event to fire.
    */
@@ -54,38 +54,53 @@ class BasicSpellCheckEvent implements SpellCheckEvent {
     this.startPosition = tokenizer.getCurrentWordPosition();
   }
 
-  /** Returns the list of suggested Word objects*/
+  /** Returns the list of suggested Word objects
+   * @return A list of words phonetically close to the misspelt word
+   */
   public List getSuggestions() {
     return suggestions;
   }
 
-  /** Returns the currently misspelt word*/
+  /** Returns the currently misspelt word
+   * @return The text misspelt
+   */
   public String getInvalidWord() {
     return invalidWord;
   }
 
+  /** Returns the context in which the misspelt word is used
+   * @return The text containing the context
+   */
   public String getWordContext() {
     //JMH TBD
     return null;
   }
 
-  /** Returns the start position of the misspelt word in the context*/
+  /** Returns the start position of the misspelt word in the context
+   * @return The position of the word
+   */
   public int getWordContextPosition() {
     return startPosition;
   }
 
+  /** Returns the action type the user has to handle
+   * @return The type of action the event is carrying
+   */
   public short getAction() {
     return action;
   }
 
+  /** Returns the text to replace
+   * @return the text of the word to replace
+   */
   public String getReplaceWord() {
     return replaceWord;
   }
 
   /** Set the action to replace the currently misspelt word with the new word
-   *  @param String newWord The word to replace the currently misspelt word
-   *  @param boolean replaceAll If set to true, the SpellChecker will replace all
-   *  further occurances of the misspelt word without firing a SpellCheckEvent.
+   *  @param newWord The word to replace the currently misspelt word
+   *  @param replaceAll If set to true, the SpellChecker will replace all
+   *  further occurrences of the misspelt word without firing a SpellCheckEvent.
    */
   public void replaceWord(String newWord, boolean replaceAll) {
     if (action != INITIAL)
@@ -97,9 +112,10 @@ class BasicSpellCheckEvent implements SpellCheckEvent {
     replaceWord = newWord;
   }
 
-  /** Set the action it ignore the currently misspelt word.
-   *  @param boolean ignoreAll If set to true, the SpellChecker will replace all
-   *  further occurances of the misspelt word without firing a SpellCheckEvent.
+  /**
+   * Set the action it ignore the currently misspelt word.
+   * @param ignoreAll If set to true, the SpellChecker will replace all
+   *  further occurrences of the misspelt word without firing a SpellCheckEvent.
    */
   public void ignoreWord(boolean ignoreAll) {
     if (action != INITIAL)
@@ -112,6 +128,7 @@ class BasicSpellCheckEvent implements SpellCheckEvent {
 
   /** Set the action to add a new word into the dictionary. This will also replace the
    *  currently misspelt word.
+   * @param newWord The new word to add to the dictionary.
    */
   public void addToDictionary(String newWord) {
     if (action != INITIAL)
@@ -120,6 +137,8 @@ class BasicSpellCheckEvent implements SpellCheckEvent {
     replaceWord = newWord;
   }
 
+  /** Set the action to terminate processing of the spellchecker.
+   */
   public void cancel() {
     if (action != INITIAL)
       throw new IllegalStateException("The action can can only be set once");

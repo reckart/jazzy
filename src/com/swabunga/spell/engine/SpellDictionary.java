@@ -30,11 +30,14 @@ public interface SpellDictionary {
 
   /**
    * Add a word permanently to the dictionary.
+   * @param word The word to add to the dictionary
    */
   public void addWord(String word);
 
   /**
-   * Returns true if the word is correctly spelled against the dictionary.
+   * Evaluates if the word is correctly spelled against the dictionary.
+   * @param word The word to verify if it's spelling is OK.
+   * @return Indicates if the word is present in the dictionary.
    */
   public boolean isCorrect(String word);
 
@@ -47,7 +50,7 @@ public interface SpellDictionary {
    * Each suggested word has a score, which is an integer
    * that represents how different the suggested word is from the sourceWord.
    * If the words are the exactly the same, then the score is 0.
-   * You can get the dictionary to only return the most similiar words by setting
+   * You can get the dictionary to only return the most similar words by setting
    * an appropriately low threshold value.
    * If you set the threshold value too low, you may get no suggestions for a given word.
    * <p>

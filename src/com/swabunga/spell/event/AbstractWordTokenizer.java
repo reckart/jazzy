@@ -37,8 +37,12 @@ public abstract class AbstractWordTokenizer implements WordTokenizer {
 
   //~ Instance/static variables ...............................................
 
+  /** The word being analyzed */
   protected Word currentWord;
+  /** The word finder used to filter out words which are non pertinent to
+   * spell checking */
   protected WordFinder finder;
+  /** An iterator to work through the sentence */
   protected BreakIterator sentenceIterator;
 
   /** The cumulative word count that have been processed */
@@ -92,7 +96,7 @@ public abstract class AbstractWordTokenizer implements WordTokenizer {
   }
 
   /**
-   * Returns the index of the start of the curent word in the text
+   * Returns the index of the start of the current word in the text
    *
    * @return index in string of the start of the current word.
    * @throws WordNotFoundException current word has not yet been set.

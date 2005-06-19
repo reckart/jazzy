@@ -54,16 +54,20 @@ public class DocumentWordTokenizer implements WordTokenizer {
   private boolean first = true;
   private BreakIterator sentenceIterator;
   private boolean startsSentence = true;
-  
+
+  /**
+   * Creates a new DocumentWordTokenizer to work on a document
+   * @param document The document to spell check
+   */
   public DocumentWordTokenizer(Document document) {
     this.document = document;
-    //Create a text segment over the etire document
+    //Create a text segment over the entire document
     text = new Segment();
     sentenceIterator = BreakIterator.getSentenceInstance();
     try {
       document.getText(0, document.getLength(), text);
       sentenceIterator.setText(text);
-      currentWordPos = getNextWordStart(text, text.getBeginIndex());
+      currentWordPos = getNextWordStart(text, 0);
       //If the current word pos is -1 then the string was all white space
       if (currentWordPos != -1) {
         currentWordEnd = getNextWordEnd(text, currentWordPos);
@@ -107,8 +111,9 @@ public class DocumentWordTokenizer implements WordTokenizer {
     return text.getEndIndex();
   }
 
-  /** Returns true if there are more words that can be processed in the string
-   *
+  /**
+   * Indicates if there are more words left
+   * @return true if more words can be found in the text.
    */
   public boolean hasMoreWords() {
     return moreTokens;
@@ -144,23 +149,28 @@ public class DocumentWordTokenizer implements WordTokenizer {
   	currentWordEnd = getNextWordEnd(text, currentWordPos);
   	nextWordPos = getNextWordStart(text, currentWordEnd + 1);
   }
-  
-  /** Returns the current character position in the text
-   *
+
+  /**
+   * Returns the number of word tokens that have been processed thus far
+   * @return the number of words found so far.
    */
   public int getCurrentWordPosition() {
     return currentWordPos;
   }
 
-  /** Returns the current end word position in the text
-   *
+  /**
+   * Returns an index representing the end location of the current word in the text.
+   * @return index of the end of the current word in the text.
    */
   public int getCurrentWordEnd() {
     return currentWordEnd;
   }
 
-  /** Returns the next word in the text
-   *
+  /**
+   * This returns the next word in the iteration. Note that any implementation should return
+   * the current word, and then replace the current word with the next word found in the
+   * input text (if one exists).
+   * @return the next word in the iteration.
    */
   public String nextWord() {
     if (!first) {
@@ -190,14 +200,17 @@ public class DocumentWordTokenizer implements WordTokenizer {
     return word;
   }
 
-  /** Returns the current number of words that have been processed
-   *
+  /**
+   * Returns the number of word tokens that have been processed thus far
+   * @return the number of words found so far.
    */
   public int getCurrentWordCount() {
     return wordCount;
   }
 
-  /** Replaces the current word token*/
+  /** Replaces the current word token
+   * @param newWord The new word to replace the misspelt one
+   */
   public void replaceWord(String newWord) {
     AttributeSet attr=null;
     if (currentWordPos != -1) {
@@ -205,7 +218,7 @@ public class DocumentWordTokenizer implements WordTokenizer {
         if(document instanceof StyledDocument)
             attr=((StyledDocument)document).getCharacterElement(currentWordPos).getAttributes();
         document.remove(currentWordPos, currentWordEnd - currentWordPos);
-        document.insertString(currentWordPos, newWord, attr);
+        document.insertString(currentWordPos, newWord, null);
         //Need to reset the segment
         document.getText(0, document.getLength(), text);
       } catch (BadLocationException ex) {
@@ -226,12 +239,15 @@ public class DocumentWordTokenizer implements WordTokenizer {
 
   /** Returns the current text that is being tokenized (includes any changes
    *  that have been made)
+   * @return The text, including changes.
    */
   public String getContext() {
     return text.toString();
   }
 
-  /** Returns true if the current word is at the start of a sentence*/
+  /** Indicates if the current word is at the start of a sentence
+   * @return true if the current word is at the start of a sentence
+   */
   public boolean isNewSentence() {
     // BreakIterator doesn't work when the first word in a sentence is not capitalised,
     // but we need to check for capitalisation

@@ -21,7 +21,8 @@ package com.swabunga.spell.event;
 
 
 /**
- * A basic word finder, which searches text for sequences of letters.
+ * A word finder Java source files, which searches text for sequences of 
+ * letters formated as Java comments.
  *
  * @author Anthony Roy  (ajr@antroy.co.uk)
  */
@@ -34,7 +35,7 @@ public class JavaWordFinder extends AbstractWordFinder {
   //~ Constructors ............................................................
 
   /**
-   * Creates a new DefaultWordFinder object.
+   * Creates a new JavaWordFinder object.
    *
    * @param inText the String to search
    */
@@ -42,6 +43,9 @@ public class JavaWordFinder extends AbstractWordFinder {
     super(inText);
   }
 
+  /**
+   * Creates a new JavaWordFinder object.
+   */
   public JavaWordFinder() {
     super();
   }

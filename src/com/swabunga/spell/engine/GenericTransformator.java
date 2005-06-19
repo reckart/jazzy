@@ -26,8 +26,20 @@ import java.util.HashMap;
 import java.util.Vector;
 
 /**
- * A Generic implementation of a transformator takes an aspell phonetics file and constructs
- * some sort of transformation table using the inner class Rule.
+ * A Generic implementation of a transformator takes an 
+ * <a href="http://aspell.net/man-html/Phonetic-Code.html">
+ * aspell phonetics file</a> and constructs some sort of transformation 
+ * table using the inner class TransformationRule.
+ * </p>
+ * Basically, each transformation rule represent a line in the phonetic file.
+ * One line contains two groups of characters separated by white space(s).
+ * The first group is the <em>match expression</em>. 
+ * The <em>match expression</em> describe letters to associate with a syllable.
+ * The second group is the <em>replacement expression</em> giving the phonetic 
+ * equivalent of the <em>match expression</em>.
+ *
+ * @see SpellDictionaryASpell SpellDictionaryASpell for information on getting
+ * phonetic files for aspell.
  *
  * @author Robert Gustavsson (robert@lindesign.se)
  */
@@ -40,31 +52,86 @@ public class GenericTransformator implements Transformator {
    */
   private static final char[] defaultEnglishAlphabet = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
 
-
+  /**
+   * The alphabet start marker.
+   * @see GenericTransformator#KEYWORD_ALPHBET KEYWORD_ALPHBET
+   */
   public static final char ALPHABET_START = '[';
+  /**
+   * The alphabet end marker.
+   * @see GenericTransformator#KEYWORD_ALPHBET KEYWORD_ALPHBET
+   */
   public static final char ALPHABET_END = ']';
+  /**
+   * Phonetic file keyword indicating that a different alphabet is used 
+   * for this language. The keyword must be followed an
+   * {@link GenericTransformator#ALPHABET_START ALPHABET_START} marker, 
+   * a list of characters defining the alphabet and a
+   * {@link GenericTransformator#ALPHABET_END ALPHABET_END} marker.
+   */
   public static final String KEYWORD_ALPHBET = "alphabet";
+  /**
+   * Phonetic file lines starting with the keywords are skipped. 
+   * The key words are: version, followup, collapse_result.
+   * Comments, starting with '#', are also skipped to the end of line.
+   */
   public static final String[] IGNORED_KEYWORDS = {"version", "followup", "collapse_result"};
 
+  /**
+   * Start a group of characters which can be appended to the match expression
+   * of the phonetic file.
+   */
   public static final char STARTMULTI = '(';
+  /**
+   * End a group of characters which can be appended to the match expression
+   * of the phonetic file.
+   */
   public static final char ENDMULTI = ')';
+  /**
+   * During phonetic transformation of a word each numeric character is
+   * replaced by this DIGITCODE.
+   */
   public static final String DIGITCODE = "0";
+  /**
+   * Phonetic file character code indicating that the replace expression
+   * is empty.
+   */
   public static final String REPLACEVOID = "_";
 
   private Object[] ruleArray = null;
   private char[] alphabetString = defaultEnglishAlphabet;
 
+  /**
+   * Construct a transformation table from the phonetic file
+   * @param phonetic the phonetic file as specified in aspell
+   * @throws java.io.IOException indicates a problem while reading
+   * the phonetic file
+   */
   public GenericTransformator(File phonetic) throws IOException {
     buildRules(new BufferedReader(new FileReader(phonetic)));
     alphabetString = washAlphabetIntoReplaceList(getReplaceList());
 
   }
 
+  /**
+   * Construct a transformation table from the phonetic file
+   * @param phonetic the phonetic file as specified in aspell
+   * @param encoding the character set required
+   * @throws java.io.IOException indicates a problem while reading
+   * the phonetic file
+   */
   public GenericTransformator(File phonetic, String encoding) throws IOException {
     buildRules(new BufferedReader(new InputStreamReader(new FileInputStream(phonetic), encoding)));
     alphabetString = washAlphabetIntoReplaceList(getReplaceList());
   }
 
+  /**
+   * Construct a transformation table from the phonetic file
+   * @param phonetic the phonetic file as specified in aspell. The file is
+   * supplied as a reader.
+   * @throws java.io.IOException indicates a problem while reading
+   * the phonetic information
+   */
   public GenericTransformator(Reader phonetic) throws IOException {
     buildRules(new BufferedReader(phonetic));
     alphabetString = washAlphabetIntoReplaceList(getReplaceList());
@@ -138,7 +205,9 @@ public class GenericTransformator implements Transformator {
   }
 
   /**
-   * Returns the phonetic code of the word.
+   * Builds the phonetic code of the word.
+   * @param word the word to transform
+   * @return the phonetic transformation of the word
    */
   public String transform(String word) {
 
@@ -216,6 +285,10 @@ public class GenericTransformator implements Transformator {
       return;
     }
 
+    // str contains two groups of characters separated by white space(s).
+    // The fisrt group is the "match expression". The second group is the 
+    // "replacement expression" giving the phonetic equivalent of the 
+    // "match expression".
     TransformationRule rule = null;
     StringBuffer matchExp = new StringBuffer();
     StringBuffer replaceExp = new StringBuffer();

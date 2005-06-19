@@ -31,7 +31,15 @@ import java.util.*;
 
 /**
  * This is the main class for spell checking (using the new event based spell
- *  checking).
+ * checking). 
+ * <p/>
+ * By default, the class makes a user dictionary to accumulate added words.
+ * Since this user directory has no file assign to persist added words, they
+ * will be retained for the duration of the spell checker instance.
+ * If you set a user dictionary like 
+ * {@link com.swabunga.spell.engine.SpellDictionaryHashMap SpellDictionaryHashMap}
+ * to persist the added word, the user dictionary will have the possibility to
+ * grow and be available across differents invocations of the spell checker.
  *
  * @author     Jason Height (jheight@chariot.net.au)
  * 19 June 2002
@@ -73,7 +81,7 @@ public class SpellChecker {
   /**
    * Constructs the SpellChecker. The default threshold is used
    *
-   * @param  dictionary  Description of the Parameter
+   * @param  dictionary  The dictionary used for looking up words.
    */
   public SpellChecker(SpellDictionary dictionary) {
     this();
@@ -84,14 +92,22 @@ public class SpellChecker {
   /**
    * Constructs the SpellChecker with a threshold
    *
-   * @param  dictionary  Description of the Parameter
-   * @param  threshold   Description of the Parameter
+   * @param  dictionary  the dictionary used for looking up words.
+   * @param  threshold   the cost value above which any suggestions are 
+   *                     thrown away
    */
   public SpellChecker(SpellDictionary dictionary, int threshold) {
     this(dictionary);
     config.setInteger(Configuration.SPELL_THRESHOLD, threshold);
   }
 
+  /**
+   * Accumulates a dictionary at the end of the dictionaries list used
+   * for looking up words. Adding a dictionary give the flexibility to
+   * assign the base language dictionary, then a more technical, then...
+   *
+   * @param dictionary the dictionary to add at the end of the dictionary list.
+   */
   public void addDictionary(SpellDictionary dictionary) {
     if (dictionary == null) {
       throw new IllegalArgumentException("dictionary must be non-null");
@@ -100,13 +116,18 @@ public class SpellChecker {
   }
 
   /**
-   * Set user dictionary (used when a word is added)
+   * Registers the user dictionary to which words are added.
+   *
+   * @param dictionary the dictionary to use when the user specify a new word
+   * to add.
    */
   public void setUserDictionary(SpellDictionary dictionary) {
     userdictionary = dictionary;
   }
 
   /**
+   * Supply the instance of the configuration holding the spell checking engine
+   * parameters.
    *
    * @return Current Configuration
    */
@@ -115,7 +136,7 @@ public class SpellChecker {
   }
 
   /**
-   *Adds a SpellCheckListener
+   * Adds a SpellCheckListener to the listeners list.
    *
    * @param  listener  The feature to be added to the SpellCheckListener attribute
    */
@@ -125,9 +146,9 @@ public class SpellChecker {
 
 
   /**
-   *Removes a SpellCheckListener
+   * Removes a SpellCheckListener from the listeners list.
    *
-   * @param  listener  Description of the Parameter
+   * @param  listener  The listener to be removed from the listeners list.
    */
   public void removeSpellCheckListener(SpellCheckListener listener) {
     eventListeners.removeElement(listener);
@@ -137,7 +158,8 @@ public class SpellChecker {
   /**
    * Fires off a spell check event to the listeners.
    *
-   * @param  event  Description of the Parameter
+   * @param  event  The event that need to be processed by the spell checking
+   * system.
    */
   protected void fireSpellCheckEvent(SpellCheckEvent event) {
     for (int i = eventListeners.size() - 1; i >= 0; i--) {
@@ -148,7 +170,7 @@ public class SpellChecker {
 
   /**
    * This method clears the words that are currently being remembered as
-   *  Ignore All words and Replace All words.
+   *  <code>Ignore All</code> words and <code>Replace All</code> words.
    */
   public void reset() {
     ignoredWords = new Vector();
@@ -161,8 +183,8 @@ public class SpellChecker {
    *  <p>
    *  Returns the corrected string.
    *
-   * @param  text   Description of the Parameter
-   * @return        Description of the Return Value
+   * @param  text   The text that need to be spelled checked
+   * @return        The text after spell checking
    * @deprecated    use checkSpelling(WordTokenizer)
    */
   public String checkString(String text) {
@@ -173,10 +195,12 @@ public class SpellChecker {
 
 
   /**
-   * Returns true iff this word contains a digit.
+   * Verifies if the word that is being spell checked contains at least a
+   * digit.
+   * Returns true if this word contains a digit.
    *
-   * @param  word  Description of the Parameter
-   * @return       The digitWord value
+   * @param  word  The word to analyze for digit.
+   * @return       true if the word contains at least a digit.
    */
   private final static boolean isDigitWord(String word) {
     for (int i = word.length() - 1; i >= 0; i--) {
@@ -189,15 +213,24 @@ public class SpellChecker {
 
 
   /**
-   * Returns true iff this word looks like an internet address.
+   * Verifies if the word that is being spell checked contains an Internet 
+   * address. The method look for typical protocol or the habitual string 
+   * in the word:
+   * <ul>
+   * <li>http://</li>
+   * <li>ftp://</li>
+   * <li>https://</li>
+   * <li>ftps://</li>
+   * <li>www.</li>
+   * </ul>
    *
-   * One limitation is that this method cannot currently recognise email
-   * addresses. Since the 'word' that is passed in may in fact contain
+   * One limitation is that this method cannot currently recognize email
+   * addresses. Since the 'word' that is passed in, may in fact contain
    * the rest of the document to be checked, it is not (yet!) a good
    * idea to scan for the @ character.
    *
-   * @param  word  Description of the Parameter
-   * @return       The iNETWord value
+   * @param  word  The word to analyze for an Internet address.
+   * @return       true if this word looks like an Internet address.
    */
     public final static boolean isINETWord(String word) {
         String lowerCaseWord = word.toLowerCase();
@@ -210,10 +243,11 @@ public class SpellChecker {
 
 
   /**
-   * Returns true iif this word contains all upper case characters
+   * Verifies if the word that is being spell checked contains all
+   * uppercases characters.
    *
-   * @param  word  Description of the Parameter
-   * @return       The upperCaseWord value
+   * @param  word  The word to analyze for uppercases characters
+   * @return       true if this word contains all upper case characters
    */
   private final static boolean isUpperCaseWord(String word) {
     for (int i = word.length() - 1; i >= 0; i--) {
@@ -226,11 +260,13 @@ public class SpellChecker {
 
 
   /**
-   * Returns true iif this word contains mixed case characters
+   * Verifies if the word that is being spell checked contains lower and
+   * upper cased characters. Note that a phrase beginning with an upper cased
+   * character is not considered a mixed case word.
    *
-   * @param  word  Description of the Parameter
+   * @param  word  The word to analyze for mixed cases characters
    * @param startsSentence True if this word is at the start of a sentence
-   * @return       The mixedCaseWord value
+   * @return       true if this word contains mixed case characters
    */
   private final static boolean isMixedCaseWord(String word, boolean startsSentence) {
     int strLen = word.length();
@@ -261,7 +297,7 @@ public class SpellChecker {
    *  action that has been selected by the user.
    *
    * @param  tokenizer        Description of the Parameter
-   * @param  event            Description of the Parameter
+   * @param  event            The event to handle
    * @return                  Returns true if the event action is to cancel the current spell checking, false if the spell checking should continue
    */
   protected boolean fireAndHandleEvent(WordTokenizer tokenizer, SpellCheckEvent event) {
@@ -300,21 +336,47 @@ public class SpellChecker {
     return false;
   }
 
+  /**
+   * Adds a word to the list of ignored words
+   * @param word The text of the word to ignore
+   */
   public void ignoreAll(String word) {
     if (!ignoredWords.contains(word)) {
       ignoredWords.addElement(word);
     }
   }
   
+  /**
+   * Adds a word to the user dictionary
+   * @param word The text of the word to add
+   */
   public void addToDictionary(String word) {
     if (!userdictionary.isCorrect(word))
       userdictionary.addWord(word);
   }
   
+  /**
+   * Indicates if a word is in the list of ignored words
+   * @param word The text of the word check
+   */
   public boolean isIgnored(String word){
   	return ignoredWords.contains(word);
   }
   
+  /**
+   * Verifies if the word to analyze is contained in dictionaries. The order 
+   * of dictionary lookup is:
+   * <ul>
+   * <li>The default user dictionary or the one set through 
+   * {@link SpellChecker#setUserDictionary}</li>
+   * <li>The dictionary specified at construction time, if any.</li>
+   * <li>Any dictionary in the order they were added through 
+   * {@link SpellChecker#addDictionary}</li>
+   * </ul>
+   *
+   * @param word The word to verify that it's spelling is known.
+   * @return true if the word is in a dictionary.
+   */
   public boolean isCorrect(String word) {
     if (userdictionary.isCorrect(word)) return true;
     for (Enumeration e = dictionaries.elements(); e.hasMoreElements();) {
@@ -323,8 +385,23 @@ public class SpellChecker {
     }
     return false;
   }
-  
-  
+
+  /**
+   * Produces a list of suggested word after looking for suggestions in various
+   * dictionaries. The order of dictionary lookup is:
+   * <ul>
+   * <li>The default user dictionary or the one set through 
+   * {@link SpellChecker#setUserDictionary}</li>
+   * <li>The dictionary specified at construction time, if any.</li>
+   * <li>Any dictionary in the order they were added through 
+   * {@link SpellChecker#addDictionary}</li>
+   * </ul>
+   *
+   * @param word The word for which we want to gather suggestions
+   * @param threshold the cost value above which any suggestions are 
+   *                  thrown away
+   * @return the list of words suggested
+   */
   public List getSuggestions(String word, int threshold) {
     if (this.threshold != threshold && cache != null) {
        this.threshold = threshold;
@@ -378,9 +455,11 @@ public class SpellChecker {
   /**
    * This method is called to check the spelling of the words that are returned
    * by the WordTokenizer.
-   * <p>For each invalid word the action listeners will be informed with a new SpellCheckEvent</p>
+   * <p/>
+   * For each invalid word the action listeners will be informed with a new 
+   * SpellCheckEvent.<p>
    *
-   * @param  tokenizer  Description of the Parameter
+   * @param  tokenizer  The media containing the text to analyze.
    * @return Either SPELLCHECK_OK, SPELLCHECK_CANCEL or the number of errors found. The number of errors are those that
    * are found BEFORE any corrections are made.
    */

@@ -45,7 +45,7 @@
 
   <target name="compile" depends="init">
     <!-- Compile the java code from ${src} into ${build} -->
-    <javac deprecation="true" verbose="${verbose}" srcdir="${src}" destdir="${build}" target="${target}">
+    <javac deprecation="true" verbose="${verbose}" srcdir="${src}" destdir="${build}" target="${target}" source="1.3">
       <classpath refid="classpath.id"/>
       <exclude name="com/swabunga/spell/jedit/**"/>
       <exclude name="com/swabunga/test/**"/>

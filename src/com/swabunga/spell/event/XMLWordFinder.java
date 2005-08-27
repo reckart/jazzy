@@ -82,9 +82,8 @@ public class XMLWordFinder extends AbstractWordFinder {
       }
 
       //Ignore things inside tags.
-      i = ignore(i, '<', '>');
-
-      i++;
+      int i2 = ignore(i, '<', '>');
+      i = (i2 == i ? i + 1 : i2);
     }
 
     if (!started) {

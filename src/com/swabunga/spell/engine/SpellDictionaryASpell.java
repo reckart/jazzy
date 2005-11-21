@@ -109,6 +109,21 @@ public abstract class SpellDictionaryASpell implements SpellDictionary {
       tf = new GenericTransformator(phonetic);
   }
 
+  /**
+   * Returns a list of Word objects that are the suggestions to an
+   * incorrect word. 
+   * <p>
+   * This method is only needed to provide backward compatibility.
+   * @see #getSuggestions(String, int, int[][])
+   * @param word Suggestions for given misspelt word
+   * @param threshold The lower boundary of similarity to misspelt word
+   * @return Vector a List of suggestions
+   */
+  public List getSuggestions(String word, int threshold) {
+  	
+  	return getSuggestions(word,threshold,null);
+  	
+  }
 
   /**
    * Returns a list of Word objects that are the suggestions to an
@@ -116,10 +131,18 @@ public abstract class SpellDictionaryASpell implements SpellDictionary {
    * <p>
    * @param word Suggestions for given misspelt word
    * @param threshold The lower boundary of similarity to misspelt word
+   * @param matrix Two dimensional int array used to calculate
+   * edit distance. Allocating this memory outside of the function will greatly improve efficiency. 
    * @return Vector a List of suggestions
    */
-  public List getSuggestions(String word, int threshold) {
+  public List getSuggestions(String word, int threshold, int[][] matrix) {
 
+  	int i;
+  	int j;
+  	
+  	if(matrix == null)
+  		matrix = new int[0][0];
+  	
     Hashtable nearmisscodes = new Hashtable();
     String code = getCode(word);
 
@@ -131,9 +154,12 @@ public abstract class SpellDictionaryASpell implements SpellDictionary {
     //interchange
     nearmisscodes = new Hashtable();
     char[] charArray = word.toCharArray();
-    for (int i = 0; i < word.length() - 1; i++) {
-      char a = charArray[i];
-      char b = charArray[i + 1];
+    char a;
+    char b ;
+    
+    for (i = 0; i < word.length() - 1; i++) {
+      a = charArray[i];
+      b = charArray[i + 1];
       charArray[i] = b;
       charArray[i + 1] = a;
       String s = getCode(new String(charArray));
@@ -146,9 +172,10 @@ public abstract class SpellDictionaryASpell implements SpellDictionary {
 
     //change
     charArray = word.toCharArray();
-    for (int i = 0; i < word.length(); i++) {
-      char original = charArray[i];
-      for (int j = 0; j < replacelist.length; j++) {
+    char original; 
+    for (i = 0; i < word.length(); i++) {
+      original = charArray[i];
+      for (j = 0; j < replacelist.length; j++) {
         charArray[i] = replacelist[j];
         String s = getCode(new String(charArray));
         nearmisscodes.put(s, s);
@@ -160,7 +187,7 @@ public abstract class SpellDictionaryASpell implements SpellDictionary {
     charArray = (word += " ").toCharArray();
     int iy = charArray.length - 1;
     while (true) {
-      for (int j = 0; j < replacelist.length; j++) {
+      for (j = 0; j < replacelist.length; j++) {
         charArray[iy] = replacelist[j];
         String s = getCode(new String(charArray));
         nearmisscodes.put(s, s);
@@ -178,7 +205,7 @@ public abstract class SpellDictionaryASpell implements SpellDictionary {
     for (int ix = 0; ix < charArray2.length; ix++) {
       charArray2[ix] = charArray[ix];
     }
-    char a, b;
+    
     a = charArray[charArray.length - 1];
     int ii = charArray2.length;
     while (true) {
@@ -197,7 +224,7 @@ public abstract class SpellDictionaryASpell implements SpellDictionary {
     Vector wordlist = getWordsFromCode(word, nearmisscodes);
 
     if (wordlist.size() == 0 && phoneticList.size() == 0)
-      addBestGuess(word, phoneticList);
+      addBestGuess(word, phoneticList, matrix);
 
 
     // We sort a Vector at the end instead of maintaining a
@@ -215,15 +242,33 @@ public abstract class SpellDictionaryASpell implements SpellDictionary {
   /**
    * When we don't come up with any suggestions (probably because the threshold was too strict),
    * then pick the best guesses from the those words that have the same phonetic code.
+   * <p>
+   * This method is only needed to provide backward compatibility.
+   * @see addBestGuess(String word, Vector wordList, int[][] matrix)
    * @param word - the word we are trying spell correct
    * @param wordList - the linked list that will get the best guess
    */
   private void addBestGuess(String word, Vector wordList) {
+  	addBestGuess(word,wordList,null);
+  }
+  
+  /**
+   * When we don't come up with any suggestions (probably because the threshold was too strict),
+   * then pick the best guesses from the those words that have the same phonetic code.
+   * @param word - the word we are trying spell correct
+   * @param Two dimensional array of int used to calculate 
+   * edit distance. Allocating this memory outside of the function will greatly improve efficiency. 
+   * @param wordList - the linked list that will get the best guess
+   */
+  private void addBestGuess(String word, Vector wordList, int[][] matrix) {
+  	if(matrix == null)
+  		matrix = new int[0][0];
+  	
     if (wordList.size() != 0)
       throw new InvalidParameterException("the wordList vector must be empty");
 
     int bestScore = Integer.MAX_VALUE;
-
+    
     String code = getCode(word);
     List simwordlist = getWords(code);
 
@@ -231,7 +276,7 @@ public abstract class SpellDictionaryASpell implements SpellDictionary {
 
     for (Iterator j = simwordlist.iterator(); j.hasNext();) {
       String similar = (String) j.next();
-      int distance = EditDistance.getDistance(word, similar);
+      int distance = EditDistance.getDistance(word, similar, matrix);
       if (distance <= bestScore) {
         bestScore = distance;
         Word goodGuess = new Word(similar, distance);
@@ -251,6 +296,7 @@ public abstract class SpellDictionaryASpell implements SpellDictionary {
   private Vector getWordsFromCode(String word, Hashtable codes) {
     Configuration config = Configuration.getConfiguration();
     Vector result = new Vector();
+    int[][] matrix = new int[0][0]; 
     final int configDistance = config.getInteger(Configuration.SPELL_THRESHOLD);
 
     for (Enumeration i = codes.keys(); i.hasMoreElements();) {
@@ -259,7 +305,7 @@ public abstract class SpellDictionaryASpell implements SpellDictionary {
       List simwordlist = getWords(code);
       for (Iterator iter = simwordlist.iterator(); iter.hasNext();) {
         String similar = (String) iter.next();
-        int distance = EditDistance.getDistance(word, similar);
+        int distance = EditDistance.getDistance(word, similar, matrix);
         if (distance < configDistance) {
           Word w = new Word(similar, distance);
           result.addElement(w);

@@ -49,6 +49,15 @@ public class EditDistance {
   public static Configuration config = Configuration.getConfiguration();
 
   /**
+   * get the weights for each possible operation
+   */
+  static final int costOfDeletingSourceCharacter = config.getInteger(Configuration.COST_REMOVE_CHAR);
+  static final int costOfInsertingSourceCharacter = config.getInteger(Configuration.COST_INSERT_CHAR);
+  static final int costOfSubstitutingLetters = config.getInteger(Configuration.COST_SUBST_CHARS);
+  static final int costOfSwappingLetters = config.getInteger(Configuration.COST_SWAP_CHARS);
+  static final int costOfChangingCase = config.getInteger(Configuration.COST_CHANGE_CASE);  
+
+  /**
    * Evaluates the distance between two words.
    * 
    * @param word One word to evaluates
@@ -57,6 +66,18 @@ public class EditDistance {
    * word into a similar one.
    */
   public static final int getDistance(String word, String similar) {
+  	return getDistance(word,similar,null);
+  }  
+  
+  /**
+   * Evaluates the distance between two words.
+   * 
+   * @param word One word to evaluates
+   * @param similar The other word to evaluates
+   * @return a number representing how easy or complex it is to transform on
+   * word into a similar one.
+   */
+  public static final int getDistance(String word, String similar, int[][] matrix) {
     /* JMH Again, there is no need to have a global class matrix variable
      *  in this class. I have removed it and made the getDistance static final
      * DMV: I refactored this method to make it more efficient, more readable, and simpler.
@@ -67,65 +88,88 @@ public class EditDistance {
      * to "a".
      */
 
-    //get the weights for each possible operation
-    final int costOfDeletingSourceCharacter = config.getInteger(Configuration.COST_REMOVE_CHAR);
-    final int costOfInsertingSourceCharacter = config.getInteger(Configuration.COST_INSERT_CHAR);
-    final int costOfSubstitutingLetters = config.getInteger(Configuration.COST_SUBST_CHARS);
-    final int costOfSwappingLetters = config.getInteger(Configuration.COST_SWAP_CHARS);
-    final int costOfChangingCase = config.getInteger(Configuration.COST_CHANGE_CASE);
-
+  	//Allocate memory outside of the loops. 
+  	int i;
+  	int j;
+  	int costOfSubst;
+  	int costOfSwap;
+  	int costOfDelete;
+  	int costOfInsertion;
+  	int costOfCaseChange;
+  	
+  	boolean isSwap;
+  	char sourceChar = 0;
+  	char otherChar = 0;
+  	
     int a_size = word.length() + 1;
     int b_size = similar.length() + 1;
-    int[][] matrix = new int[a_size][b_size];
+  
+    
+    //Only allocate new memory if we need a bigger matrix. 
+    if (matrix == null || matrix.length < a_size || matrix[0].length < b_size)
+    	matrix = new int[a_size][b_size];
+      
     matrix[0][0] = 0;
 
-    for (int i = 1; i != a_size; ++i)
+    for (i = 1; i != a_size; ++i)
       matrix[i][0] = matrix[i - 1][0] + costOfInsertingSourceCharacter; //initialize the first column
 
-    for (int j = 1; j != b_size; ++j)
+    for (j = 1; j != b_size; ++j)
       matrix[0][j] = matrix[0][j - 1] + costOfDeletingSourceCharacter; //initalize the first row
 
-    word = " " + word;
-    similar = " " + similar;
+    for (i = 1; i != a_size; ++i) {
+      sourceChar = word.charAt(i-1);
+      for (j = 1; j != b_size; ++j) {
 
-    for (int i = 1; i != a_size; ++i) {
-      char sourceChar = word.charAt(i);
-      for (int j = 1; j != b_size; ++j) {
-
-        char otherChar = similar.charAt(j);
+        otherChar = similar.charAt(j-1);
         if (sourceChar == otherChar) {
           matrix[i][j] = matrix[i - 1][j - 1]; //no change required, so just carry the current cost up
           continue;
         }
 
-        int costOfSubst = costOfSubstitutingLetters + matrix[i - 1][j - 1];
+        costOfSubst = costOfSubstitutingLetters + matrix[i - 1][j - 1];
         //if needed, add up the cost of doing a swap
-        int costOfSwap = Integer.MAX_VALUE;
-        boolean isSwap = (i != 1) && (j != 1) && sourceChar == similar.charAt(j - 1) && word.charAt(i - 1) == otherChar;
+        costOfSwap = Integer.MAX_VALUE;
+
+        isSwap = (i != 1) && (j != 1) && sourceChar == similar.charAt(j - 2) && word.charAt(i - 2) == otherChar;
         if (isSwap)
           costOfSwap = costOfSwappingLetters + matrix[i - 2][j - 2];
 
-        int costOfDelete = costOfDeletingSourceCharacter + matrix[i][j - 1];
-        int costOfInsertion = costOfInsertingSourceCharacter + matrix[i - 1][j];
+        costOfDelete = costOfDeletingSourceCharacter + matrix[i][j - 1];
+        costOfInsertion = costOfInsertingSourceCharacter + matrix[i - 1][j];
 
-        int costOfCaseChange = Integer.MAX_VALUE;
-        String strSrcChar = "" + sourceChar;
-        String strOtherChar = "" + otherChar;
-
-        if (strSrcChar.compareToIgnoreCase(strOtherChar) == 0)
+        costOfCaseChange = Integer.MAX_VALUE;
+       
+        if (equalIgnoreCase(sourceChar, otherChar))
           costOfCaseChange = costOfChangingCase + matrix[i - 1][j - 1];
-
+        
         matrix[i][j] = minimum(costOfSubst, costOfSwap, costOfDelete, costOfInsertion, costOfCaseChange);
       }
     }
-    int cost = matrix[a_size - 1][b_size - 1];
 
     if (false)
       System.out.println(dumpMatrix(word, similar, matrix));
 
-    return cost;
+    return matrix[a_size - 1][b_size - 1];
   }
 
+  /**
+   * checks to see if the two charactors are equal ignoring case. 
+   * @param ch1
+   * @param ch2
+   * @return boolean
+   */
+  private static boolean equalIgnoreCase(char ch1, char ch2) {
+    if (ch1 == ch2)
+    {
+    	return true;
+    }
+    else
+    {
+    	return (Character.toLowerCase(ch1) == Character.toLowerCase(ch2));
+    }
+  }
+  
   /**
    * For debugging, this creates a string that represents the matrix. To read the matrix, look at any square. That is the cost to get from
    * the partial letters along the top to the partial letters along the side.
@@ -137,8 +181,8 @@ public class EditDistance {
   static private String dumpMatrix(String src, String dest, int matrix[][]) {
     StringBuffer s = new StringBuffer("");
 
-    int cols = matrix.length;
-    int rows = matrix[0].length;
+    int cols = matrix.length -1;
+    int rows = matrix[0].length -1;
 
     for (int i = 0; i < cols + 1; i++) {
       for (int j = 0; j < rows + 1; j++) {
@@ -191,7 +235,7 @@ public class EditDistance {
    */
   public static void main(String[] args) throws Exception {
     BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
-
+    int[][] matrix = new int[0][0]; 
     while (true) {
 
       String input1 = stdin.readLine();
@@ -202,7 +246,7 @@ public class EditDistance {
       if (input2 == null || input2.length() == 0)
         break;
 
-      System.out.println(EditDistance.getDistance(input1, input2));
+      System.out.println(EditDistance.getDistance(input1, input2,matrix));
     }
     System.out.println("done");
   }

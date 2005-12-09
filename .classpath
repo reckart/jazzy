@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry exported="true" sourcepath="JDK_SOURCE" kind="var" path="JRE_LIB"/>
-	<classpathentry kind="var" path="JEDIT_JAR"/>
-	<classpathentry sourcepath="ECLIPSE_HOME/plugins/org.eclipse.jdt.source_3.1.0/src/org.junit_3.8.1/junitsrc.zip" kind="var" path="JUNIT_HOME/junit.jar"/>
+	<classpathentry kind="lib" path="D:/j2sdk1.4.2_03/jre/lib/rt.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

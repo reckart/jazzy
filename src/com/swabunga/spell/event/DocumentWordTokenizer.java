@@ -67,7 +67,7 @@ public class DocumentWordTokenizer implements WordTokenizer {
     try {
       document.getText(0, document.getLength(), text);
       sentenceIterator.setText(text);
-      currentWordPos = getNextWordStart(text, 0);
+      currentWordPos = getNextWordStart(text, text.getBeginIndex());
       //If the current word pos is -1 then the string was all white space
       if (currentWordPos != -1) {
         currentWordEnd = getNextWordEnd(text, currentWordPos);
@@ -84,9 +84,9 @@ public class DocumentWordTokenizer implements WordTokenizer {
    * word in the buffer from the start position
    */
   private static int getNextWordStart(Segment text, int startPos) {
-    if (startPos <= text.getEndIndex())
+  	if (startPos <= text.getEndIndex())
       for (char ch = text.setIndex(startPos); ch != Segment.DONE; ch = text.next()) {
-        if (Character.isLetterOrDigit(ch)) {
+      	if (Character.isLetterOrDigit(ch)) {
           return text.getIndex();
         }
       }
@@ -143,7 +143,7 @@ public class DocumentWordTokenizer implements WordTokenizer {
   		}
   	}
   	//System.out.println("CurPos:"+currentWordPos);
-  	if(currentWordPos==0)
+  	if(currentWordPos==text.getBeginIndex())
   		first=true;
   	moreTokens=true;
   	currentWordEnd = getNextWordEnd(text, currentWordPos);
@@ -155,7 +155,7 @@ public class DocumentWordTokenizer implements WordTokenizer {
    * @return the number of words found so far.
    */
   public int getCurrentWordPosition() {
-    return currentWordPos;
+    return currentWordPos-text.getBeginIndex();
   }
 
   /**
@@ -163,7 +163,7 @@ public class DocumentWordTokenizer implements WordTokenizer {
    * @return index of the end of the current word in the text.
    */
   public int getCurrentWordEnd() {
-    return currentWordEnd;
+    return currentWordEnd-text.getBeginIndex();
   }
 
   /**
@@ -189,7 +189,7 @@ public class DocumentWordTokenizer implements WordTokenizer {
     //The nextWordPos has already been populated
     String word = null;
     try {
-      word = document.getText(currentWordPos, currentWordEnd - currentWordPos);
+      word = document.getText(getCurrentWordPosition(), getCurrentWordEnd() - getCurrentWordPosition());
     } catch (BadLocationException ex) {
       moreTokens = false;
     }
@@ -212,13 +212,15 @@ public class DocumentWordTokenizer implements WordTokenizer {
    * @param newWord The new word to replace the misspelt one
    */
   public void replaceWord(String newWord) {
-    AttributeSet attr=null;
+    AttributeSet 	attr=null;
+    int				docWordPos;
     if (currentWordPos != -1) {
       try {
+      	docWordPos=getCurrentWordPosition();
         if(document instanceof StyledDocument)
-            attr=((StyledDocument)document).getCharacterElement(currentWordPos).getAttributes();
-        document.remove(currentWordPos, currentWordEnd - currentWordPos);
-        document.insertString(currentWordPos, newWord, null);
+            attr=((StyledDocument)document).getCharacterElement(docWordPos).getAttributes();
+        document.remove(docWordPos, getCurrentWordEnd() - docWordPos);
+        document.insertString(docWordPos, newWord, null);
         //Need to reset the segment
         document.getText(0, document.getLength(), text);
       } catch (BadLocationException ex) {
@@ -226,7 +228,7 @@ public class DocumentWordTokenizer implements WordTokenizer {
       }
       //Position after the newly replaced word(s)
       first = true;
-      currentWordPos = getNextWordStart(text, currentWordPos + newWord.length());
+      currentWordPos = getNextWordStart(text, docWordPos + text.getBeginIndex() + newWord.length());
       if (currentWordPos != -1) {
         currentWordEnd = getNextWordEnd(text, currentWordPos);
         nextWordPos = getNextWordStart(text, currentWordEnd);

@@ -122,6 +122,7 @@ public class JTextComponentSpellChecker implements SpellCheckListener {
 
   /**
    * This method is called to check the spelling of a JTextComponent.
+   * It starts at the current caret position.
    *
    * @param  textComp  The JTextComponent to spellcheck.
    * @return Either SpellChecker.SPELLCHECK_OK,  SpellChecker.SPELLCHECK_CANCEL or the number of errors found. The number of errors are those that
@@ -131,7 +132,7 @@ public class JTextComponentSpellChecker implements SpellCheckListener {
     setupDialog(textComp);
     this.textComp = textComp;
 
-    DocumentWordTokenizer tokenizer = new DocumentWordTokenizer(textComp.getDocument());
+    DocumentWordTokenizer tokenizer = new DocumentWordTokenizer(textComp.getDocument(), textComp.getCaretPosition());
     int exitStatus = spellCheck.checkSpelling(tokenizer);
 
     textComp.requestFocus();
